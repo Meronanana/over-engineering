@@ -36,13 +36,13 @@ export default function Sandbox() {
         endY = Math.round(lerp(startY, endY, t));
       }
 
-      // if (!mouseDownRef.current && startX === endX && startY === endY) clearInterval(moveKey.current);
-
-      if (screenRef.current.offsetWidth < endX) {
-        endX = screenRef.current.offsetWidth * 2 - endX;
+      if (screenRef.current.offsetWidth - toyRef.current.offsetWidth < endX) {
+        endX = screenRef.current.offsetWidth - toyRef.current.offsetWidth;
+        toyDst.current.X = endX;
         accelate.current.X = accelate.current.X.map((v) => -v);
       } else if (endX < 0) {
-        endX = -endX;
+        endX = 0;
+        toyDst.current.X = endX;
         accelate.current.X = accelate.current.X.map((v) => -v);
       }
 
@@ -52,8 +52,6 @@ export default function Sandbox() {
 
       toyRef.current.style.left = endX + "px";
       toyRef.current.style.top = endY + "px";
-
-      // setTimeout(toyMove, 1000 / 60, endX, endY, endX, endY, t);
     }
   };
 
@@ -66,14 +64,18 @@ export default function Sandbox() {
     toyDst.current.X = toyDst.current.X + vx;
     toyDst.current.Y = toyDst.current.Y + vy;
 
-    vy += 5;
+    vy += 3;
 
     if (vy < 30 || toyRef.current.offsetTop < 0) {
-      setTimeout(toyGravityDrop, 1000 / 30, vy);
+      setTimeout(toyGravityDrop, 1000 / 60, vy);
     } else {
       clearInterval(moveKey.current);
       toyDst.current.X = toyRef.current.offsetLeft;
       toyDst.current.Y = toyRef.current.offsetTop;
+      if (accelate.current) {
+        accelate.current.X = [];
+        accelate.current.Y = [];
+      }
     }
   };
 
@@ -94,10 +96,6 @@ export default function Sandbox() {
       mouseDownRef.current = false;
 
       toyGravityDrop();
-      if (accelate.current) {
-        accelate.current.X = [];
-        accelate.current.Y = [];
-      }
     }
   };
 
@@ -118,10 +116,6 @@ export default function Sandbox() {
         accelate.current.Y.shift();
       }
     }
-
-    // toyMove(startX, startY, endX, endY, 0.1);
-
-    // console.log(toyRef);
   };
 
   return (
