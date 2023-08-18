@@ -23,7 +23,10 @@ export default function Sandbox() {
   const mouseDownRef: MutableRefObject<boolean> = useRef<boolean>(false);
   const moveKey = useRef<NodeJS.Timer>();
 
-  const spinSpeedOffset = 250;
+  const GVT_SPEED_OFFSET = 0.1;
+  const SPIN_SPEED_OFFSET = 250;
+  const FPS_OFFSET = 1000 / 60; // 60fps
+  const UNDER_BOUND = 0.8;
 
   const toyMove = (t?: number) => {
     if (toyRef.current !== null && screenRef.current !== null && accelate.current !== null) {
@@ -49,12 +52,12 @@ export default function Sandbox() {
         toyDst.current.X = endX;
         accelate.current.X = accelate.current.X.map((v) => -v / 2);
         let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0));
-        toyRef.current.style.animationDuration = `${Math.abs(spinSpeedOffset / vx)}s`;
+        toyRef.current.style.animationDuration = `${Math.abs(SPIN_SPEED_OFFSET / vx)}s`;
       }
 
-      if (screenRef.current.offsetHeight * 0.8 < endY) {
+      if (screenRef.current.offsetHeight * UNDER_BOUND < endY) {
         if (!mouseDownRef.current) endX = toyRef.current.offsetLeft;
-        endY = screenRef.current.offsetHeight * 0.8;
+        endY = screenRef.current.offsetHeight * UNDER_BOUND;
       }
 
       toyRef.current.style.left = endX + "px";
@@ -65,8 +68,8 @@ export default function Sandbox() {
   const toyGravityDrop = (vy?: number) => {
     if (!accelate.current || !toyRef.current) return;
 
-    let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0) / 15);
-    vy = vy !== undefined ? vy : Math.round(accelate.current.Y.reduce((sum, cur) => sum + cur, 0) / 10);
+    let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0) * (GVT_SPEED_OFFSET * 1.5));
+    vy = vy !== undefined ? vy : Math.round(accelate.current.Y.reduce((sum, cur) => sum + cur, 0) * GVT_SPEED_OFFSET);
 
     toyDst.current.X = toyDst.current.X + vx;
     toyDst.current.Y = toyDst.current.Y + vy;
@@ -74,7 +77,7 @@ export default function Sandbox() {
     vy += 2;
 
     if (vy < 30 || toyRef.current.offsetTop < 0) {
-      setTimeout(toyGravityDrop, 1000 / 60, vy);
+      setTimeout(toyGravityDrop, FPS_OFFSET, vy);
     } else {
       clearInterval(moveKey.current);
       toyDst.current.X = toyRef.current.offsetLeft;
@@ -94,7 +97,7 @@ export default function Sandbox() {
 
     if (!mouseDownRef.current) {
       mouseDownRef.current = true;
-      moveKey.current = setInterval(toyMove, 1000 / 60, 0.2);
+      moveKey.current = setInterval(toyMove, FPS_OFFSET, 0.2);
     }
   };
 
@@ -112,7 +115,7 @@ export default function Sandbox() {
         } else if (vx < 0) {
           toyRef.current.style.animationName = "spin-counter-clockwise";
         }
-        toyRef.current.style.animationDuration = `${Math.abs(spinSpeedOffset / vx)}s`;
+        toyRef.current.style.animationDuration = `${Math.abs(SPIN_SPEED_OFFSET / vx)}s`;
       }
 
       toyGravityDrop();
