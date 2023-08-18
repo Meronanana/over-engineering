@@ -5,7 +5,7 @@ import Link from "next/link";
 import Toy from "./components/toy";
 
 import "./sandbox.scss";
-import { lerp } from "@/utils/mathEngine";
+import { lerp } from "@/utils/physicalEngine";
 
 interface ArrayPair<T> {
   X: Array<T>;
@@ -15,14 +15,29 @@ interface ArrayPair<T> {
 export default function Sandbox() {
   const screenRef: RefObject<HTMLElement> | null = useRef<HTMLElement>(null);
   const toyRef: RefObject<HTMLDivElement> | null = useRef<HTMLDivElement>(null);
+  const toyDst = useRef({ X: -1, Y: -1 });
   const accelate: RefObject<ArrayPair<number>> = useRef<ArrayPair<number>>({
     X: [],
     Y: [],
   });
   const mouseDownRef: MutableRefObject<boolean> = useRef<boolean>(false);
 
-  const toyMove = (startX: number, startY: number, endX: number, endY: number, t?: number) => {
+  const moveKey = useRef<NodeJS.Timer>();
+
+  const toyMove = (t?: number) => {
     if (toyRef.current !== null && screenRef.current !== null && accelate.current !== null) {
+      let startX = toyRef.current.offsetLeft;
+      let startY = toyRef.current.offsetTop;
+      let endX = toyDst.current.X;
+      let endY = toyDst.current.Y;
+
+      if (t !== undefined) {
+        endX = Math.round(lerp(startX, endX, t));
+        endY = Math.round(lerp(startY, endY, t));
+      }
+
+      // if (!mouseDownRef.current && startX === endX && startY === endY) clearInterval(moveKey.current);
+
       if (screenRef.current.offsetWidth < endX) {
         endX = screenRef.current.offsetWidth * 2 - endX;
         accelate.current.X = accelate.current.X.map((v) => -v);
@@ -35,48 +50,65 @@ export default function Sandbox() {
         endY = screenRef.current.offsetHeight * 0.8;
       }
 
-      // toyRef.current.style.left = lerp(startX, endX, t) + "px";
-      // toyRef.current.style.top = lerp(startY, endY, t) + "px";
       toyRef.current.style.left = endX + "px";
       toyRef.current.style.top = endY + "px";
+
+      // setTimeout(toyMove, 1000 / 60, endX, endY, endX, endY, t);
     }
   };
 
   const toyGravityDrop = (vy?: number) => {
-    if (!accelate.current) return;
+    if (!accelate.current || !toyRef.current) return;
 
-    let startX, startY, vx;
-    startX = toyRef.current ? toyRef.current.offsetLeft : 0;
-    startY = toyRef.current ? toyRef.current.offsetTop : 0;
+    let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0) / 10);
+    vy = vy !== undefined ? vy : Math.round(accelate.current.Y.reduce((sum, cur) => sum + cur, 0) / 10);
 
-    vx = Math.floor(accelate.current.X.reduce((sum, cur) => sum + cur, 0) / 10);
-    vy = vy !== undefined ? vy : Math.floor(accelate.current.Y.reduce((sum, cur) => sum + cur, 0) / 10);
+    toyDst.current.X = toyDst.current.X + vx;
+    toyDst.current.Y = toyDst.current.Y + vy;
 
-    toyMove(startX, startY, startX + vx, startY + vy, 0.1);
-
-    startX += vx;
-    startY += vy;
     vy += 5;
 
-    if (vy < 30 || startY < 0) {
-      setTimeout(toyGravityDrop, 1000 / 60, vy);
+    if (vy < 30 || toyRef.current.offsetTop < 0) {
+      setTimeout(toyGravityDrop, 1000 / 30, vy);
+    } else {
+      clearInterval(moveKey.current);
+      toyDst.current.X = toyRef.current.offsetLeft;
+      toyDst.current.Y = toyRef.current.offsetTop;
+    }
+  };
+
+  const mouseDownEvent: MouseEventHandler = (e: React.MouseEvent) => {
+    if (toyDst.current.X === -1) {
+      toyDst.current.X = toyRef.current ? toyRef.current.offsetLeft : -1;
+      toyDst.current.Y = toyRef.current ? toyRef.current.offsetTop : -1;
+    }
+
+    if (!mouseDownRef.current) {
+      mouseDownRef.current = true;
+      moveKey.current = setInterval(toyMove, 1000 / 60, 0.2);
     }
   };
 
   const mouseUpEvent: MouseEventHandler = (e: React.MouseEvent) => {
     if (mouseDownRef.current) {
       mouseDownRef.current = false;
+
       toyGravityDrop();
+      if (accelate.current) {
+        accelate.current.X = [];
+        accelate.current.Y = [];
+      }
     }
   };
 
   const mouseMoveEvent: MouseEventHandler = (e: React.MouseEvent) => {
     if (!mouseDownRef.current) return;
 
-    const startX = toyRef.current ? toyRef.current.offsetLeft : 0;
-    const startY = toyRef.current ? toyRef.current.offsetTop : 0;
     const moveX = e.movementX;
     const moveY = e.movementY;
+
+    toyDst.current.X = toyDst.current.X + e.movementX;
+    toyDst.current.Y = toyDst.current.Y + e.movementY;
 
     if (accelate.current !== null) {
       accelate.current.X.push(moveX);
@@ -85,10 +117,9 @@ export default function Sandbox() {
         accelate.current.X.shift();
         accelate.current.Y.shift();
       }
-      console.log(accelate.current.X);
     }
 
-    toyMove(startX, startY, startX + moveX, startY + moveY, 0.1);
+    // toyMove(startX, startY, endX, endY, 0.1);
 
     // console.log(toyRef);
   };
@@ -101,8 +132,8 @@ export default function Sandbox() {
       onMouseMove={mouseMoveEvent}
       ref={screenRef}
     >
-      <Link href="/">HIHII</Link>
-      <Toy toyRef={toyRef} mouseDownRef={mouseDownRef} />
+      <Link href="/">HIHddII</Link>
+      <Toy toyRef={toyRef} mouseDownEvent={mouseDownEvent} />
     </main>
   );
 }
