@@ -1,6 +1,42 @@
 .sandbox-screen {
   position: absolute;
+  overflow: hidden;
   width: 100vw;
   height: 100vh;
   background-color: rgb(63, 63, 63);
+}
+
+.toy-div {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10vmin;
+  height: 10vmin;
+  border-radius: 3vmin;
+  border-width: 1px;
+  border-color: rgb(255, 255, 163);
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  color: red;
+}
+
+.toy-div.spin {
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes spin-clockwise {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-counter-clockwise {
+  100% {
+    transform: rotate(-360deg);
+  }
 }
