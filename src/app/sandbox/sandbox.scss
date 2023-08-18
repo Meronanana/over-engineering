@@ -12,7 +12,7 @@
   left: 50%;
   width: 10vmin;
   height: 10vmin;
-  border-radius: 5vmin;
+  border-radius: 3vmin;
   border-width: 1px;
   border-color: rgb(255, 255, 163);
 
@@ -23,11 +23,22 @@
 
   color: red;
 
-  // animation: rotate 3s linear infinite;
+  // animation-timing-function: linear;
 }
 
-@keyframes rotate {
+.toy-div.spin {
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes spin-clockwise {
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-counter-clockwise {
+  100% {
+    transform: rotate(-360deg);
   }
 }

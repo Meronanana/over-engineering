@@ -21,8 +21,9 @@ export default function Sandbox() {
     Y: [],
   });
   const mouseDownRef: MutableRefObject<boolean> = useRef<boolean>(false);
-
   const moveKey = useRef<NodeJS.Timer>();
+
+  const spinSpeedOffset = 250;
 
   const toyMove = (t?: number) => {
     if (toyRef.current !== null && screenRef.current !== null && accelate.current !== null) {
@@ -36,14 +37,19 @@ export default function Sandbox() {
         endY = Math.round(lerp(startY, endY, t));
       }
 
+      let hitWall = false;
       if (screenRef.current.offsetWidth - toyRef.current.offsetWidth < endX) {
         endX = screenRef.current.offsetWidth - toyRef.current.offsetWidth;
-        toyDst.current.X = endX;
-        accelate.current.X = accelate.current.X.map((v) => -v / 2);
+        hitWall = true;
       } else if (endX < 0) {
         endX = 0;
+        hitWall = true;
+      }
+      if (hitWall) {
         toyDst.current.X = endX;
         accelate.current.X = accelate.current.X.map((v) => -v / 2);
+        let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0));
+        toyRef.current.style.animationDuration = `${Math.abs(spinSpeedOffset / vx)}s`;
       }
 
       if (screenRef.current.offsetHeight * 0.8 < endY) {
@@ -73,6 +79,8 @@ export default function Sandbox() {
       clearInterval(moveKey.current);
       toyDst.current.X = toyRef.current.offsetLeft;
       toyDst.current.Y = toyRef.current.offsetTop;
+      toyRef.current.style.animationPlayState = "paused";
+      toyRef.current.className = "toy-div";
       if (accelate.current) {
         accelate.current.X = [];
         accelate.current.Y = [];
@@ -93,6 +101,19 @@ export default function Sandbox() {
   const mouseUpEvent: MouseEventHandler = (e: React.MouseEvent) => {
     if (mouseDownRef.current) {
       mouseDownRef.current = false;
+
+      if (accelate.current && toyRef.current) {
+        let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0));
+
+        toyRef.current.className = "toy-div spin";
+        toyRef.current.style.animationPlayState = "running";
+        if (vx > 0) {
+          toyRef.current.style.animationName = "spin-clockwise";
+        } else if (vx < 0) {
+          toyRef.current.style.animationName = "spin-counter-clockwise";
+        }
+        toyRef.current.style.animationDuration = `${Math.abs(spinSpeedOffset / vx)}s`;
+      }
 
       toyGravityDrop();
     }
