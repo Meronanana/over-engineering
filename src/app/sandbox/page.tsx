@@ -1,27 +1,30 @@
 "use client";
 
-import { MouseEventHandler, MutableRefObject, RefObject, useRef } from "react";
+import { MouseEventHandler, MutableRefObject, RefObject, createRef, useEffect, useRef } from "react";
+import { Toy } from "./model/toy";
 import Link from "next/link";
-import Toy from "./components/toy";
+import ToyComponent from "./components/ToyComponent";
 
 import "./sandbox.scss";
 import { lerp } from "@/utils/physicalEngine";
 
-interface ArrayPair<T> {
-  X: Array<T>;
-  Y: Array<T>;
-}
-
 export default function Sandbox() {
   const screenRef: RefObject<HTMLElement> | null = useRef<HTMLElement>(null);
-  const toyRef: RefObject<HTMLDivElement> | null = useRef<HTMLDivElement>(null);
-  const toyDst = useRef({ X: -1, Y: -1 });
-  const accelate: RefObject<ArrayPair<number>> = useRef<ArrayPair<number>>({
-    X: [],
-    Y: [],
-  });
   const mouseDownRef: MutableRefObject<boolean> = useRef<boolean>(false);
+  const toyFocus: MutableRefObject<number> = useRef<number>(-1);
+
   const moveKey = useRef<NodeJS.Timer>();
+  const toyDst = useRef({ X: -1, Y: -1 });
+  const accelate = useRef({
+    X: [0],
+    Y: [0],
+  });
+
+  const dummyToys: Array<Toy> = [
+    { ref: createRef(), name: "qr-code", link: "", image: "" },
+    { ref: createRef(), name: "dead-lock", link: "", image: "" },
+    { ref: createRef(), name: "nwjns-powerpuffgirl", link: "", image: "" },
+  ];
 
   const GVT_SPEED_OFFSET = 0.1;
   const SPIN_SPEED_OFFSET = 250;
@@ -29,6 +32,7 @@ export default function Sandbox() {
   const UNDER_BOUND = 0.8;
 
   const toyMove = (t?: number) => {
+    const toyRef = dummyToys[toyFocus.current].ref;
     if (toyRef.current !== null && screenRef.current !== null && accelate.current !== null) {
       let startX = toyRef.current.offsetLeft;
       let startY = toyRef.current.offsetTop;
@@ -56,8 +60,8 @@ export default function Sandbox() {
       }
 
       if (screenRef.current.offsetHeight * UNDER_BOUND < endY) {
-        if (!mouseDownRef.current) endX = toyRef.current.offsetLeft;
-        endY = screenRef.current.offsetHeight * UNDER_BOUND;
+        if (!mouseDownRef.current) endX = startX;
+        endY = Math.round(screenRef.current.offsetHeight * UNDER_BOUND);
       }
 
       toyRef.current.style.left = endX + "px";
@@ -66,9 +70,10 @@ export default function Sandbox() {
   };
 
   const toyGravityDrop = (vy?: number) => {
-    if (!accelate.current || !toyRef.current) return;
+    const toyRef = dummyToys[toyFocus.current].ref;
+    if (!accelate.current || !toyRef.current || !screenRef.current) return;
 
-    let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0) * (GVT_SPEED_OFFSET * 1.5));
+    let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0) * (GVT_SPEED_OFFSET * 0.7));
     vy = vy !== undefined ? vy : Math.round(accelate.current.Y.reduce((sum, cur) => sum + cur, 0) * GVT_SPEED_OFFSET);
 
     toyDst.current.X = toyDst.current.X + vx;
@@ -76,50 +81,56 @@ export default function Sandbox() {
 
     vy += 2;
 
-    if (vy < 30 || toyRef.current.offsetTop < 0) {
+    if (
+      (vy < 30 || toyRef.current.offsetTop < 0) &&
+      toyDst.current.Y < Math.round(screenRef.current.offsetHeight * UNDER_BOUND)
+    ) {
       setTimeout(toyGravityDrop, FPS_OFFSET, vy);
     } else {
       clearInterval(moveKey.current);
       toyDst.current.X = toyRef.current.offsetLeft;
       toyDst.current.Y = toyRef.current.offsetTop;
       toyRef.current.style.animationPlayState = "paused";
-      toyRef.current.className = "toy-div";
       if (accelate.current) {
         accelate.current.X = [];
         accelate.current.Y = [];
       }
+
+      toyFocus.current = -1;
     }
   };
 
-  const mouseDownEvent: MouseEventHandler = (e: React.MouseEvent) => {
+  const mouseDownEvent: MouseEventHandler<HTMLDivElement> = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (mouseDownRef.current || toyFocus.current !== -1) return;
+    mouseDownRef.current = true;
+
+    toyFocus.current = (e.target as HTMLDivElement).id.charAt(0) as unknown as number;
+    const toyRef = dummyToys[toyFocus.current].ref;
+
     toyDst.current.X = toyRef.current ? e.clientX - toyRef.current.offsetWidth / 2 : -1;
     toyDst.current.Y = toyRef.current ? e.clientY - toyRef.current.offsetHeight / 2 : -1;
-
-    if (!mouseDownRef.current) {
-      mouseDownRef.current = true;
-      moveKey.current = setInterval(toyMove, FPS_OFFSET, 0.2);
-    }
+    moveKey.current = setInterval(toyMove, FPS_OFFSET, 0.2);
   };
 
   const mouseUpEvent: MouseEventHandler = (e: React.MouseEvent) => {
-    if (mouseDownRef.current) {
-      mouseDownRef.current = false;
+    if (!mouseDownRef.current) return;
+    mouseDownRef.current = false;
 
-      if (accelate.current && toyRef.current) {
-        let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0));
+    const toyRef = dummyToys[toyFocus.current].ref;
 
-        toyRef.current.className = "toy-div spin";
-        toyRef.current.style.animationPlayState = "running";
-        if (vx > 0) {
-          toyRef.current.style.animationName = "spin-clockwise";
-        } else if (vx < 0) {
-          toyRef.current.style.animationName = "spin-counter-clockwise";
-        }
-        toyRef.current.style.animationDuration = `${Math.abs(SPIN_SPEED_OFFSET / vx)}s`;
+    if (accelate.current && toyRef.current) {
+      let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0));
+
+      toyRef.current.style.animationPlayState = "running";
+      if (vx > 0) {
+        toyRef.current.style.animationName = "spin-clockwise";
+      } else if (vx < 0) {
+        toyRef.current.style.animationName = "spin-counter-clockwise";
       }
-
-      toyGravityDrop();
+      toyRef.current.style.animationDuration = `${Math.abs(SPIN_SPEED_OFFSET / vx)}s`;
     }
+
+    toyGravityDrop();
   };
 
   const mouseMoveEvent: MouseEventHandler = (e: React.MouseEvent) => {
@@ -150,7 +161,13 @@ export default function Sandbox() {
       ref={screenRef}
     >
       <Link href="/">HIHddII</Link>
-      <Toy toyRef={toyRef} mouseDownEvent={mouseDownEvent} />
+      {dummyToys.map((v, i) => {
+        return (
+          <div className="toy-div" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>
+            .
+          </div>
+        );
+      })}
     </main>
   );
 }
