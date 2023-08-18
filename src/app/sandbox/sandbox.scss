@@ -14,9 +14,10 @@ $angle: 0deg;
   left: 50%;
   width: 10vmin;
   height: 10vmin;
-  border-radius: 3vmin;
+  border-radius: 5vmin;
   border-width: 1px;
   border-color: rgb(255, 255, 163);
+  transform: translate(-50%, -50%);
 
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -31,13 +32,13 @@ $angle: 0deg;
 
 @keyframes spin-clockwise {
   100% {
-    transform: rotate($angle + 360deg);
+    transform: translate(-50%, -50%) rotate($angle + 360deg);
   }
 }
 
 @keyframes spin-counter-clockwise {
   100% {
-    transform: rotate($angle - 360deg);
+    transform: translate(-50%, -50%) rotate($angle - 360deg);
   }
 }
 

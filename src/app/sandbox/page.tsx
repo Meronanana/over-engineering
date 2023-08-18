@@ -45,11 +45,11 @@ export default function Sandbox() {
       }
 
       let hitWall = false;
-      if (screenRef.current.offsetWidth - toyRef.current.offsetWidth < endX) {
-        endX = screenRef.current.offsetWidth - toyRef.current.offsetWidth;
+      if (screenRef.current.offsetWidth - toyRef.current.offsetWidth / 2 < endX) {
+        endX = screenRef.current.offsetWidth - toyRef.current.offsetWidth / 2;
         hitWall = true;
-      } else if (endX < 0) {
-        endX = 0;
+      } else if (endX < toyRef.current.offsetWidth / 2) {
+        endX = toyRef.current.offsetWidth / 2;
         hitWall = true;
       }
       if (hitWall) {
@@ -107,8 +107,8 @@ export default function Sandbox() {
     toyFocus.current = (e.target as HTMLDivElement).id.charAt(0) as unknown as number;
     const toyRef = dummyToys[toyFocus.current].ref;
 
-    toyDst.current.X = toyRef.current ? e.clientX - toyRef.current.offsetWidth / 2 : -1;
-    toyDst.current.Y = toyRef.current ? e.clientY - toyRef.current.offsetHeight / 2 : -1;
+    toyDst.current.X = toyRef.current ? e.clientX : -1;
+    toyDst.current.Y = toyRef.current ? e.clientY : -1;
     moveKey.current = setInterval(toyMove, FPS_OFFSET, 0.2);
   };
 
@@ -121,12 +121,12 @@ export default function Sandbox() {
     if (accelate.current && toyRef.current) {
       let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0));
 
-      toyRef.current.style.animationPlayState = "running";
       if (vx > 0) {
         toyRef.current.style.animationName = "spin-clockwise";
       } else if (vx < 0) {
         toyRef.current.style.animationName = "spin-counter-clockwise";
       }
+      toyRef.current.style.animationPlayState = "running";
       toyRef.current.style.animationDuration = `${Math.abs(SPIN_SPEED_OFFSET / vx)}s`;
     }
 
@@ -164,7 +164,7 @@ export default function Sandbox() {
       {dummyToys.map((v, i) => {
         return (
           <div className="toy-div" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>
-            .
+            A
           </div>
         );
       })}
