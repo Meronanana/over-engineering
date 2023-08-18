@@ -1,3 +1,5 @@
+$angle: 0deg;
+
 .sandbox-screen {
   position: absolute;
   overflow: hidden;
@@ -29,12 +31,16 @@
 
 @keyframes spin-clockwise {
   100% {
-    transform: rotate(360deg);
+    transform: rotate($angle + 360deg);
   }
 }
 
 @keyframes spin-counter-clockwise {
   100% {
-    transform: rotate(-360deg);
+    transform: rotate($angle - 360deg);
   }
+}
+
+:export {
+  angle: $angle;
 }
