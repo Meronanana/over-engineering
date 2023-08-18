@@ -39,14 +39,15 @@ export default function Sandbox() {
       if (screenRef.current.offsetWidth - toyRef.current.offsetWidth < endX) {
         endX = screenRef.current.offsetWidth - toyRef.current.offsetWidth;
         toyDst.current.X = endX;
-        accelate.current.X = accelate.current.X.map((v) => -v);
+        accelate.current.X = accelate.current.X.map((v) => -v / 2);
       } else if (endX < 0) {
         endX = 0;
         toyDst.current.X = endX;
-        accelate.current.X = accelate.current.X.map((v) => -v);
+        accelate.current.X = accelate.current.X.map((v) => -v / 2);
       }
 
       if (screenRef.current.offsetHeight * 0.8 < endY) {
+        if (!mouseDownRef.current) endX = toyRef.current.offsetLeft;
         endY = screenRef.current.offsetHeight * 0.8;
       }
 
@@ -58,13 +59,13 @@ export default function Sandbox() {
   const toyGravityDrop = (vy?: number) => {
     if (!accelate.current || !toyRef.current) return;
 
-    let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0) / 10);
+    let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0) / 15);
     vy = vy !== undefined ? vy : Math.round(accelate.current.Y.reduce((sum, cur) => sum + cur, 0) / 10);
 
     toyDst.current.X = toyDst.current.X + vx;
     toyDst.current.Y = toyDst.current.Y + vy;
 
-    vy += 3;
+    vy += 2;
 
     if (vy < 30 || toyRef.current.offsetTop < 0) {
       setTimeout(toyGravityDrop, 1000 / 60, vy);
@@ -80,10 +81,8 @@ export default function Sandbox() {
   };
 
   const mouseDownEvent: MouseEventHandler = (e: React.MouseEvent) => {
-    if (toyDst.current.X === -1) {
-      toyDst.current.X = toyRef.current ? toyRef.current.offsetLeft : -1;
-      toyDst.current.Y = toyRef.current ? toyRef.current.offsetTop : -1;
-    }
+    toyDst.current.X = toyRef.current ? e.clientX - toyRef.current.offsetWidth / 2 : -1;
+    toyDst.current.Y = toyRef.current ? e.clientY - toyRef.current.offsetHeight / 2 : -1;
 
     if (!mouseDownRef.current) {
       mouseDownRef.current = true;
