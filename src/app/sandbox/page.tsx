@@ -57,24 +57,32 @@ export default function Sandbox() {
       }
       if (hitWall) {
         toyDst.current.X = endX;
-        accelate.current.X = accelate.current.X.map((v) => -v / 2);
-        accelate.current.V.vx = Math.round(
-          accelate.current.X.reduce((sum, cur) => sum + cur, 0) * (GVT_SPEED_OFFSET * 0.7)
-        );
+        // accelate.current.X = accelate.current.X.map((v) => -v / 2);
+        // accelate.current.V.vx = Math.round(
+        //   accelate.current.X.reduce((sum, cur) => sum + cur, 0) * (GVT_SPEED_OFFSET * 0.7)
+        // );
+        accelate.current.V.vx = -accelate.current.V.vx / 2;
         toyRef.current.style.animationDuration = `${Math.abs(SPIN_SPEED_OFFSET / accelate.current.V.vx)}s`;
       }
 
       // 객체 충돌 감지
       if (!mouseDownRef.current) {
-        const data: Array<Circle | undefined> = dummyToys.map((v) => {
+        const data: Array<Circle | null> = dummyToys.map((v) => {
           if (v.ref.current) {
             return { x: v.ref.current.offsetLeft, y: v.ref.current.offsetTop, d: v.ref.current.offsetWidth };
           } else {
-            return undefined;
+            return null;
           }
         });
 
-        const vector = reactionCircleCollision(data, toyFocus.current);
+        const vector = reactionCircleCollision(data, toyFocus.current, accelate.current.V);
+        if (vector !== null) {
+          accelate.current.V = vector;
+          endX = startX + vector.vx;
+          endY = startY + vector.vy;
+          toyDst.current.X = endX;
+          toyDst.current.Y = endY;
+        }
       }
 
       if (screenRef.current.offsetHeight * UNDER_BOUND < endY) {
@@ -122,7 +130,7 @@ export default function Sandbox() {
     if (mouseDownRef.current || toyFocus.current !== -1) return;
     mouseDownRef.current = true;
 
-    toyFocus.current = (e.target as HTMLDivElement).id.charAt(0) as unknown as number;
+    toyFocus.current = Number((e.target as HTMLDivElement).id.charAt(0));
     const toyRef = dummyToys[toyFocus.current].ref;
 
     toyDst.current.X = toyRef.current ? e.clientX : -1;
