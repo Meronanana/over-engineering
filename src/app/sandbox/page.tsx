@@ -6,8 +6,9 @@ import Link from "next/link";
 import ToyComponent from "./components/ToyComponent";
 
 import "./sandbox.scss";
-import { lerp } from "@/utils/physicalEngine";
+import { Circle, Vector, lerp, reactionCircleCollision } from "@/utils/physicalEngine";
 
+// TODO: 회전 애니메이션 손보기
 export default function Sandbox() {
   const screenRef: RefObject<HTMLElement> | null = useRef<HTMLElement>(null);
   const mouseDownRef: MutableRefObject<boolean> = useRef<boolean>(false);
@@ -18,6 +19,7 @@ export default function Sandbox() {
   const accelate = useRef({
     X: [0],
     Y: [0],
+    V: { vx: 0, vy: 0 } as Vector,
   });
 
   const dummyToys: Array<Toy> = [
@@ -27,7 +29,7 @@ export default function Sandbox() {
   ];
 
   const GVT_SPEED_OFFSET = 0.1;
-  const SPIN_SPEED_OFFSET = 250;
+  const SPIN_SPEED_OFFSET = 40;
   const FPS_OFFSET = 1000 / 60; // 60fps
   const UNDER_BOUND = 0.8;
 
@@ -44,6 +46,7 @@ export default function Sandbox() {
         endY = Math.round(lerp(startY, endY, t));
       }
 
+      // 벽 충돌 감지
       let hitWall = false;
       if (screenRef.current.offsetWidth - toyRef.current.offsetWidth / 2 < endX) {
         endX = screenRef.current.offsetWidth - toyRef.current.offsetWidth / 2;
@@ -55,8 +58,23 @@ export default function Sandbox() {
       if (hitWall) {
         toyDst.current.X = endX;
         accelate.current.X = accelate.current.X.map((v) => -v / 2);
-        let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0));
-        toyRef.current.style.animationDuration = `${Math.abs(SPIN_SPEED_OFFSET / vx)}s`;
+        accelate.current.V.vx = Math.round(
+          accelate.current.X.reduce((sum, cur) => sum + cur, 0) * (GVT_SPEED_OFFSET * 0.7)
+        );
+        toyRef.current.style.animationDuration = `${Math.abs(SPIN_SPEED_OFFSET / accelate.current.V.vx)}s`;
+      }
+
+      // 객체 충돌 감지
+      if (!mouseDownRef.current) {
+        const data: Array<Circle | undefined> = dummyToys.map((v) => {
+          if (v.ref.current) {
+            return { x: v.ref.current.offsetLeft, y: v.ref.current.offsetTop, d: v.ref.current.offsetWidth };
+          } else {
+            return undefined;
+          }
+        });
+
+        const vector = reactionCircleCollision(data, toyFocus.current);
       }
 
       if (screenRef.current.offsetHeight * UNDER_BOUND < endY) {
@@ -69,23 +87,23 @@ export default function Sandbox() {
     }
   };
 
-  const toyGravityDrop = (vy?: number) => {
+  const toyGravityDrop = () => {
     const toyRef = dummyToys[toyFocus.current].ref;
     if (!accelate.current || !toyRef.current || !screenRef.current) return;
 
-    let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0) * (GVT_SPEED_OFFSET * 0.7));
-    vy = vy !== undefined ? vy : Math.round(accelate.current.Y.reduce((sum, cur) => sum + cur, 0) * GVT_SPEED_OFFSET);
+    let vx = accelate.current.V.vx;
+    let vy = accelate.current.V.vy;
 
-    toyDst.current.X = toyDst.current.X + vx;
-    toyDst.current.Y = toyDst.current.Y + vy;
+    toyDst.current.X += vx;
+    toyDst.current.Y += vy;
 
-    vy += 2;
+    accelate.current.V.vy += 2;
 
     if (
-      (vy < 30 || toyRef.current.offsetTop < 0) &&
+      (vy < 30 || toyRef.current.offsetTop < toyRef.current.offsetHeight) &&
       toyDst.current.Y < Math.round(screenRef.current.offsetHeight * UNDER_BOUND)
     ) {
-      setTimeout(toyGravityDrop, FPS_OFFSET, vy);
+      setTimeout(toyGravityDrop, FPS_OFFSET);
     } else {
       clearInterval(moveKey.current);
       toyDst.current.X = toyRef.current.offsetLeft;
@@ -119,7 +137,10 @@ export default function Sandbox() {
     const toyRef = dummyToys[toyFocus.current].ref;
 
     if (accelate.current && toyRef.current) {
-      let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0));
+      let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0) * (GVT_SPEED_OFFSET * 0.7));
+      let vy = Math.round(accelate.current.Y.reduce((sum, cur) => sum + cur, 0) * GVT_SPEED_OFFSET);
+      accelate.current.V.vx = vx;
+      accelate.current.V.vy = vy;
 
       if (vx > 0) {
         toyRef.current.style.animationName = "spin-clockwise";
