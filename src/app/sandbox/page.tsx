@@ -48,6 +48,14 @@ export default function Sandbox() {
   });
 
   const toyMove = (t?: number) => {
+    const data: Array<Circle | null> = dummyToys.map((v) => {
+      if (v.ref.current) {
+        return { x: v.ref.current.offsetLeft, y: v.ref.current.offsetTop, d: v.ref.current.offsetWidth };
+      } else {
+        return null;
+      }
+    });
+
     dummyToys.forEach((v, i) => {
       const toyRef = v.ref;
       if (toyRef.current === null || screenRef.current === null || toyPhysicsList.current === null) return;
@@ -85,15 +93,7 @@ export default function Sandbox() {
       }
 
       // 객체 충돌 감지
-      if (!mouseDownRef.current) {
-        const data: Array<Circle | null> = dummyToys.map((v) => {
-          if (v.ref.current) {
-            return { x: v.ref.current.offsetLeft, y: v.ref.current.offsetTop, d: v.ref.current.offsetWidth };
-          } else {
-            return null;
-          }
-        });
-
+      if (i !== toyFocus.current) {
         const vector = reactionByCircleCollision(data, i, toyPhysics.V);
         if (vector !== null) {
           toyPhysics.V = vector;
@@ -195,16 +195,14 @@ export default function Sandbox() {
     const moveY = e.movementY;
     const toyPhysics = toyPhysicsList.current[toyFocus.current];
 
-    toyPhysics.DST.X = toyPhysics.DST.X + e.movementX;
-    toyPhysics.DST.Y = toyPhysics.DST.Y + e.movementY;
+    toyPhysics.DST.X += e.movementX;
+    toyPhysics.DST.Y += e.movementY;
 
-    if (toyPhysics !== null) {
-      toyPhysics.X.push(moveX);
-      toyPhysics.Y.push(moveY);
-      if (toyPhysics.X.length > 5) {
-        toyPhysics.X.shift();
-        toyPhysics.Y.shift();
-      }
+    toyPhysics.X.push(moveX);
+    toyPhysics.Y.push(moveY);
+    if (toyPhysics.X.length > 5) {
+      toyPhysics.X.shift();
+      toyPhysics.Y.shift();
     }
   };
 
