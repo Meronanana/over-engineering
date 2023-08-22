@@ -6,7 +6,7 @@ import Link from "next/link";
 import ToyComponent from "./components/ToyComponent";
 
 import "./sandbox.scss";
-import { Circle, Vector, lerp, reactionCircleCollision } from "@/utils/physicalEngine";
+import { Circle, Position, Vector, lerp, reactionCircleCollision } from "@/utils/physicalEngine";
 
 // TODO: 회전 애니메이션 손보기
 export default function Sandbox() {
@@ -15,11 +15,12 @@ export default function Sandbox() {
   const toyFocus: MutableRefObject<number> = useRef<number>(-1);
 
   const moveKey = useRef<NodeJS.Timer>();
-  const toyDst = useRef({ X: -1, Y: -1 });
-  const accelate = useRef({
+  const toyPhysics = useRef({
     X: [0],
     Y: [0],
+    DST: { X: -1, Y: -1 } as Position,
     V: { vx: 0, vy: 0 } as Vector,
+    R: 0,
   });
 
   const dummyToys: Array<Toy> = [
@@ -35,91 +36,91 @@ export default function Sandbox() {
 
   const toyMove = (t?: number) => {
     const toyRef = dummyToys[toyFocus.current].ref;
-    if (toyRef.current !== null && screenRef.current !== null && accelate.current !== null) {
-      let startX = toyRef.current.offsetLeft;
-      let startY = toyRef.current.offsetTop;
-      let endX = toyDst.current.X;
-      let endY = toyDst.current.Y;
+    if (toyRef.current === null || screenRef.current === null || toyPhysics.current === null) return;
 
-      if (t !== undefined) {
-        endX = Math.round(lerp(startX, endX, t));
-        endY = Math.round(lerp(startY, endY, t));
-      }
+    let startX = toyRef.current.offsetLeft;
+    let startY = toyRef.current.offsetTop;
+    let endX = toyPhysics.current.DST.X;
+    let endY = toyPhysics.current.DST.Y;
 
-      // 벽 충돌 감지
-      let hitWall = false;
-      if (screenRef.current.offsetWidth - toyRef.current.offsetWidth / 2 < endX) {
-        endX = screenRef.current.offsetWidth - toyRef.current.offsetWidth / 2;
-        hitWall = true;
-      } else if (endX < toyRef.current.offsetWidth / 2) {
-        endX = toyRef.current.offsetWidth / 2;
-        hitWall = true;
-      }
-      if (hitWall) {
-        toyDst.current.X = endX;
-        // accelate.current.X = accelate.current.X.map((v) => -v / 2);
-        // accelate.current.V.vx = Math.round(
-        //   accelate.current.X.reduce((sum, cur) => sum + cur, 0) * (GVT_SPEED_OFFSET * 0.7)
-        // );
-        accelate.current.V.vx = -accelate.current.V.vx / 2;
-        toyRef.current.style.animationDuration = `${Math.abs(SPIN_SPEED_OFFSET / accelate.current.V.vx)}s`;
-      }
-
-      // 객체 충돌 감지
-      if (!mouseDownRef.current) {
-        const data: Array<Circle | null> = dummyToys.map((v) => {
-          if (v.ref.current) {
-            return { x: v.ref.current.offsetLeft, y: v.ref.current.offsetTop, d: v.ref.current.offsetWidth };
-          } else {
-            return null;
-          }
-        });
-
-        const vector = reactionCircleCollision(data, toyFocus.current, accelate.current.V);
-        if (vector !== null) {
-          accelate.current.V = vector;
-          endX = startX + vector.vx;
-          endY = startY + vector.vy;
-          toyDst.current.X = endX;
-          toyDst.current.Y = endY;
-        }
-      }
-
-      if (screenRef.current.offsetHeight * UNDER_BOUND < endY) {
-        if (!mouseDownRef.current) endX = startX;
-        endY = Math.round(screenRef.current.offsetHeight * UNDER_BOUND);
-      }
-
-      toyRef.current.style.left = endX + "px";
-      toyRef.current.style.top = endY + "px";
+    if (t !== undefined) {
+      endX = Math.round(lerp(startX, endX, t));
+      endY = Math.round(lerp(startY, endY, t));
     }
+
+    // 벽 충돌 감지
+    let hitWall = false;
+    if (screenRef.current.offsetWidth - toyRef.current.offsetWidth / 2 < endX) {
+      endX = screenRef.current.offsetWidth - toyRef.current.offsetWidth / 2;
+      hitWall = true;
+    } else if (endX < toyRef.current.offsetWidth / 2) {
+      endX = toyRef.current.offsetWidth / 2;
+      hitWall = true;
+    }
+    if (hitWall) {
+      toyPhysics.current.DST.X = endX;
+      toyPhysics.current.V.vx = -toyPhysics.current.V.vx / 2;
+      // toyRef.current.style.animationDuration = `${Math.abs(SPIN_SPEED_OFFSET / accelate.current.V.vx)}s`;
+    }
+
+    // 객체 충돌 감지
+    if (!mouseDownRef.current) {
+      const data: Array<Circle | null> = dummyToys.map((v) => {
+        if (v.ref.current) {
+          return { x: v.ref.current.offsetLeft, y: v.ref.current.offsetTop, d: v.ref.current.offsetWidth };
+        } else {
+          return null;
+        }
+      });
+
+      const vector = reactionCircleCollision(data, toyFocus.current, toyPhysics.current.V);
+      if (vector !== null) {
+        toyPhysics.current.V = vector;
+        endX = startX + vector.vx;
+        endY = startY + vector.vy;
+        toyPhysics.current.DST.X = endX;
+        toyPhysics.current.DST.Y = endY;
+      }
+    }
+
+    if (screenRef.current.offsetHeight * UNDER_BOUND < endY) {
+      if (!mouseDownRef.current) endX = startX;
+      endY = Math.round(screenRef.current.offsetHeight * UNDER_BOUND);
+    }
+
+    toyRef.current.style.left = endX + "px";
+    toyRef.current.style.top = endY + "px";
   };
 
   const toyGravityDrop = () => {
     const toyRef = dummyToys[toyFocus.current].ref;
-    if (!accelate.current || !toyRef.current || !screenRef.current) return;
+    if (!toyPhysics.current || !toyRef.current || !screenRef.current) return;
 
-    let vx = accelate.current.V.vx;
-    let vy = accelate.current.V.vy;
+    let vx = toyPhysics.current.V.vx;
+    let vy = toyPhysics.current.V.vy;
 
-    toyDst.current.X += vx;
-    toyDst.current.Y += vy;
+    toyPhysics.current.DST.X += vx;
+    toyPhysics.current.DST.Y += vy;
 
-    accelate.current.V.vy += 2;
+    toyPhysics.current.V.vy += 2;
 
     if (
       (vy < 30 || toyRef.current.offsetTop < toyRef.current.offsetHeight) &&
-      toyDst.current.Y < Math.round(screenRef.current.offsetHeight * UNDER_BOUND)
+      toyPhysics.current.DST.Y < Math.round(screenRef.current.offsetHeight * UNDER_BOUND)
     ) {
       setTimeout(toyGravityDrop, FPS_OFFSET);
     } else {
       clearInterval(moveKey.current);
-      toyDst.current.X = toyRef.current.offsetLeft;
-      toyDst.current.Y = toyRef.current.offsetTop;
-      toyRef.current.style.animationPlayState = "paused";
-      if (accelate.current) {
-        accelate.current.X = [];
-        accelate.current.Y = [];
+      toyPhysics.current.DST.X = toyRef.current.offsetLeft;
+      toyPhysics.current.DST.Y = toyRef.current.offsetTop;
+      // toyRef.current.style.animationPlayState = "paused";
+      // toyRef.current.style.rotate = "90deg";
+      // toyRef.current.style.translate = "-50% -50%";
+      // toyRef.current.style.transform = `translate(-50%, -50%) rotate(90deg)`;
+      console.log(toyRef.current);
+      if (toyPhysics.current) {
+        toyPhysics.current.X = [];
+        toyPhysics.current.Y = [];
       }
 
       toyFocus.current = -1;
@@ -133,8 +134,8 @@ export default function Sandbox() {
     toyFocus.current = Number((e.target as HTMLDivElement).id.charAt(0));
     const toyRef = dummyToys[toyFocus.current].ref;
 
-    toyDst.current.X = toyRef.current ? e.clientX : -1;
-    toyDst.current.Y = toyRef.current ? e.clientY : -1;
+    toyPhysics.current.DST.X = toyRef.current ? e.clientX : -1;
+    toyPhysics.current.DST.Y = toyRef.current ? e.clientY : -1;
     moveKey.current = setInterval(toyMove, FPS_OFFSET, 0.2);
   };
 
@@ -144,19 +145,21 @@ export default function Sandbox() {
 
     const toyRef = dummyToys[toyFocus.current].ref;
 
-    if (accelate.current && toyRef.current) {
-      let vx = Math.round(accelate.current.X.reduce((sum, cur) => sum + cur, 0) * (GVT_SPEED_OFFSET * 0.7));
-      let vy = Math.round(accelate.current.Y.reduce((sum, cur) => sum + cur, 0) * GVT_SPEED_OFFSET);
-      accelate.current.V.vx = vx;
-      accelate.current.V.vy = vy;
+    if (toyPhysics.current && toyRef.current) {
+      let vx = Math.round(toyPhysics.current.X.reduce((sum, cur) => sum + cur, 0) * (GVT_SPEED_OFFSET * 0.7));
+      let vy = Math.round(toyPhysics.current.Y.reduce((sum, cur) => sum + cur, 0) * GVT_SPEED_OFFSET);
+      toyPhysics.current.V.vx = vx;
+      toyPhysics.current.V.vy = vy;
 
-      if (vx > 0) {
-        toyRef.current.style.animationName = "spin-clockwise";
-      } else if (vx < 0) {
-        toyRef.current.style.animationName = "spin-counter-clockwise";
-      }
-      toyRef.current.style.animationPlayState = "running";
-      toyRef.current.style.animationDuration = `${Math.abs(SPIN_SPEED_OFFSET / vx)}s`;
+      // if (vx > 0) {
+      //   toyRef.current.style.animationName = "spin-clockwise";
+      // } else if (vx < 0) {
+      //   toyRef.current.style.animationName = "spin-counter-clockwise";
+      // } else {
+      //   toyRef.current.style.animationName = "none";
+      // }
+      // toyRef.current.style.animationDuration = `${Math.abs(SPIN_SPEED_OFFSET / vx)}s`;
+      // toyRef.current.style.animationPlayState = "running";
     }
 
     toyGravityDrop();
@@ -168,15 +171,15 @@ export default function Sandbox() {
     const moveX = e.movementX;
     const moveY = e.movementY;
 
-    toyDst.current.X = toyDst.current.X + e.movementX;
-    toyDst.current.Y = toyDst.current.Y + e.movementY;
+    toyPhysics.current.DST.X = toyPhysics.current.DST.X + e.movementX;
+    toyPhysics.current.DST.Y = toyPhysics.current.DST.Y + e.movementY;
 
-    if (accelate.current !== null) {
-      accelate.current.X.push(moveX);
-      accelate.current.Y.push(moveY);
-      if (accelate.current.X.length > 5) {
-        accelate.current.X.shift();
-        accelate.current.Y.shift();
+    if (toyPhysics.current !== null) {
+      toyPhysics.current.X.push(moveX);
+      toyPhysics.current.Y.push(moveY);
+      if (toyPhysics.current.X.length > 5) {
+        toyPhysics.current.X.shift();
+        toyPhysics.current.Y.shift();
       }
     }
   };

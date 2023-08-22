@@ -3,6 +3,11 @@ export interface Vector {
   vy: number;
 }
 
+export interface Position {
+  X: number;
+  Y: number;
+}
+
 export interface Circle {
   x: number;
   y: number;

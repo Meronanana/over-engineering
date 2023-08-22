@@ -28,6 +28,7 @@ $angle: 0deg;
 
   animation-timing-function: linear;
   animation-iteration-count: infinite;
+  animation-fill-mode: both;
 }
 
 @keyframes spin-clockwise {
