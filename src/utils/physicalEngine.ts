@@ -3,7 +3,7 @@ export interface Vector {
   vy: number;
 }
 
-export interface Position {
+export interface Coordinate {
   X: number;
   Y: number;
 }

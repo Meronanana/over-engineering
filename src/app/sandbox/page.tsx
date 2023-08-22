@@ -6,7 +6,7 @@ import Link from "next/link";
 import ToyComponent from "./components/ToyComponent";
 
 import "./sandbox.scss";
-import { Circle, Position, Vector, lerp, reactionCircleCollision } from "@/utils/physicalEngine";
+import { Circle, Coordinate, Vector, lerp, reactionCircleCollision } from "@/utils/physicalEngine";
 
 // TODO: 회전 애니메이션 손보기
 export default function Sandbox() {
@@ -18,9 +18,10 @@ export default function Sandbox() {
   const toyPhysics = useRef({
     X: [0],
     Y: [0],
-    DST: { X: -1, Y: -1 } as Position,
+    DST: { X: -1, Y: -1 } as Coordinate,
     V: { vx: 0, vy: 0 } as Vector,
     R: 0,
+    dR: 0,
   });
 
   const dummyToys: Array<Toy> = [
@@ -30,7 +31,7 @@ export default function Sandbox() {
   ];
 
   const GVT_SPEED_OFFSET = 0.1;
-  const SPIN_SPEED_OFFSET = 40;
+  const SPIN_SPEED_OFFSET = 0.2;
   const FPS_OFFSET = 1000 / 60; // 60fps
   const UNDER_BOUND = 0.8;
 
@@ -42,6 +43,8 @@ export default function Sandbox() {
     let startY = toyRef.current.offsetTop;
     let endX = toyPhysics.current.DST.X;
     let endY = toyPhysics.current.DST.Y;
+    let rotate = toyPhysics.current.R + toyPhysics.current.dR;
+    toyPhysics.current.R = rotate;
 
     if (t !== undefined) {
       endX = Math.round(lerp(startX, endX, t));
@@ -60,7 +63,7 @@ export default function Sandbox() {
     if (hitWall) {
       toyPhysics.current.DST.X = endX;
       toyPhysics.current.V.vx = -toyPhysics.current.V.vx / 2;
-      // toyRef.current.style.animationDuration = `${Math.abs(SPIN_SPEED_OFFSET / accelate.current.V.vx)}s`;
+      toyPhysics.current.dR = toyPhysics.current.dR / 2;
     }
 
     // 객체 충돌 감지
@@ -80,6 +83,7 @@ export default function Sandbox() {
         endY = startY + vector.vy;
         toyPhysics.current.DST.X = endX;
         toyPhysics.current.DST.Y = endY;
+        toyPhysics.current.dR = vector.vx * SPIN_SPEED_OFFSET;
       }
     }
 
@@ -90,6 +94,7 @@ export default function Sandbox() {
 
     toyRef.current.style.left = endX + "px";
     toyRef.current.style.top = endY + "px";
+    toyRef.current.style.transform = `translate(-50%, -50%) rotate(${rotate}deg)`;
   };
 
   const toyGravityDrop = () => {
@@ -113,15 +118,12 @@ export default function Sandbox() {
       clearInterval(moveKey.current);
       toyPhysics.current.DST.X = toyRef.current.offsetLeft;
       toyPhysics.current.DST.Y = toyRef.current.offsetTop;
-      // toyRef.current.style.animationPlayState = "paused";
-      // toyRef.current.style.rotate = "90deg";
-      // toyRef.current.style.translate = "-50% -50%";
-      // toyRef.current.style.transform = `translate(-50%, -50%) rotate(90deg)`;
-      console.log(toyRef.current);
-      if (toyPhysics.current) {
-        toyPhysics.current.X = [];
-        toyPhysics.current.Y = [];
-      }
+
+      toyPhysics.current.X = [];
+      toyPhysics.current.Y = [];
+      toyPhysics.current.V.vx = 0;
+      toyPhysics.current.V.vy = 0;
+      toyPhysics.current.dR = 0;
 
       toyFocus.current = -1;
     }
@@ -134,8 +136,13 @@ export default function Sandbox() {
     toyFocus.current = Number((e.target as HTMLDivElement).id.charAt(0));
     const toyRef = dummyToys[toyFocus.current].ref;
 
-    toyPhysics.current.DST.X = toyRef.current ? e.clientX : -1;
-    toyPhysics.current.DST.Y = toyRef.current ? e.clientY : -1;
+    if (toyRef.current) {
+      toyPhysics.current.DST.X = e.clientX;
+      toyPhysics.current.DST.Y = e.clientY;
+
+      toyPhysics.current.R = Number(toyRef.current.style.transform.substring(29).split("d")[0]);
+    }
+
     moveKey.current = setInterval(toyMove, FPS_OFFSET, 0.2);
   };
 
@@ -151,15 +158,7 @@ export default function Sandbox() {
       toyPhysics.current.V.vx = vx;
       toyPhysics.current.V.vy = vy;
 
-      // if (vx > 0) {
-      //   toyRef.current.style.animationName = "spin-clockwise";
-      // } else if (vx < 0) {
-      //   toyRef.current.style.animationName = "spin-counter-clockwise";
-      // } else {
-      //   toyRef.current.style.animationName = "none";
-      // }
-      // toyRef.current.style.animationDuration = `${Math.abs(SPIN_SPEED_OFFSET / vx)}s`;
-      // toyRef.current.style.animationPlayState = "running";
+      toyPhysics.current.dR = vx * SPIN_SPEED_OFFSET;
     }
 
     toyGravityDrop();

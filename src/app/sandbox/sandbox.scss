@@ -26,23 +26,19 @@ $angle: 0deg;
 
   color: red;
 
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-fill-mode: both;
+  // animation-timing-function: linear;
+  // animation-iteration-count: infinite;
+  // animation-fill-mode: both;
 }
 
-@keyframes spin-clockwise {
-  100% {
-    transform: translate(-50%, -50%) rotate($angle + 360deg);
-  }
-}
+// @keyframes spin-clockwise {
+//   100% {
+//     transform: translate(-50%, -50%) rotate($angle + 360deg);
+//   }
+// }
 
-@keyframes spin-counter-clockwise {
-  100% {
-    transform: translate(-50%, -50%) rotate($angle - 360deg);
-  }
-}
-
-:export {
-  angle: $angle;
-}
+// @keyframes spin-counter-clockwise {
+//   100% {
+//     transform: translate(-50%, -50%) rotate($angle - 360deg);
+//   }
+// }
