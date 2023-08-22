@@ -8,6 +8,15 @@ export interface Coordinate {
   Y: number;
 }
 
+export interface ToyPhysics {
+  X: Array<number>;
+  Y: Array<number>;
+  DST: Coordinate;
+  V: Vector;
+  R: number;
+  dR: number;
+}
+
 export interface Circle {
   x: number;
   y: number;
@@ -24,7 +33,7 @@ export const getRadius = (vector: Vector): number => {
   return result;
 };
 
-export const reactionCircleCollision = (data: Array<Circle | null>, index: number, vector: Vector): Vector | null => {
+export const reactionByCircleCollision = (data: Array<Circle | null>, index: number, vector: Vector): Vector | null => {
   const point = data[index] as Circle;
 
   let result: Vector | null = null;
