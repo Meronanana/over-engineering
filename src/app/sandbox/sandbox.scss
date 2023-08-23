@@ -5,7 +5,7 @@ $angle: 0deg;
   overflow: hidden;
   width: 100vw;
   height: 100vh;
-  background-color: rgb(63, 63, 63);
+  background-color: rgb(51, 50, 41);
 }
 
 .toy-div {
@@ -16,7 +16,7 @@ $angle: 0deg;
   height: 10vmin;
   border-radius: 5vmin;
   border-width: 1px;
-  border-color: rgb(255, 255, 163);
+  border-color: rgb(233, 233, 179);
   transform: translate(-50%, -50%);
 
   -webkit-user-select: none;
@@ -24,11 +24,38 @@ $angle: 0deg;
   -ms-user-select: none;
   user-select: none;
 
-  color: red;
+  color: rgb(194, 165, 255);
 
   // animation-timing-function: linear;
   // animation-iteration-count: infinite;
   // animation-fill-mode: both;
+}
+
+.sandbox-toggle-button {
+  position: absolute;
+  top: 3vmin;
+  left: 3vmin;
+  width: 3vmin;
+  height: 3vmin;
+  background-color: rgb(231, 250, 218);
+  opacity: 0.7;
+  transition: 0.5s;
+}
+
+.sandbox-toggle-button.toggle-checked {
+  background-color: aqua;
+  transition: 0.5s;
+}
+
+.physics-checker {
+  position: absolute;
+  top: 3vmin;
+  left: 9vmin;
+  width: 3vmin;
+  height: 3vmin;
+  background-color: rgb(255, 0, 0);
+  opacity: 0.7;
+  transition: 0.5s;
 }
 
 // @keyframes spin-clockwise {

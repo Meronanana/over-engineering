@@ -8,6 +8,15 @@ export interface Coordinate {
   Y: number;
 }
 
+export interface ToyPhysics {
+  X: Array<number>;
+  Y: Array<number>;
+  DST: Coordinate;
+  V: Vector;
+  R: number;
+  dR: number;
+}
+
 export interface Circle {
   x: number;
   y: number;
@@ -24,7 +33,7 @@ export const getRadius = (vector: Vector): number => {
   return result;
 };
 
-export const reactionCircleCollision = (data: Array<Circle | null>, index: number, vector: Vector): Vector | null => {
+export const reactionByCircleCollision = (data: Array<Circle | null>, index: number, vector: Vector): Vector | null => {
   const point = data[index] as Circle;
 
   let result: Vector | null = null;
@@ -45,8 +54,8 @@ export const reactionCircleCollision = (data: Array<Circle | null>, index: numbe
 
       const direction = normal * 2 - incoming + Math.PI;
       let speed = Math.sqrt(Math.pow(vector.vx, 2) + Math.pow(vector.vy, 2)) / 2;
-      speed = speed > 10 ? speed : 10;
-      result = { vx: Math.floor(speed * Math.cos(direction)), vy: -Math.floor(speed * Math.sin(direction)) };
+      speed = speed > 5 ? speed : 5;
+      result = { vx: Math.floor(speed * Math.cos(direction)), vy: Math.floor(-speed * Math.sin(direction)) };
     }
   });
 
