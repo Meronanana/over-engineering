@@ -8,7 +8,6 @@ import ToyComponent from "./components/ToyComponent";
 import "./sandbox.scss";
 import { Circle, Coordinate, ToyPhysics, Vector, lerp, reactionByCircleCollision } from "@/utils/physicalEngine";
 
-// TODO: Grid 정렬 시 회전하는 문제 해결
 export default function Sandbox() {
   const [gridOn, setGridOn] = useState<boolean>(false);
 
@@ -45,8 +44,6 @@ export default function Sandbox() {
       });
     }
 
-    console.log(toyPhysicsList.current);
-
     const id = setInterval(toyMove, FPS_OFFSET, 0.2);
 
     return () => {
@@ -56,8 +53,8 @@ export default function Sandbox() {
 
   useEffect(() => {
     if (gridOn && screenRef.current) {
-      const stdWidth = screenRef.current.offsetWidth / (GRID_COLS + 1);
-      const stdHeight = (screenRef.current.offsetHeight * UNDER_BOUND) / (GRID_ROWS + 1);
+      const stdWidth = Math.round(screenRef.current.offsetWidth / (GRID_COLS + 1));
+      const stdHeight = Math.round((screenRef.current.offsetHeight * UNDER_BOUND) / (GRID_ROWS + 1));
       const coors: Array<Coordinate> = [];
 
       for (let i = 1; i <= GRID_ROWS; i++) {
@@ -68,7 +65,17 @@ export default function Sandbox() {
 
       coors.forEach((v, i) => {
         if (toyPhysicsList.current.length > i) {
-          toyPhysicsList.current[i].DST = v;
+          const toyPhysics = toyPhysicsList.current[i];
+
+          toyPhysics.DST = v;
+          toyPhysics.R = 0;
+          toyPhysics.X = [];
+          toyPhysics.Y = [];
+          toyPhysics.V.vx = 0;
+          toyPhysics.V.vy = 0;
+          toyPhysics.dR = 0;
+
+          console.log(toyPhysicsList.current[i]);
         }
       });
     }
@@ -95,15 +102,17 @@ export default function Sandbox() {
       let endX = toyPhysics.DST.X;
       let endY = toyPhysics.DST.Y;
 
+      if (t !== undefined) {
+        let newX = lerp(startX, endX, t);
+        let newY = lerp(startY, endY, t);
+        endX = Math.abs(endX - newX) < 1 ? endX : newX;
+        endY = Math.abs(endY - newY) < 1 ? endY : newY;
+      }
+
       if (startX === endX && startY === endY) return;
 
       let rotate = toyPhysics.R + toyPhysics.dR;
       toyPhysics.R = rotate;
-
-      if (t !== undefined) {
-        endX = Math.round(lerp(startX, endX, t));
-        endY = Math.round(lerp(startY, endY, t));
-      }
 
       // 벽 충돌 감지
       let hitWall = false;
@@ -121,9 +130,10 @@ export default function Sandbox() {
       }
 
       // 객체 충돌 감지
-      if (i !== toyFocus.current && !gridOn) {
+      if (i !== toyFocus.current && !gridOn && !(toyPhysics.V.vx === 0 && toyPhysics.V.vy === 0)) {
         const vector = reactionByCircleCollision(data, i, toyPhysics.V);
         if (vector !== null) {
+          console.log("collision: " + i);
           toyPhysics.V = vector;
           endX = startX + vector.vx;
           endY = startY + vector.vy;
@@ -246,6 +256,7 @@ export default function Sandbox() {
         className={`sandbox-toggle-button ${gridOn ? "toggle-checked" : ""}`}
         onClick={() => setGridOn((s) => !s)}
       ></div>
+      <div className="physics-checker" onClick={() => console.log(toyPhysicsList.current)}></div>
       {dummyToys.map((v, i) => {
         return (
           <div className="toy-div" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>

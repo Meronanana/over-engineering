@@ -47,6 +47,17 @@ $angle: 0deg;
   transition: 0.5s;
 }
 
+.physics-checker {
+  position: absolute;
+  top: 3vmin;
+  left: 9vmin;
+  width: 3vmin;
+  height: 3vmin;
+  background-color: rgb(255, 0, 0);
+  opacity: 0.7;
+  transition: 0.5s;
+}
+
 // @keyframes spin-clockwise {
 //   100% {
 //     transform: translate(-50%, -50%) rotate($angle + 360deg);
