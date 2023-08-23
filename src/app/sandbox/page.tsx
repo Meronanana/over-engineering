@@ -16,8 +16,15 @@ import {
   reactionByCircleCollision,
 } from "@/utils/physicalEngine";
 
+enum AlignType {
+  Grid = 0,
+  Free = 1,
+  Shake = 2,
+}
+
 export default function Sandbox() {
-  const [gridOn, setGridOn] = useState<boolean>(false);
+  const [align, setAlign] = useState<AlignType>(1);
+  const [initialized, setInitialized] = useState<boolean>(false);
 
   const screenRef: RefObject<HTMLElement> = useRef<HTMLElement>(null);
   const mouseDownRef: MutableRefObject<boolean> = useRef<boolean>(false);
@@ -38,6 +45,7 @@ export default function Sandbox() {
   const GRID_ROWS = 2;
   const GRID_COLS = 4;
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (toyPhysicsList.current.length === 0) {
       dummyToys.forEach(() => {
@@ -66,6 +74,8 @@ export default function Sandbox() {
       });
     }
 
+    if (!initialized) setInitialized(true);
+
     const id = setInterval(toyMove, FPS_OFFSET, 0.2);
 
     return () => {
@@ -74,7 +84,7 @@ export default function Sandbox() {
   });
 
   useEffect(() => {
-    if (gridOn && screenRef.current) {
+    if (align === AlignType.Grid && screenRef.current) {
       const stdWidth = Math.round(screenRef.current.offsetWidth / (GRID_COLS + 1));
       const stdHeight = Math.round((screenRef.current.offsetHeight * UNDER_BOUND) / (GRID_ROWS + 1));
       const coors: Array<Coordinate> = [];
@@ -98,9 +108,18 @@ export default function Sandbox() {
           toyPhysics.dR = 0;
         }
       });
+    } else if (align === AlignType.Free && screenRef.current) {
+      toyPhysicsList.current.forEach((v, i) => {
+        v.V.vx = Math.round(Math.random() * 6) - 3;
+        v.V.vy = Math.round(Math.random() * 6) - 3;
+
+        toyGravityDrop(i);
+      });
+    } else if (align === AlignType.Shake && screenRef.current) {
+      shake();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gridOn]);
+  }, [align]);
 
   const toyMove = (t?: number) => {
     const data: Array<Circle | null> = dummyToys.map((v) => {
@@ -150,7 +169,7 @@ export default function Sandbox() {
       }
 
       // 객체 충돌 감지
-      if (i !== toyFocus.current && !gridOn && !(toyPhysics.V.vx === 0 && toyPhysics.V.vy === 0)) {
+      if (i !== toyFocus.current && align !== AlignType.Grid && !(toyPhysics.V.vx === 0 && toyPhysics.V.vy === 0)) {
         const vector = reactionByCircleCollision(data, i, toyPhysics.V);
         if (vector !== null) {
           toyPhysics.V = vector;
@@ -205,8 +224,19 @@ export default function Sandbox() {
     }
   };
 
+  const shake = () => {
+    if (toyPhysicsList.current === null) return;
+
+    toyPhysicsList.current.forEach((v, i) => {
+      v.V.vx = Math.round(Math.random() * 30) - 15;
+      v.V.vy = Math.round(Math.random() * -30);
+
+      toyGravityDrop(i);
+    });
+  };
+
   const mouseDownEvent: MouseEventHandler<HTMLDivElement> = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (mouseDownRef.current || gridOn) return;
+    if (mouseDownRef.current || align === AlignType.Grid) return;
     mouseDownRef.current = true;
 
     let focus = Number((e.target as HTMLDivElement).id.charAt(0));
@@ -272,10 +302,15 @@ export default function Sandbox() {
     >
       <Link href="/">HIHddII</Link>
       <div
-        className={`sandbox-toggle-button ${gridOn ? "toggle-checked" : ""}`}
-        onClick={() => setGridOn((s) => !s)}
+        className={`sandbox-toggle-button ${align === AlignType.Grid ? "toggle-checked" : ""}`}
+        onClick={() => setAlign(align === AlignType.Grid ? AlignType.Free : AlignType.Grid)}
       ></div>
-      <div className="physics-checker" onClick={() => console.log(toyPhysicsList.current)}></div>
+      <div className="physics-checker" onClick={() => console.log(toyPhysicsList.current)}>
+        log
+      </div>
+      <div className="shake-button" onClick={() => (align === AlignType.Shake ? shake() : setAlign(AlignType.Shake))}>
+        shk
+      </div>
       {dummyToys.map((v, i) => {
         return (
           <div className="toy-div" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>

@@ -61,7 +61,7 @@ export const reactionByCircleCollision = (data: Array<Circle | null>, index: num
 
       const direction = normal * 2 - incoming + Math.PI;
       let speed = Math.sqrt(Math.pow(vector.vx, 2) + Math.pow(vector.vy, 2)) / 2;
-      speed = speed > 5 ? speed : 5;
+      speed = speed > 3 ? speed : 3;
       result = { vx: Math.floor(speed * Math.cos(direction)), vy: Math.floor(-speed * Math.sin(direction)) };
     }
   });
