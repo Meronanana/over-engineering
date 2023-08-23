@@ -1,6 +1,6 @@
 "use client";
 
-import { MouseEventHandler, MutableRefObject, RefObject, createRef, useEffect, useRef } from "react";
+import { MouseEventHandler, MutableRefObject, RefObject, createRef, useEffect, useRef, useState } from "react";
 import { Toy } from "./model/toy";
 import Link from "next/link";
 import ToyComponent from "./components/ToyComponent";
@@ -8,13 +8,14 @@ import ToyComponent from "./components/ToyComponent";
 import "./sandbox.scss";
 import { Circle, Coordinate, ToyPhysics, Vector, lerp, reactionByCircleCollision } from "@/utils/physicalEngine";
 
-// TODO: 회전 애니메이션 손보기
+// TODO: Grid 정렬 시 회전하는 문제 해결
 export default function Sandbox() {
+  const [gridOn, setGridOn] = useState<boolean>(false);
+
   const screenRef: RefObject<HTMLElement> = useRef<HTMLElement>(null);
   const mouseDownRef: MutableRefObject<boolean> = useRef<boolean>(false);
   const toyFocus: MutableRefObject<number> = useRef<number>(-1);
 
-  const moveKey = useRef<NodeJS.Timer>();
   const toyPhysicsList = useRef<Array<ToyPhysics>>([]);
 
   const dummyToys: Array<Toy> = [
@@ -27,25 +28,52 @@ export default function Sandbox() {
   const SPIN_SPEED_OFFSET = 0.2;
   const FPS_OFFSET = 1000 / 60; // 60fps
   const UNDER_BOUND = 0.8;
+  const GRID_ROWS = 2;
+  const GRID_COLS = 4;
 
   useEffect(() => {
-    dummyToys.forEach(() => {
-      toyPhysicsList.current.push({
-        X: [0],
-        Y: [0],
-        DST: { X: -1, Y: -1 } as Coordinate,
-        V: { vx: 0, vy: 0 } as Vector,
-        R: 0,
-        dR: 0,
+    if (toyPhysicsList.current.length === 0) {
+      dummyToys.forEach(() => {
+        toyPhysicsList.current.push({
+          X: [0],
+          Y: [0],
+          DST: { X: -1, Y: -1 } as Coordinate,
+          V: { vx: 0, vy: 0 } as Vector,
+          R: 0,
+          dR: 0,
+        });
       });
-    });
+    }
 
-    moveKey.current = setInterval(toyMove, FPS_OFFSET, 0.2);
+    console.log(toyPhysicsList.current);
+
+    const id = setInterval(toyMove, FPS_OFFSET, 0.2);
 
     return () => {
-      clearInterval(moveKey.current);
+      clearInterval(id);
     };
   });
+
+  useEffect(() => {
+    if (gridOn && screenRef.current) {
+      const stdWidth = screenRef.current.offsetWidth / (GRID_COLS + 1);
+      const stdHeight = (screenRef.current.offsetHeight * UNDER_BOUND) / (GRID_ROWS + 1);
+      const coors: Array<Coordinate> = [];
+
+      for (let i = 1; i <= GRID_ROWS; i++) {
+        for (let j = 1; j <= GRID_COLS; j++) {
+          coors.push({ X: stdWidth * j, Y: stdHeight * i });
+        }
+      }
+
+      coors.forEach((v, i) => {
+        if (toyPhysicsList.current.length > i) {
+          toyPhysicsList.current[i].DST = v;
+        }
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gridOn]);
 
   const toyMove = (t?: number) => {
     const data: Array<Circle | null> = dummyToys.map((v) => {
@@ -93,7 +121,7 @@ export default function Sandbox() {
       }
 
       // 객체 충돌 감지
-      if (i !== toyFocus.current) {
+      if (i !== toyFocus.current && !gridOn) {
         const vector = reactionByCircleCollision(data, i, toyPhysics.V);
         if (vector !== null) {
           toyPhysics.V = vector;
@@ -105,6 +133,7 @@ export default function Sandbox() {
         }
       }
 
+      // 바닥 하한선 감지
       if (screenRef.current.offsetHeight * UNDER_BOUND < endY) {
         if (!mouseDownRef.current) endX = startX;
         endY = Math.round(screenRef.current.offsetHeight * UNDER_BOUND);
@@ -148,7 +177,7 @@ export default function Sandbox() {
   };
 
   const mouseDownEvent: MouseEventHandler<HTMLDivElement> = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (mouseDownRef.current) return;
+    if (mouseDownRef.current || gridOn) return;
     mouseDownRef.current = true;
 
     let focus = Number((e.target as HTMLDivElement).id.charAt(0));
@@ -162,8 +191,6 @@ export default function Sandbox() {
 
       toyPhysics.R = Number(toyRef.current.style.transform.substring(29).split("d")[0]);
     }
-    // console.log(toyPhysicsList.current);
-    // console.log(toyFocus.current);
   };
 
   const mouseUpEvent: MouseEventHandler = (e: React.MouseEvent) => {
@@ -215,6 +242,10 @@ export default function Sandbox() {
       ref={screenRef}
     >
       <Link href="/">HIHddII</Link>
+      <div
+        className={`sandbox-toggle-button ${gridOn ? "toggle-checked" : ""}`}
+        onClick={() => setGridOn((s) => !s)}
+      ></div>
       {dummyToys.map((v, i) => {
         return (
           <div className="toy-div" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>
