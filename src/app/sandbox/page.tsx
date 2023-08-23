@@ -6,7 +6,15 @@ import Link from "next/link";
 import ToyComponent from "./components/ToyComponent";
 
 import "./sandbox.scss";
-import { Circle, Coordinate, ToyPhysics, Vector, lerp, reactionByCircleCollision } from "@/utils/physicalEngine";
+import {
+  Circle,
+  Coordinate,
+  ToyPhysics,
+  Vector,
+  lerp,
+  randomCoordinate,
+  reactionByCircleCollision,
+} from "@/utils/physicalEngine";
 
 export default function Sandbox() {
   const [gridOn, setGridOn] = useState<boolean>(false);
@@ -33,14 +41,28 @@ export default function Sandbox() {
   useEffect(() => {
     if (toyPhysicsList.current.length === 0) {
       dummyToys.forEach(() => {
-        toyPhysicsList.current.push({
-          X: [0],
-          Y: [0],
-          DST: { X: -1, Y: -1 } as Coordinate,
-          V: { vx: 0, vy: 0 } as Vector,
-          R: 0,
-          dR: 0,
-        });
+        if (screenRef.current) {
+          toyPhysicsList.current.push({
+            X: [0],
+            Y: [0],
+            DST: randomCoordinate(
+              screenRef.current.offsetWidth,
+              screenRef.current.offsetHeight * UNDER_BOUND
+            ) as Coordinate,
+            V: { vx: 0, vy: 0 } as Vector,
+            R: 0,
+            dR: 0,
+          });
+        } else {
+          toyPhysicsList.current.push({
+            X: [0],
+            Y: [0],
+            DST: { X: -1, Y: -1 } as Coordinate,
+            V: { vx: 0, vy: 0 } as Vector,
+            R: 0,
+            dR: 0,
+          });
+        }
       });
     }
 
