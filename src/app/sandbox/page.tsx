@@ -74,8 +74,6 @@ export default function Sandbox() {
           toyPhysics.V.vx = 0;
           toyPhysics.V.vy = 0;
           toyPhysics.dR = 0;
-
-          console.log(toyPhysicsList.current[i]);
         }
       });
     }
@@ -133,7 +131,6 @@ export default function Sandbox() {
       if (i !== toyFocus.current && !gridOn && !(toyPhysics.V.vx === 0 && toyPhysics.V.vy === 0)) {
         const vector = reactionByCircleCollision(data, i, toyPhysics.V);
         if (vector !== null) {
-          console.log("collision: " + i);
           toyPhysics.V = vector;
           endX = startX + vector.vx;
           endY = startY + vector.vy;
