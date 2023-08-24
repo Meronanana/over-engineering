@@ -14,6 +14,7 @@ $angle: 0deg;
   left: 50%;
   padding: 1vh;
   color: white;
+  font-size: 2vmin;
   transform: translate(-50%, 0%);
 }
 
@@ -57,34 +58,12 @@ $angle: 0deg;
   width: 4vmin;
   height: 4vmin;
   margin: 1vmin 0vmin;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
   opacity: 0.7;
   transition: 0.5s;
 }
-
-.toggle-button {
-  background-color: rgb(231, 250, 218);
-}
-
-.toggle-button.toggle-checked {
-  background-color: aqua;
-}
-
-.physics-checker {
-  background-color: rgb(255, 0, 0);
-}
-
-.shake-button {
-  background-color: rgb(77, 255, 0);
-}
-
-// @keyframes spin-clockwise {
-//   100% {
-//     transform: translate(-50%, -50%) rotate($angle + 360deg);
-//   }
-// }
-
-// @keyframes spin-counter-clockwise {
-//   100% {
-//     transform: translate(-50%, -50%) rotate($angle - 360deg);
-//   }
-// }

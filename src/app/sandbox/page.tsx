@@ -3,6 +3,9 @@
 import { MouseEventHandler, MutableRefObject, RefObject, createRef, useEffect, useRef, useState } from "react";
 import { Toy } from "./model/toy";
 import Link from "next/link";
+import IconGrid from "../../assets/icons/Icon-Grid.svg";
+import IconShake from "../../assets/icons/Icon-Shake.svg";
+import IconLog from "../../assets/icons/Icon-Log.svg";
 import ToyComponent from "./components/ToyComponent";
 
 import "./sandbox.scss";
@@ -310,17 +313,19 @@ export default function Sandbox() {
       <div className="sandbox-title">over-engineering</div>
       <div className="sandbox-sidemenu">
         <div
-          className={`sidemenu-button toggle-button ${align === AlignType.Grid ? "toggle-checked" : ""}`}
+          className="sidemenu-button"
           onClick={() => setAlign(align === AlignType.Grid ? AlignType.Free : AlignType.Grid)}
-        ></div>
+        >
+          <IconGrid color={align === AlignType.Grid ? "aqua" : "white"} />
+        </div>
         <div
-          className="sidemenu-button shake-button"
+          className="sidemenu-button"
           onClick={() => (align === AlignType.Shake ? shake() : setAlign(AlignType.Shake))}
         >
-          shk
+          <IconShake />
         </div>
-        <div className="sidemenu-button physics-checker" onClick={() => console.log(toyPhysicsList.current)}>
-          log
+        <div className="sidemenu-button" onClick={() => console.log(toyPhysicsList.current)}>
+          <IconLog color="red" />
         </div>
       </div>
     </main>
