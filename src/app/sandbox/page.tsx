@@ -3,13 +3,31 @@
 import { MouseEventHandler, MutableRefObject, RefObject, createRef, useEffect, useRef, useState } from "react";
 import { Toy } from "./model/toy";
 import Link from "next/link";
+import IconGrid from "../../assets/icons/Icon-Grid.svg";
+import IconShake from "../../assets/icons/Icon-Shake.svg";
+import IconLog from "../../assets/icons/Icon-Log.svg";
 import ToyComponent from "./components/ToyComponent";
 
 import "./sandbox.scss";
-import { Circle, Coordinate, ToyPhysics, Vector, lerp, reactionByCircleCollision } from "@/utils/physicalEngine";
+import {
+  Circle,
+  Coordinate,
+  ToyPhysics,
+  Vector,
+  lerp,
+  randomCoordinate,
+  reactionByCircleCollision,
+} from "@/utils/physicalEngine";
+
+enum AlignType {
+  Grid = 0,
+  Free = 1,
+  Shake = 2,
+}
 
 export default function Sandbox() {
-  const [gridOn, setGridOn] = useState<boolean>(false);
+  const [align, setAlign] = useState<AlignType>(1);
+  const [initialized, setInitialized] = useState<boolean>(false);
 
   const screenRef: RefObject<HTMLElement> = useRef<HTMLElement>(null);
   const mouseDownRef: MutableRefObject<boolean> = useRef<boolean>(false);
@@ -30,19 +48,33 @@ export default function Sandbox() {
   const GRID_ROWS = 2;
   const GRID_COLS = 4;
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (toyPhysicsList.current.length === 0) {
       dummyToys.forEach(() => {
-        toyPhysicsList.current.push({
-          X: [0],
-          Y: [0],
-          DST: { X: -1, Y: -1 } as Coordinate,
-          V: { vx: 0, vy: 0 } as Vector,
-          R: 0,
-          dR: 0,
-        });
+        if (screenRef.current) {
+          toyPhysicsList.current.push({
+            X: [0],
+            Y: [0],
+            DST: randomCoordinate(screenRef.current.offsetWidth, screenRef.current.offsetHeight * UNDER_BOUND),
+            V: { vx: 0, vy: 0 } as Vector,
+            R: 0,
+            dR: 0,
+          });
+        } else {
+          toyPhysicsList.current.push({
+            X: [0],
+            Y: [0],
+            DST: { X: -1, Y: -1 } as Coordinate,
+            V: { vx: 0, vy: 0 } as Vector,
+            R: 0,
+            dR: 0,
+          });
+        }
       });
     }
+
+    if (!initialized) setInitialized(true);
 
     const id = setInterval(toyMove, FPS_OFFSET, 0.2);
 
@@ -52,7 +84,9 @@ export default function Sandbox() {
   });
 
   useEffect(() => {
-    if (gridOn && screenRef.current) {
+    if (!initialized) return;
+
+    if (align === AlignType.Grid && screenRef.current) {
       const stdWidth = Math.round(screenRef.current.offsetWidth / (GRID_COLS + 1));
       const stdHeight = Math.round((screenRef.current.offsetHeight * UNDER_BOUND) / (GRID_ROWS + 1));
       const coors: Array<Coordinate> = [];
@@ -76,9 +110,18 @@ export default function Sandbox() {
           toyPhysics.dR = 0;
         }
       });
+    } else if (align === AlignType.Free && screenRef.current) {
+      toyPhysicsList.current.forEach((v, i) => {
+        v.V.vx = Math.round(Math.random() * 6) - 3;
+        v.V.vy = Math.round(Math.random() * 6) - 3;
+
+        toyGravityDrop(i);
+      });
+    } else if (align === AlignType.Shake && screenRef.current) {
+      shake();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gridOn]);
+  }, [align]);
 
   const toyMove = (t?: number) => {
     const data: Array<Circle | null> = dummyToys.map((v) => {
@@ -128,7 +171,7 @@ export default function Sandbox() {
       }
 
       // 객체 충돌 감지
-      if (i !== toyFocus.current && !gridOn && !(toyPhysics.V.vx === 0 && toyPhysics.V.vy === 0)) {
+      if (i !== toyFocus.current && align !== AlignType.Grid && !(toyPhysics.V.vx === 0 && toyPhysics.V.vy === 0)) {
         const vector = reactionByCircleCollision(data, i, toyPhysics.V);
         if (vector !== null) {
           toyPhysics.V = vector;
@@ -183,8 +226,19 @@ export default function Sandbox() {
     }
   };
 
+  const shake = () => {
+    if (toyPhysicsList.current === null) return;
+
+    toyPhysicsList.current.forEach((v, i) => {
+      v.V.vx = Math.round(Math.random() * 30) - 15;
+      v.V.vy = Math.round(Math.random() * -30);
+
+      toyGravityDrop(i);
+    });
+  };
+
   const mouseDownEvent: MouseEventHandler<HTMLDivElement> = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (mouseDownRef.current || gridOn) return;
+    if (mouseDownRef.current || align === AlignType.Grid) return;
     mouseDownRef.current = true;
 
     let focus = Number((e.target as HTMLDivElement).id.charAt(0));
@@ -248,12 +302,7 @@ export default function Sandbox() {
       onMouseMove={mouseMoveEvent}
       ref={screenRef}
     >
-      <Link href="/">HIHddII</Link>
-      <div
-        className={`sandbox-toggle-button ${gridOn ? "toggle-checked" : ""}`}
-        onClick={() => setGridOn((s) => !s)}
-      ></div>
-      <div className="physics-checker" onClick={() => console.log(toyPhysicsList.current)}></div>
+      <Link href="/">Home</Link>
       {dummyToys.map((v, i) => {
         return (
           <div className="toy-div" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>
@@ -261,6 +310,24 @@ export default function Sandbox() {
           </div>
         );
       })}
+      <div className="sandbox-title">over-engineering</div>
+      <div className="sandbox-sidemenu">
+        <div
+          className="sidemenu-button"
+          onClick={() => setAlign(align === AlignType.Grid ? AlignType.Free : AlignType.Grid)}
+        >
+          <IconGrid color={align === AlignType.Grid ? "aqua" : "white"} />
+        </div>
+        <div
+          className="sidemenu-button"
+          onClick={() => (align === AlignType.Shake ? shake() : setAlign(AlignType.Shake))}
+        >
+          <IconShake />
+        </div>
+        <div className="sidemenu-button" onClick={() => console.log(toyPhysicsList.current)}>
+          <IconLog color="red" />
+        </div>
+      </div>
     </main>
   );
 }
