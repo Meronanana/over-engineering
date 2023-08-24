@@ -53,10 +53,7 @@ export default function Sandbox() {
           toyPhysicsList.current.push({
             X: [0],
             Y: [0],
-            DST: randomCoordinate(
-              screenRef.current.offsetWidth,
-              screenRef.current.offsetHeight * UNDER_BOUND
-            ) as Coordinate,
+            DST: randomCoordinate(screenRef.current.offsetWidth, screenRef.current.offsetHeight * UNDER_BOUND),
             V: { vx: 0, vy: 0 } as Vector,
             R: 0,
             dR: 0,
@@ -84,6 +81,8 @@ export default function Sandbox() {
   });
 
   useEffect(() => {
+    if (!initialized) return;
+
     if (align === AlignType.Grid && screenRef.current) {
       const stdWidth = Math.round(screenRef.current.offsetWidth / (GRID_COLS + 1));
       const stdHeight = Math.round((screenRef.current.offsetHeight * UNDER_BOUND) / (GRID_ROWS + 1));
@@ -300,17 +299,7 @@ export default function Sandbox() {
       onMouseMove={mouseMoveEvent}
       ref={screenRef}
     >
-      <Link href="/">HIHddII</Link>
-      <div
-        className={`sandbox-toggle-button ${align === AlignType.Grid ? "toggle-checked" : ""}`}
-        onClick={() => setAlign(align === AlignType.Grid ? AlignType.Free : AlignType.Grid)}
-      ></div>
-      <div className="physics-checker" onClick={() => console.log(toyPhysicsList.current)}>
-        log
-      </div>
-      <div className="shake-button" onClick={() => (align === AlignType.Shake ? shake() : setAlign(AlignType.Shake))}>
-        shk
-      </div>
+      <Link href="/">Home</Link>
       {dummyToys.map((v, i) => {
         return (
           <div className="toy-div" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>
@@ -318,6 +307,22 @@ export default function Sandbox() {
           </div>
         );
       })}
+      <div className="sandbox-title">over-engineering</div>
+      <div className="sandbox-sidemenu">
+        <div
+          className={`sidemenu-button toggle-button ${align === AlignType.Grid ? "toggle-checked" : ""}`}
+          onClick={() => setAlign(align === AlignType.Grid ? AlignType.Free : AlignType.Grid)}
+        ></div>
+        <div
+          className="sidemenu-button shake-button"
+          onClick={() => (align === AlignType.Shake ? shake() : setAlign(AlignType.Shake))}
+        >
+          shk
+        </div>
+        <div className="sidemenu-button physics-checker" onClick={() => console.log(toyPhysicsList.current)}>
+          log
+        </div>
+      </div>
     </main>
   );
 }

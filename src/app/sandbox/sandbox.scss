@@ -8,6 +8,28 @@ $angle: 0deg;
   background-color: rgb(51, 50, 41);
 }
 
+.sandbox-title {
+  position: absolute;
+  top: 0%;
+  left: 50%;
+  padding: 1vh;
+  color: white;
+  transform: translate(-50%, 0%);
+}
+
+.sandbox-sidemenu {
+  position: absolute;
+  top: 50%;
+  right: 0%;
+  padding: 0.5vw;
+
+  display: flex;
+  flex-direction: column;
+
+  // background-color: rgba(255, 255, 255, 0.729);
+  transform: translate(0%, -50%);
+}
+
 .toy-div {
   position: absolute;
   top: -10%;
@@ -31,42 +53,28 @@ $angle: 0deg;
   // animation-fill-mode: both;
 }
 
-.sandbox-toggle-button {
-  position: absolute;
-  top: 3vmin;
-  left: 3vmin;
-  width: 3vmin;
-  height: 3vmin;
-  background-color: rgb(231, 250, 218);
+.sidemenu-button {
+  width: 4vmin;
+  height: 4vmin;
+  margin: 1vmin 0vmin;
   opacity: 0.7;
   transition: 0.5s;
 }
 
-.sandbox-toggle-button.toggle-checked {
+.toggle-button {
+  background-color: rgb(231, 250, 218);
+}
+
+.toggle-button.toggle-checked {
   background-color: aqua;
-  transition: 0.5s;
 }
 
 .physics-checker {
-  position: absolute;
-  top: 3vmin;
-  left: 9vmin;
-  width: 3vmin;
-  height: 3vmin;
   background-color: rgb(255, 0, 0);
-  opacity: 0.7;
-  transition: 0.5s;
 }
 
 .shake-button {
-  position: absolute;
-  top: 3vmin;
-  left: 15vmin;
-  width: 3vmin;
-  height: 3vmin;
   background-color: rgb(77, 255, 0);
-  opacity: 0.7;
-  transition: 0.5s;
 }
 
 // @keyframes spin-clockwise {
