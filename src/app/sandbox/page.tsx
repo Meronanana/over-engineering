@@ -1,11 +1,14 @@
 "use client";
 
 import { MouseEventHandler, MutableRefObject, RefObject, createRef, useEffect, useRef, useState } from "react";
-import { Toy } from "./model/toy";
+import Image from "next/image";
 import Link from "next/link";
-import IconGrid from "../../assets/icons/Icon-Grid.svg";
-import IconShake from "../../assets/icons/Icon-Shake.svg";
-import IconLog from "../../assets/icons/Icon-Log.svg";
+
+import { Toy } from "./model/toy";
+import Background from "../../../public/assets/images/sandbox.png";
+import IconGrid from "../../../public/assets/icons/Icon-Grid.svg";
+import IconShake from "../../../public/assets/icons/Icon-Shake.svg";
+import IconLog from "../../../public/assets/icons/Icon-Log.svg";
 import ToyComponent from "./components/ToyComponent";
 
 import "./sandbox.scss";
@@ -302,7 +305,7 @@ export default function Sandbox() {
       onMouseMove={mouseMoveEvent}
       ref={screenRef}
     >
-      <Link href="/">Home</Link>
+      <Image src={Background} alt={"background"} />
       {dummyToys.map((v, i) => {
         return (
           <div className="toy-div" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>
@@ -310,13 +313,15 @@ export default function Sandbox() {
           </div>
         );
       })}
-      <div className="sandbox-title">over-engineering</div>
+      <Link href="/" className="sandbox-title">
+        over-engineering
+      </Link>
       <div className="sandbox-sidemenu">
         <div
           className="sidemenu-button"
           onClick={() => setAlign(align === AlignType.Grid ? AlignType.Free : AlignType.Grid)}
         >
-          <IconGrid color={align === AlignType.Grid ? "aqua" : "white"} />
+          <IconGrid color={align === AlignType.Grid ? "aquamarine" : "gray"} />
         </div>
         <div
           className="sidemenu-button"

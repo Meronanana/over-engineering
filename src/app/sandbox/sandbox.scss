@@ -13,7 +13,7 @@ $angle: 0deg;
   top: 0%;
   left: 50%;
   padding: 1vh;
-  color: white;
+  color: gray;
   font-size: 2vmin;
   transform: translate(-50%, 0%);
 }
@@ -38,8 +38,8 @@ $angle: 0deg;
   width: 10vmin;
   height: 10vmin;
   border-radius: 5vmin;
-  border-width: 1px;
-  border-color: rgb(233, 233, 179);
+  border-width: 2px;
+  border-color: rgb(24, 95, 89);
   transform: translate(-50%, -50%);
 
   -webkit-user-select: none;
@@ -47,7 +47,7 @@ $angle: 0deg;
   -ms-user-select: none;
   user-select: none;
 
-  color: rgb(194, 165, 255);
+  color: rgb(99, 62, 191);
 
   // animation-timing-function: linear;
   // animation-iteration-count: infinite;
