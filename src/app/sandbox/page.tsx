@@ -137,6 +137,7 @@ export default function Sandbox() {
   }, [align]);
 
   const backgroundInitialize = () => {
+    console.log("HIHI");
     if (screenRef.current === null || backgroundRef.current === null) return;
 
     const screenWidth = screenRef.current.offsetWidth;
@@ -154,7 +155,7 @@ export default function Sandbox() {
     bgWidth += 160;
     bgHeight += 90;
 
-    if (backgroundSize.width !== bgWidth && backgroundSize.height !== bgHeight) {
+    if (backgroundSize.width !== bgWidth || backgroundSize.height !== bgHeight) {
       setBackgroundSize({ width: bgWidth, height: bgHeight });
       backgroundOffset.current = { left: -(bgWidth - screenWidth) / 2, top: -(bgHeight - screenHeight) / 2 };
       backgroundRef.current.style.transform = `translate(${backgroundOffset.current.left}px, ${backgroundOffset.current.top}px)`;
@@ -166,6 +167,8 @@ export default function Sandbox() {
 
     const stdWidth = screenRef.current.offsetWidth / 2;
     const stdHeight = screenRef.current.offsetHeight / 2;
+    const offsetLeft = backgroundOffset.current.left;
+    const offsetTop = backgroundOffset.current.top;
     let meanX = 0;
     let meanY = 0;
 
@@ -180,12 +183,10 @@ export default function Sandbox() {
     meanX /= dummyToys.length;
     meanY /= dummyToys.length;
 
-    const moveX = ((meanX - stdWidth) * 90) / stdWidth;
-    const moveY = ((meanY - stdHeight) * 45) / stdHeight;
+    const moveX = Math.round(((meanX - stdWidth) * 90) / stdWidth);
+    const moveY = Math.round(((meanY - stdHeight) * 45) / stdHeight);
 
-    backgroundRef.current.style.transform = `translate(${backgroundOffset.current.left - moveX}px, ${
-      backgroundOffset.current.top - moveY
-    }px)`;
+    backgroundRef.current.style.transform = `translate(${offsetLeft - moveX}px, ${offsetTop - moveY}px)`;
   };
 
   const toyMove = (t?: number) => {
@@ -362,50 +363,51 @@ export default function Sandbox() {
   const logBtn = () => {
     // console.log(toyPhysicsList.current);
     // console.log(backgroundRef.current?.offsetWidth, backgroundRef.current?.offsetHeight);
+    console.log(backgroundRef.current?.style.transform);
     // console.log(screenRef.current?.offsetWidth, screenRef.current?.offsetHeight);
     console.log(backgroundSize);
   };
 
   return (
-    <main
-      className="sandbox-screen"
-      onMouseLeave={mouseUpEvent}
-      onMouseUp={mouseUpEvent}
-      onMouseMove={mouseMoveEvent}
-      ref={screenRef}
-    >
+    <>
       <div className="sandbox-background" ref={backgroundRef}>
         <Background width={backgroundSize.width} height={backgroundSize.height} />
-        {/* <Background width={1080} height={1920} /> */}
-        {/* <Background /> */}
       </div>
-      {dummyToys.map((v, i) => {
-        return (
-          <div className="toy-div" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>
-            A
+      <main
+        className="sandbox-screen"
+        onMouseLeave={mouseUpEvent}
+        onMouseUp={mouseUpEvent}
+        onMouseMove={mouseMoveEvent}
+        ref={screenRef}
+      >
+        {dummyToys.map((v, i) => {
+          return (
+            <div className="toy-div" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>
+              A
+            </div>
+          );
+        })}
+        <Link href="/" className="sandbox-title">
+          over-engineering
+        </Link>
+        <div className="sandbox-sidemenu">
+          <div
+            className="sidemenu-button"
+            onClick={() => setAlign(align === AlignType.Grid ? AlignType.Free : AlignType.Grid)}
+          >
+            <IconGrid color={align === AlignType.Grid ? "aquamarine" : "gray"} />
           </div>
-        );
-      })}
-      <Link href="/" className="sandbox-title">
-        over-engineering
-      </Link>
-      <div className="sandbox-sidemenu">
-        <div
-          className="sidemenu-button"
-          onClick={() => setAlign(align === AlignType.Grid ? AlignType.Free : AlignType.Grid)}
-        >
-          <IconGrid color={align === AlignType.Grid ? "aquamarine" : "gray"} />
+          <div
+            className="sidemenu-button"
+            onClick={() => (align === AlignType.Shake ? shake() : setAlign(AlignType.Shake))}
+          >
+            <IconShake />
+          </div>
+          <div className="sidemenu-button" onClick={logBtn}>
+            <IconLog />
+          </div>
         </div>
-        <div
-          className="sidemenu-button"
-          onClick={() => (align === AlignType.Shake ? shake() : setAlign(AlignType.Shake))}
-        >
-          <IconShake />
-        </div>
-        <div className="sidemenu-button" onClick={logBtn}>
-          <IconLog />
-        </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }
