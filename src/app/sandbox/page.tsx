@@ -5,7 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Toy } from "./model/toy";
-import Background from "../../../public/assets/images/sandbox.png";
+// import Background from "../../../public/assets/images/sandbox.png";
+import Background from "../../../public/assets/images/sandbox-background.svg";
 import IconGrid from "../../../public/assets/icons/Icon-Grid.svg";
 import IconShake from "../../../public/assets/icons/Icon-Shake.svg";
 import IconLog from "../../../public/assets/icons/Icon-Log.svg";
@@ -36,6 +37,8 @@ export default function Sandbox() {
   const mouseDownRef: MutableRefObject<boolean> = useRef<boolean>(false);
   const toyFocus: MutableRefObject<number> = useRef<number>(-1);
 
+  const backgroundRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+
   const toyPhysicsList = useRef<Array<ToyPhysics>>([]);
 
   const dummyToys: Array<Toy> = [
@@ -50,6 +53,8 @@ export default function Sandbox() {
   const UNDER_BOUND = 0.8;
   const GRID_ROWS = 2;
   const GRID_COLS = 4;
+
+  const BACKGROUND_SIZE = { width: 3840, height: 2160 };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -75,6 +80,12 @@ export default function Sandbox() {
           });
         }
       });
+    }
+
+    if (backgroundRef.current && screenRef.current) {
+      backgroundRef.current.style.transform = `transition(${
+        -(BACKGROUND_SIZE.width - screenRef.current.offsetWidth) / 2
+      } ${-(BACKGROUND_SIZE.width - screenRef.current.offsetWidth) / 2})`;
     }
 
     if (!initialized) setInitialized(true);
@@ -297,6 +308,11 @@ export default function Sandbox() {
     }
   };
 
+  const logBtn = () => {
+    // console.log(toyPhysicsList.current);
+    console.log(backgroundRef);
+  };
+
   return (
     <main
       className="sandbox-screen"
@@ -305,7 +321,11 @@ export default function Sandbox() {
       onMouseMove={mouseMoveEvent}
       ref={screenRef}
     >
-      <Image src={Background} alt={"background"} />
+      <div className="sandbox-background" ref={backgroundRef}>
+        <Background />
+        {/* <Image src={Background} alt={"background"} /> */}
+      </div>
+      {/* <img className="sandbox-background" src="/assets/images/sandbox.png" alt="background" /> */}
       {dummyToys.map((v, i) => {
         return (
           <div className="toy-div" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>
@@ -329,8 +349,8 @@ export default function Sandbox() {
         >
           <IconShake />
         </div>
-        <div className="sidemenu-button" onClick={() => console.log(toyPhysicsList.current)}>
-          <IconLog color="red" />
+        <div className="sidemenu-button" onClick={logBtn}>
+          <IconLog />
         </div>
       </div>
     </main>
