@@ -10,10 +10,13 @@ $angle: 0deg;
 
 .sandbox-background {
   position: fixed;
+  // display: flex;
+  // align-items: flex-start;
+  // justify-content: flex-start;
   // width: 3840px;
   // height: 2160px;
   // width: 1920px;
-  // height: 1680px;
+  // height: 1080px;
   overflow: hidden;
   // transform: translate(-50vw, -50vh);
   // transform: translateY(-500px);
@@ -27,6 +30,7 @@ $angle: 0deg;
   padding: 1vh;
   color: gray;
   font-size: 2vmin;
+  transition: 0.5s;
   transform: translate(-50%, 0%);
 }
 
