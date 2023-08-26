@@ -186,7 +186,8 @@ export default function Sandbox() {
     const moveX = Math.round(((meanX - stdWidth) * 90) / stdWidth);
     const moveY = Math.round(((meanY - stdHeight) * 45) / stdHeight);
 
-    backgroundRef.current.style.transform = `translate(${offsetLeft - moveX}px, ${offsetTop - moveY}px)`;
+    backgroundRef.current.style.left = -moveX + "px";
+    backgroundRef.current.style.top = -moveY + "px";
   };
 
   const toyMove = (t?: number) => {
