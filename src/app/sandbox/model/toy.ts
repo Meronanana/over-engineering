@@ -4,5 +4,5 @@ export interface Toy {
   ref: RefObject<HTMLDivElement>;
   name: string;
   link: string;
-  image: string;
+  image: any;
 }
