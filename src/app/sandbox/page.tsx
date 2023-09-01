@@ -375,6 +375,7 @@ export default function Sandbox() {
   return (
     <>
       <div className="sandbox-background" ref={backgroundRef}>
+        <div className={align === AlignType.Grid ? "sandbox-shadow" : ""}></div>
         <Background width={backgroundSize.width} height={backgroundSize.height} />
       </div>
       <main
@@ -395,7 +396,7 @@ export default function Sandbox() {
             </div>
           );
         })}
-        <Link href="/" className="sandbox-title">
+        <Link href="/" className={align === AlignType.Grid ? "sandbox-title on-grid" : "sandbox-title"}>
           over-engineering
         </Link>
         <div className="sandbox-sidemenu">
@@ -409,10 +410,10 @@ export default function Sandbox() {
             className="sidemenu-button"
             onClick={() => (align === AlignType.Shake ? shake() : setAlign(AlignType.Shake))}
           >
-            <IconShake />
+            <IconShake color={align === AlignType.Grid ? "white" : "gray"} />
           </div>
           <div className="sidemenu-button" onClick={logBtn}>
-            <IconLog />
+            <IconLog color={align === AlignType.Grid ? "white" : "gray"} />
           </div>
         </div>
       </main>
