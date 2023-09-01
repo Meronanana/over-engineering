@@ -9,6 +9,8 @@ import IconGrid from "../../../public/assets/icons/Icon-Grid.svg";
 import IconShake from "../../../public/assets/icons/Icon-Shake.svg";
 import IconLog from "../../../public/assets/icons/Icon-Log.svg";
 import ToyGithubQR from "../../../public/assets/icons/toy-github-qr.svg";
+import ToyDeadlock from "../../../public/assets/icons/toy-deadlock.svg";
+
 import ToyComponent from "./components/ToyComponent";
 
 import "./sandbox.scss";
@@ -43,7 +45,7 @@ export default function Sandbox() {
 
   const dummyToys: Array<Toy> = [
     { ref: createRef(), name: "qr-code", link: "", image: ToyGithubQR },
-    { ref: createRef(), name: "dead-lock", link: "", image: "" },
+    { ref: createRef(), name: "dead-lock", link: "", image: ToyDeadlock },
     { ref: createRef(), name: "nwjns-powerpuffgirl", link: "", image: "" },
   ];
 
@@ -383,9 +385,13 @@ export default function Sandbox() {
         ref={screenRef}
       >
         {dummyToys.map((v, i) => {
-          return (
+          return v.image ? (
             <div className="toy-div" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>
-              {v.image ? <v.image className="toy-div" /> : <div>A</div>}
+              <v.image className="toy-image" id={`${i}toy`} />
+            </div>
+          ) : (
+            <div className="toy-div dummy" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>
+              A
             </div>
           );
         })}
