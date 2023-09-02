@@ -2,6 +2,7 @@
 
 import { MouseEventHandler, MutableRefObject, RefObject, createRef, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 import { Toy } from "./model/toy";
 import Background from "../../../public/assets/images/sandbox-background.svg";
@@ -10,6 +11,7 @@ import IconShake from "../../../public/assets/icons/Icon-Shake.svg";
 import IconLog from "../../../public/assets/icons/Icon-Log.svg";
 import ToyGithubQR from "../../../public/assets/icons/toy-github-qr.svg";
 import ToyDeadlock from "../../../public/assets/icons/toy-deadlock.svg";
+import ToyNWJNS from "/public/assets/images/nwjns/haerin-fow-1.png";
 
 import ToyComponent from "./components/ToyComponent";
 
@@ -46,7 +48,7 @@ export default function Sandbox() {
   const dummyToys: Array<Toy> = [
     { ref: createRef(), name: "qr-code", link: "", image: ToyGithubQR },
     { ref: createRef(), name: "dead-lock", link: "", image: ToyDeadlock },
-    { ref: createRef(), name: "nwjns-powerpuffgirl", link: "", image: "" },
+    { ref: createRef(), name: "nwjns-powerpuffgirl", link: "", image: ToyNWJNS },
   ];
 
   const GVT_SPEED_OFFSET = 0.1;
@@ -140,7 +142,6 @@ export default function Sandbox() {
   }, [align]);
 
   const backgroundInitialize = () => {
-    console.log("HIHI");
     if (screenRef.current === null || backgroundRef.current === null) return;
 
     const screenWidth = screenRef.current.offsetWidth;
@@ -386,9 +387,13 @@ export default function Sandbox() {
         ref={screenRef}
       >
         {dummyToys.map((v, i) => {
-          return v.image ? (
+          return typeof v.image === "function" ? (
             <div className="toy-div" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>
               <v.image className="toy-image" id={`${i}toy`} />
+            </div>
+          ) : typeof v.image === "object" ? (
+            <div className="toy-div" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>
+              <Image className="toy-image" src={v.image} alt={""} id={`${i}toy`} width={100} height={100} />
             </div>
           ) : (
             <div className="toy-div dummy" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>
