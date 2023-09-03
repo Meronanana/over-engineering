@@ -10,6 +10,8 @@ $angle: 0deg;
 .sandbox-background {
   position: fixed;
   overflow: hidden;
+
+  // transition: 0.5s;
 }
 
 .sandbox-shadow {
@@ -68,6 +70,14 @@ $angle: 0deg;
 
 .toy-image {
   pointer-events: none;
+}
+
+.toy-buried {
+  position: absolute;
+  bottom: 0;
+  width: 12vmin;
+  height: 2vmin;
+  background-color: yellow;
 }
 
 .toy-div.dummy {

@@ -6,6 +6,7 @@ import Image from "next/image";
 
 import { Toy } from "./model/toy";
 import Background from "../../../public/assets/images/sandbox-background.svg";
+import IconShrink from "../../../public/assets/icons/Icon-Shrink.svg";
 import IconGrid from "../../../public/assets/icons/Icon-Grid.svg";
 import IconShake from "../../../public/assets/icons/Icon-Shake.svg";
 import IconLog from "../../../public/assets/icons/Icon-Log.svg";
@@ -33,6 +34,7 @@ enum AlignType {
 }
 
 export default function Sandbox() {
+  const [backgroundShrink, setBackgroundShrink] = useState(true);
   const [align, setAlign] = useState<AlignType>(1);
   const [backgroundSize, setBackgroundSize] = useState({ width: 1920, height: 1080 });
   const [initialized, setInitialized] = useState<boolean>(false);
@@ -86,18 +88,31 @@ export default function Sandbox() {
       });
     }
 
-    backgroundInitialize();
-    window.addEventListener("resize", backgroundInitialize);
-
     if (!initialized) setInitialized(true);
 
     const toyMoveId = setInterval(toyMove, FPS_OFFSET, 0.2);
-    const bgMoveId = setInterval(bgMove, FPS_OFFSET);
+    let bgMoveId: string | number | NodeJS.Timer | undefined;
+
+    if (backgroundRef.current !== null) {
+      if (!backgroundShrink) {
+        bgMoveId = setInterval(backgroundMove, FPS_OFFSET);
+        console.log("false");
+      } else {
+        backgroundRef.current.style.left = "0px";
+        backgroundRef.current.style.top = "0px";
+        console.log("true");
+      }
+    }
+
+    backgroundInitialize();
+    window.addEventListener("resize", backgroundInitialize);
 
     return () => {
       window.removeEventListener("resize", backgroundInitialize);
       clearInterval(toyMoveId);
-      clearInterval(bgMoveId);
+      if (bgMoveId !== undefined) {
+        clearInterval(bgMoveId);
+      }
     };
   });
 
@@ -156,17 +171,34 @@ export default function Sandbox() {
       bgHeight = screenHeight;
       bgWidth = (bgHeight * 16) / 9;
     }
-    bgWidth += 160;
-    bgHeight += 90;
+
+    if (!backgroundShrink) {
+      bgWidth += 160;
+      bgHeight += 90;
+    }
 
     if (backgroundSize.width !== bgWidth || backgroundSize.height !== bgHeight) {
-      setBackgroundSize({ width: bgWidth, height: bgHeight });
-      backgroundOffset.current = { left: -(bgWidth - screenWidth) / 2, top: -(bgHeight - screenHeight) / 2 };
-      backgroundRef.current.style.transform = `translate(${backgroundOffset.current.left}px, ${backgroundOffset.current.top}px)`;
+      if (backgroundShrink) {
+        let offsetLeft = -(bgWidth - screenWidth) / 2;
+        let offsetTop = -(bgHeight - screenHeight) / 2;
+
+        backgroundOffset.current = { left: offsetLeft, top: offsetTop };
+        backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
+
+        setBackgroundSize({ width: bgWidth, height: bgHeight });
+      } else {
+        setBackgroundSize({ width: bgWidth, height: bgHeight });
+
+        let offsetLeft = -(bgWidth - screenWidth) / 2;
+        let offsetTop = -(bgHeight - screenHeight) / 2;
+
+        backgroundOffset.current = { left: offsetLeft, top: offsetTop };
+        backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
+      }
     }
   };
 
-  const bgMove = () => {
+  const backgroundMove = () => {
     if (screenRef.current === null || backgroundRef.current === null) return;
 
     const stdWidth = screenRef.current.offsetWidth / 2;
@@ -387,17 +419,16 @@ export default function Sandbox() {
         ref={screenRef}
       >
         {dummyToys.map((v, i) => {
-          return typeof v.image === "function" ? (
-            <div className="toy-div" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>
-              <v.image className="toy-image" id={`${i}toy`} />
-            </div>
-          ) : typeof v.image === "object" ? (
-            <div className="toy-div" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>
-              <Image className="toy-image" src={v.image} alt={""} id={`${i}toy`} width={100} height={100} />
-            </div>
-          ) : (
-            <div className="toy-div dummy" id={`${i}toy`} key={i} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent}>
-              A
+          return (
+            <div className="toy-div" id={`${i}toy`} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent} key={i}>
+              {typeof v.image === "function" ? (
+                <v.image className="toy-image" id={`${i}toy`} />
+              ) : typeof v.image === "object" ? (
+                <Image className="toy-image" src={v.image} alt={""} id={`${i}toy`} />
+              ) : (
+                "A"
+              )}
+              {/* <div className="toy-buried"></div> */}
             </div>
           );
         })}
@@ -405,21 +436,24 @@ export default function Sandbox() {
           over-engineering
         </Link>
         <div className="sandbox-sidemenu">
-          <div
+          <IconShrink
+            className="sidemenu-button"
+            onClick={() => {
+              setBackgroundShrink((state) => !state);
+            }}
+            color={backgroundShrink === true ? "aquamarine" : align === AlignType.Grid ? "white" : "gray"}
+          />
+          <IconGrid
             className="sidemenu-button"
             onClick={() => setAlign(align === AlignType.Grid ? AlignType.Free : AlignType.Grid)}
-          >
-            <IconGrid color={align === AlignType.Grid ? "aquamarine" : "gray"} />
-          </div>
-          <div
+            color={align === AlignType.Grid ? "aquamarine" : "gray"}
+          />
+          <IconShake
             className="sidemenu-button"
             onClick={() => (align === AlignType.Shake ? shake() : setAlign(AlignType.Shake))}
-          >
-            <IconShake color={align === AlignType.Grid ? "white" : "gray"} />
-          </div>
-          <div className="sidemenu-button" onClick={logBtn}>
-            <IconLog color={align === AlignType.Grid ? "white" : "gray"} />
-          </div>
+            color={align === AlignType.Grid ? "white" : "gray"}
+          />
+          <IconLog className="sidemenu-button" onClick={logBtn} color={align === AlignType.Grid ? "white" : "gray"} />
         </div>
       </main>
     </>
