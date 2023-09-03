@@ -10,9 +10,9 @@ import IconShrink from "../../../public/assets/icons/Icon-Shrink.svg";
 import IconGrid from "../../../public/assets/icons/Icon-Grid.svg";
 import IconShake from "../../../public/assets/icons/Icon-Shake.svg";
 import IconLog from "../../../public/assets/icons/Icon-Log.svg";
-import ToyGithubQR from "../../../public/assets/icons/toy-github-qr.svg";
 import ToyDeadlock from "../../../public/assets/icons/toy-deadlock.svg";
 import ToyNWJNS from "/public/assets/images/nwjns/haerin-fow-1.png";
+import ToyLinkQR from "/public/assets/icons/toy-link-qr.png";
 
 import ToyComponent from "./components/ToyComponent";
 
@@ -48,7 +48,7 @@ export default function Sandbox() {
   const backgroundOffset = useRef({ left: 0, top: 0 });
 
   const dummyToys: Array<Toy> = [
-    { ref: createRef(), name: "qr-code", link: "", image: ToyGithubQR },
+    { ref: createRef(), name: "qr-code", link: "", image: ToyLinkQR },
     { ref: createRef(), name: "dead-lock", link: "", image: ToyDeadlock },
     { ref: createRef(), name: "nwjns-powerpuffgirl", link: "", image: ToyNWJNS },
   ];
