@@ -50,10 +50,10 @@ export default function Sandbox() {
   const backgroundOffset = useRef({ left: 0, top: 0 });
 
   const dummyToys: Array<Toy> = [
-    { ref: createRef(), name: "qr-code", link: "", image: ToyTutoMouse },
-    { ref: createRef(), name: "qr-code", link: "", image: ToyLinkQR },
-    { ref: createRef(), name: "dead-lock", link: "", image: ToyDeadlock },
-    { ref: createRef(), name: "nwjns-powerpuffgirl", link: "", image: ToyNWJNS },
+    { moveRef: createRef(), rotateRef: createRef(), name: "qr-code", link: "", image: ToyTutoMouse },
+    { moveRef: createRef(), rotateRef: createRef(), name: "qr-code", link: "", image: ToyLinkQR },
+    { moveRef: createRef(), rotateRef: createRef(), name: "dead-lock", link: "", image: ToyDeadlock },
+    { moveRef: createRef(), rotateRef: createRef(), name: "nwjns-powerpuffgirl", link: "", image: ToyNWJNS },
   ];
 
   const GVT_SPEED_OFFSET = 0.1;
@@ -212,7 +212,7 @@ export default function Sandbox() {
     let meanY = 0;
 
     dummyToys.forEach((v) => {
-      const toyRef = v.ref;
+      const toyRef = v.moveRef;
       if (toyRef.current === null) return;
 
       meanX += toyRef.current.offsetLeft;
@@ -231,21 +231,28 @@ export default function Sandbox() {
 
   const toyMove = (t?: number) => {
     const data: Array<Circle | null> = dummyToys.map((v) => {
-      if (v.ref.current) {
-        return { x: v.ref.current.offsetLeft, y: v.ref.current.offsetTop, d: v.ref.current.offsetWidth };
+      if (v.moveRef.current) {
+        return { x: v.moveRef.current.offsetLeft, y: v.moveRef.current.offsetTop, d: v.moveRef.current.offsetWidth };
       } else {
         return null;
       }
     });
 
     dummyToys.forEach((v, i) => {
-      const toyRef = v.ref;
-      if (toyRef.current === null || screenRef.current === null || toyPhysicsList.current === null) return;
+      const toyMoveRef = v.moveRef;
+      const toyRotateRef = v.rotateRef;
+      if (
+        toyMoveRef.current === null ||
+        screenRef.current === null ||
+        toyPhysicsList.current === null ||
+        toyRotateRef.current === null
+      )
+        return;
 
       const toyPhysics = toyPhysicsList.current[i];
 
-      let startX = toyRef.current.offsetLeft;
-      let startY = toyRef.current.offsetTop;
+      let startX = toyMoveRef.current.offsetLeft;
+      let startY = toyMoveRef.current.offsetTop;
       let endX = toyPhysics.DST.X;
       let endY = toyPhysics.DST.Y;
 
@@ -263,11 +270,11 @@ export default function Sandbox() {
 
       // 벽 충돌 감지
       let hitWall = false;
-      if (screenRef.current.offsetWidth - toyRef.current.offsetWidth / 2 < endX) {
-        endX = screenRef.current.offsetWidth - toyRef.current.offsetWidth / 2;
+      if (screenRef.current.offsetWidth - toyMoveRef.current.offsetWidth / 2 < endX) {
+        endX = screenRef.current.offsetWidth - toyMoveRef.current.offsetWidth / 2;
         hitWall = true;
-      } else if (endX < toyRef.current.offsetWidth / 2) {
-        endX = toyRef.current.offsetWidth / 2;
+      } else if (endX < toyMoveRef.current.offsetWidth / 2) {
+        endX = toyMoveRef.current.offsetWidth / 2;
         hitWall = true;
       }
       if (hitWall) {
@@ -295,14 +302,15 @@ export default function Sandbox() {
         endY = Math.round(screenRef.current.offsetHeight * UNDER_BOUND);
       }
 
-      toyRef.current.style.left = endX + "px";
-      toyRef.current.style.top = endY + "px";
-      toyRef.current.style.transform = `translate(-50%, -50%) rotate(${rotate}deg)`;
+      toyMoveRef.current.style.left = endX + "px";
+      toyMoveRef.current.style.top = endY + "px";
+      toyMoveRef.current.style.transform = `translate(-50%, -50%) `;
+      toyRotateRef.current.style.transform = `rotate(${rotate}deg)`;
     });
   };
 
   const toyGravityDrop = (index: number) => {
-    const toyRef = dummyToys[index].ref;
+    const toyRef = dummyToys[index].moveRef;
     if (toyPhysicsList.current === null || toyRef.current === null || screenRef.current === null) return;
 
     const toyPhysics = toyPhysicsList.current[index];
@@ -349,14 +357,15 @@ export default function Sandbox() {
 
     let focus = Number((e.target as HTMLDivElement).id.charAt(0));
     toyFocus.current = focus;
-    const toyRef = dummyToys[focus].ref;
+    const toyMoveRef = dummyToys[focus].moveRef;
+    const toyRotateRef = dummyToys[focus].rotateRef;
     const toyPhysics = toyPhysicsList.current[focus];
 
-    if (toyRef.current) {
+    if (toyMoveRef.current && toyRotateRef.current) {
       toyPhysics.DST.X = e.clientX;
       toyPhysics.DST.Y = e.clientY;
 
-      toyPhysics.R = Number(toyRef.current.style.transform.substring(29).split("d")[0]);
+      toyPhysics.R = Number(toyRotateRef.current.style.transform.substring(7).split("d")[0]);
     }
   };
 
@@ -365,7 +374,7 @@ export default function Sandbox() {
     mouseDownRef.current = false;
 
     const focus = toyFocus.current;
-    const toyRef = dummyToys[focus].ref;
+    const toyRef = dummyToys[focus].moveRef;
     const toyPhysics = toyPhysicsList.current[focus];
 
     if (toyPhysics && toyRef.current) {
@@ -423,14 +432,17 @@ export default function Sandbox() {
       >
         {dummyToys.map((v, i) => {
           return (
-            <div className="toy-div" id={`${i}toy`} ref={dummyToys[i].ref} onMouseDown={mouseDownEvent} key={i}>
-              {typeof v.image === "function" ? (
-                <v.image className="toy-image" id={`${i}toy`} />
-              ) : typeof v.image === "object" ? (
-                <Image className="toy-image" src={v.image} alt={""} id={`${i}toy`} />
-              ) : (
-                "A"
-              )}
+            <div className="toy-div" id={`${i}toy`} ref={v.moveRef} onMouseDown={mouseDownEvent} key={i}>
+              <div id={`${i}toy`} ref={v.rotateRef}>
+                {typeof v.image === "function" ? (
+                  <v.image className="toy-image" />
+                ) : // <ToyDeadlock id={`${i}toy`} />
+                typeof v.image === "object" ? (
+                  <Image className="toy-image" src={v.image} alt={""} />
+                ) : (
+                  <div className="toy-image">A</div>
+                )}
+              </div>
               {/* <div className="toy-buried"></div> */}
             </div>
           );
