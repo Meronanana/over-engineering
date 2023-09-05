@@ -22,7 +22,7 @@ $angle: 0deg;
   background-color: black;
   opacity: 0;
 
-  animation: shadow 0.5s linear forwards;
+  animation: shadowOn 0.5s linear forwards;
 }
 
 .sandbox-title {
@@ -40,16 +40,21 @@ $angle: 0deg;
   color: white;
 }
 
-.sandbox-sidemenu {
+.sandbox-docker {
   position: absolute;
   top: 50%;
   right: 0%;
-  padding: 0.5vw;
+  padding: 1vmin;
 
   display: flex;
   flex-direction: column;
 
   transform: translate(0%, -50%);
+}
+
+.sandbox-docker.tutorial {
+  border-color: white;
+  animation: tutorial-highlight 3s linear forwards;
 }
 
 .toy-div {
@@ -72,12 +77,15 @@ $angle: 0deg;
   pointer-events: none;
 }
 
-.toy-buried {
+.toy-tutorial-message {
   position: absolute;
   bottom: 0;
   width: 12vmin;
-  height: 2vmin;
-  background-color: yellow;
+  height: 1vmin;
+
+  text-align: center;
+  color: white;
+  // background-color: yellow;
 }
 
 .toy-div.dummy {
@@ -113,8 +121,31 @@ $angle: 0deg;
   transition: 0.5s;
 }
 
-@keyframes shadow {
+@keyframes shadowOn {
   100% {
     opacity: 0.3;
+  }
+}
+
+@keyframes shadowOff {
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes tutorial-highlight {
+  0% {
+    border-left-width: 0px;
+  }
+  10% {
+    border-left-width: 3px;
+  }
+
+  90% {
+    border-left-width: 3px;
+  }
+
+  100% {
+    border-left-width: 0px;
   }
 }

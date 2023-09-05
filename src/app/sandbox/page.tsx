@@ -5,15 +5,15 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { Toy } from "./model/toy";
-import Background from "../../../public/assets/images/sandbox-background.svg";
-import IconShrink from "../../../public/assets/icons/Icon-Shrink.svg";
-import IconGrid from "../../../public/assets/icons/Icon-Grid.svg";
-import IconShake from "../../../public/assets/icons/Icon-Shake.svg";
-import IconLog from "../../../public/assets/icons/Icon-Log.svg";
+import Background from "/public/assets/images/sandbox-background.svg";
+import IconShrink from "/public/assets/icons/Icon-Shrink.svg";
+import IconGrid from "/public/assets/icons/Icon-Grid.svg";
+import IconShake from "/public/assets/icons/Icon-Shake.svg";
+import IconLog from "/public/assets/icons/Icon-Log.svg";
 
 import ToyTutoMouse from "/public/assets/icons/toy-tuto-mouse.svg";
 import ToyLinkQR from "/public/assets/icons/toy-link-qr.png";
-import ToyDeadlock from "../../../public/assets/icons/toy-deadlock.svg";
+import ToyDeadlock from "/public/assets/icons/toy-deadlock.svg";
 import ToyNWJNS from "/public/assets/images/nwjns/haerin-fow-1.png";
 
 import ToyComponent from "./components/ToyComponent";
@@ -28,6 +28,8 @@ import {
   randomCoordinate,
   reactionByCircleCollision,
 } from "@/utils/physicalEngine";
+import { SandboxTutorial } from "./demonstrations";
+import { GVT_SPEED_OFFSET, SPIN_SPEED_OFFSET, FPS_OFFSET, UNDER_BOUND, GRID_ROWS, GRID_COLS } from "./model/constants";
 
 enum AlignType {
   Grid = 0,
@@ -43,6 +45,10 @@ export default function Sandbox() {
 
   const screenRef: RefObject<HTMLElement> = useRef<HTMLElement>(null);
   const backgroundRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+  const bgShadowRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+
+  const dockerRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+  const tutorialMessageRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
   const mouseDownRef: MutableRefObject<boolean> = useRef<boolean>(false);
   const toyFocus: MutableRefObject<number> = useRef<number>(-1);
@@ -50,20 +56,20 @@ export default function Sandbox() {
   const backgroundOffset = useRef({ left: 0, top: 0 });
 
   const dummyToys: Array<Toy> = [
-    { moveRef: createRef(), rotateRef: createRef(), name: "qr-code", link: "", image: ToyTutoMouse },
+    { moveRef: createRef(), rotateRef: createRef(), name: "tutorial", link: "", image: ToyTutoMouse },
     { moveRef: createRef(), rotateRef: createRef(), name: "qr-code", link: "", image: ToyLinkQR },
     { moveRef: createRef(), rotateRef: createRef(), name: "dead-lock", link: "", image: ToyDeadlock },
     { moveRef: createRef(), rotateRef: createRef(), name: "nwjns-powerpuffgirl", link: "", image: ToyNWJNS },
   ];
 
-  const GVT_SPEED_OFFSET = 0.1;
-  const SPIN_SPEED_OFFSET = 0.2;
-  const FPS_OFFSET = 1000 / 60; // 60fps
-  const UNDER_BOUND = 0.8;
-  const GRID_ROWS = 2;
-  const GRID_COLS = 4;
+  // const GVT_SPEED_OFFSET = 0.1;
+  // const SPIN_SPEED_OFFSET = 0.2;
+  // const FPS_OFFSET = 1000 / 60; // 60fps
+  // const UNDER_BOUND = 0.8;
+  // const GRID_ROWS = 2;
+  // const GRID_COLS = 4;
 
-  const BACKGROUND_SIZE = { width: 3840, height: 2160 };
+  // const BACKGROUND_SIZE = { width: 3840, height: 2160 };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -90,6 +96,8 @@ export default function Sandbox() {
         }
       });
     }
+
+    if (dummyToys[0].moveRef.current) dummyToys[0].moveRef.current.style.visibility = "hidden";
 
     if (!initialized) setInitialized(true);
 
@@ -340,6 +348,17 @@ export default function Sandbox() {
     }
   };
 
+  const spread = (index: number, outer: boolean) => {
+    if (screenRef.current === null) return;
+
+    const toyPhysics = toyPhysicsList.current[index];
+    if (outer) {
+      toyPhysics.DST = randomCoordinate(screenRef.current.offsetWidth, -200);
+    } else {
+      toyPhysics.DST = randomCoordinate(screenRef.current.offsetWidth, screenRef.current.offsetHeight * UNDER_BOUND);
+    }
+  };
+
   const shake = () => {
     if (toyPhysicsList.current === null) return;
 
@@ -420,7 +439,7 @@ export default function Sandbox() {
   return (
     <>
       <div className="sandbox-background" ref={backgroundRef}>
-        <div className={align === AlignType.Grid ? "sandbox-shadow" : ""}></div>
+        <div className={align === AlignType.Grid ? "sandbox-shadow" : ""} ref={bgShadowRef}></div>
         <Background width={backgroundSize.width} height={backgroundSize.height} />
       </div>
       <main
@@ -443,14 +462,20 @@ export default function Sandbox() {
                   <div className="toy-image">A</div>
                 )}
               </div>
-              {/* <div className="toy-buried"></div> */}
+              {i === 0 ? (
+                <div className="toy-tutorial-message" ref={tutorialMessageRef}>
+                  AAAA
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
           );
         })}
         <Link href="/" className={align === AlignType.Grid ? "sandbox-title on-grid" : "sandbox-title"}>
           over-engineering
         </Link>
-        <div className="sandbox-sidemenu">
+        <div className="sandbox-docker" ref={dockerRef}>
           <IconShrink
             className="sidemenu-button"
             onClick={() => {
@@ -468,7 +493,30 @@ export default function Sandbox() {
             onClick={() => (align === AlignType.Shake ? shake() : setAlign(AlignType.Shake))}
             color={align === AlignType.Grid ? "white" : "gray"}
           />
-          <IconLog className="sidemenu-button" onClick={logBtn} color={align === AlignType.Grid ? "white" : "gray"} />
+          <IconLog
+            className="sidemenu-button"
+            onClick={() => {
+              if (screenRef.current === null) return;
+              const coor =
+                screenRef.current.offsetHeight < screenRef.current.offsetWidth
+                  ? {
+                      X: screenRef.current.offsetWidth - screenRef.current.offsetHeight * 0.15,
+                      Y: screenRef.current.offsetHeight * 0.5,
+                    }
+                  : { X: screenRef.current.offsetWidth * 0.85, Y: screenRef.current.offsetHeight * 0.5 };
+              SandboxTutorial(
+                dummyToys,
+                toyPhysicsList,
+                bgShadowRef,
+                tutorialMessageRef,
+                dockerRef,
+                toyGravityDrop,
+                spread,
+                coor
+              );
+            }}
+            color={align === AlignType.Grid ? "white" : "gray"}
+          />
         </div>
       </main>
     </>
