@@ -10,6 +10,7 @@ import IconShrink from "/public/assets/icons/Icon-Shrink.svg";
 import IconGrid from "/public/assets/icons/Icon-Grid.svg";
 import IconShake from "/public/assets/icons/Icon-Shake.svg";
 import IconLog from "/public/assets/icons/Icon-Log.svg";
+import IconTutorial from "/public/assets/icons/Icon-Tutorial.svg";
 
 import ToyTutoMouse from "/public/assets/icons/toy-tuto-mouse.svg";
 import ToyLinkQR from "/public/assets/icons/toy-link-qr.png";
@@ -493,7 +494,7 @@ export default function Sandbox() {
             onClick={() => (align === AlignType.Shake ? shake() : setAlign(AlignType.Shake))}
             color={align === AlignType.Grid ? "white" : "gray"}
           />
-          <IconLog
+          <IconTutorial
             className="sidemenu-button"
             onClick={() => {
               if (screenRef.current === null) return;
