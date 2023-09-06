@@ -30,7 +30,15 @@ import {
   reactionByCircleCollision,
 } from "@/utils/physicalEngine";
 import { SandboxTutorial } from "./demonstrations";
-import { GVT_SPEED_OFFSET, SPIN_SPEED_OFFSET, FPS_OFFSET, UNDER_BOUND, GRID_ROWS, GRID_COLS } from "./model/constants";
+import {
+  GVT_SPEED_OFFSET,
+  SPIN_SPEED_OFFSET,
+  FPS_OFFSET,
+  UNDER_BOUND,
+  GRID_ROWS,
+  GRID_COLS,
+  TUTORIAL_INDEX,
+} from "./model/constants";
 
 enum AlignType {
   Grid = 0,
@@ -57,20 +65,11 @@ export default function Sandbox() {
   const backgroundOffset = useRef({ left: 0, top: 0 });
 
   const dummyToys: Array<Toy> = [
-    { moveRef: createRef(), rotateRef: createRef(), name: "tutorial", link: "", image: ToyTutoMouse },
     { moveRef: createRef(), rotateRef: createRef(), name: "qr-code", link: "", image: ToyLinkQR },
     { moveRef: createRef(), rotateRef: createRef(), name: "dead-lock", link: "", image: ToyDeadlock },
     { moveRef: createRef(), rotateRef: createRef(), name: "nwjns-powerpuffgirl", link: "", image: ToyNWJNS },
+    { moveRef: createRef(), rotateRef: createRef(), name: "tutorial", link: "", image: ToyTutoMouse },
   ];
-
-  // const GVT_SPEED_OFFSET = 0.1;
-  // const SPIN_SPEED_OFFSET = 0.2;
-  // const FPS_OFFSET = 1000 / 60; // 60fps
-  // const UNDER_BOUND = 0.8;
-  // const GRID_ROWS = 2;
-  // const GRID_COLS = 4;
-
-  // const BACKGROUND_SIZE = { width: 3840, height: 2160 };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -84,6 +83,7 @@ export default function Sandbox() {
             V: { vx: 0, vy: 0 } as Vector,
             R: 0,
             dR: 0,
+            FIXED: false,
           });
         } else {
           toyPhysicsList.current.push({
@@ -93,12 +93,15 @@ export default function Sandbox() {
             V: { vx: 0, vy: 0 } as Vector,
             R: 0,
             dR: 0,
+            FIXED: false,
           });
         }
       });
     }
 
-    if (dummyToys[0].moveRef.current) dummyToys[0].moveRef.current.style.visibility = "hidden";
+    toyPhysicsList.current[TUTORIAL_INDEX].FIXED = true;
+    if (dummyToys[TUTORIAL_INDEX].moveRef.current)
+      dummyToys[TUTORIAL_INDEX].moveRef.current.style.visibility = "hidden";
 
     if (!initialized) setInitialized(true);
 
@@ -239,8 +242,8 @@ export default function Sandbox() {
   };
 
   const toyMove = (t?: number) => {
-    const data: Array<Circle | null> = dummyToys.map((v) => {
-      if (v.moveRef.current) {
+    const data: Array<Circle | null> = dummyToys.map((v, i) => {
+      if (v.moveRef.current && i !== TUTORIAL_INDEX) {
         return { x: v.moveRef.current.offsetLeft, y: v.moveRef.current.offsetTop, d: v.moveRef.current.offsetWidth };
       } else {
         return null;
@@ -248,6 +251,8 @@ export default function Sandbox() {
     });
 
     dummyToys.forEach((v, i) => {
+      if (toyPhysicsList.current[i].FIXED) return;
+
       const toyMoveRef = v.moveRef;
       const toyRotateRef = v.rotateRef;
       if (
@@ -463,7 +468,7 @@ export default function Sandbox() {
                   <div className="toy-image">A</div>
                 )}
               </div>
-              {i === 0 ? (
+              {i === TUTORIAL_INDEX ? (
                 <div className="toy-tutorial-message" ref={tutorialMessageRef}>
                   AAAA
                 </div>
@@ -476,25 +481,8 @@ export default function Sandbox() {
         <Link href="/" className={align === AlignType.Grid ? "sandbox-title on-grid" : "sandbox-title"}>
           over-engineering
         </Link>
-        <div className="sandbox-docker" ref={dockerRef}>
-          <IconShrink
-            className="sidemenu-button"
-            onClick={() => {
-              setBackgroundShrink((state) => !state);
-            }}
-            color={backgroundShrink === true ? "aquamarine" : align === AlignType.Grid ? "white" : "gray"}
-          />
-          <IconGrid
-            className="sidemenu-button"
-            onClick={() => setAlign(align === AlignType.Grid ? AlignType.Free : AlignType.Grid)}
-            color={align === AlignType.Grid ? "aquamarine" : "gray"}
-          />
-          <IconShake
-            className="sidemenu-button"
-            onClick={() => (align === AlignType.Shake ? shake() : setAlign(AlignType.Shake))}
-            color={align === AlignType.Grid ? "white" : "gray"}
-          />
-          <IconTutorial
+        <div className="master-docker">
+          {/* <IconTutorial
             className="sidemenu-button"
             onClick={() => {
               if (screenRef.current === null) return;
@@ -516,6 +504,26 @@ export default function Sandbox() {
                 coor
               );
             }}
+            color={align === AlignType.Grid ? "white" : "gray"}
+          /> */}
+          <IconLog className="sidemenu-button" onClick={logBtn} color={align === AlignType.Grid ? "white" : "gray"} />
+        </div>
+        <div className="sandbox-docker" ref={dockerRef}>
+          <IconShrink
+            className="sidemenu-button"
+            onClick={() => {
+              setBackgroundShrink((state) => !state);
+            }}
+            color={backgroundShrink === true ? "aquamarine" : align === AlignType.Grid ? "white" : "gray"}
+          />
+          <IconGrid
+            className="sidemenu-button"
+            onClick={() => setAlign(align === AlignType.Grid ? AlignType.Free : AlignType.Grid)}
+            color={align === AlignType.Grid ? "aquamarine" : "gray"}
+          />
+          <IconShake
+            className="sidemenu-button"
+            onClick={() => (align === AlignType.Shake ? shake() : setAlign(AlignType.Shake))}
             color={align === AlignType.Grid ? "white" : "gray"}
           />
         </div>

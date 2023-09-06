@@ -15,6 +15,7 @@ export interface ToyPhysics {
   V: Vector; // 현재 이동 방향
   R: number; // 현재 회전각
   dR: number; // 현재 회전각속도
+  FIXED: boolean; // 이동 가능 여부
 }
 
 export interface Circle {
