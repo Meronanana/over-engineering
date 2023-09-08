@@ -11,9 +11,8 @@ import {
   useState,
 } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
-import { Toy, ToyPhysics, defaultToyPhysics } from "./model/toy";
+import { Toy, defaultToyPhysics } from "./model/toy";
 import Background from "/public/assets/images/sandbox-background.svg";
 import IconShrink from "/public/assets/icons/Icon-Shrink.svg";
 import IconGrid from "/public/assets/icons/Icon-Grid.svg";
@@ -48,9 +47,8 @@ enum AlignType {
 }
 
 export default function Sandbox() {
-  console.log("rerender!");
+  console.log("re-render!");
 
-  // const [backgroundShrink, setBackgroundShrink] = useState(true);
   const [backgroundSize, setBackgroundSize] = useState({ width: 1920, height: 1080 });
 
   const screenRef: RefObject<HTMLElement> = useRef<HTMLElement>(null);
@@ -103,9 +101,11 @@ export default function Sandbox() {
 
   useEffect(() => {
     const toyMoveId = setInterval(toyMove, FPS_OFFSET, 0.2);
+    window.addEventListener("resize", backgroundInitialize);
 
     return () => {
       clearInterval(toyMoveId);
+      window.removeEventListener("resize", backgroundInitialize);
     };
   }, []);
 
@@ -120,7 +120,6 @@ export default function Sandbox() {
     if (toyList.current[TUTORIAL_INDEX].moveRef.current)
       toyList.current[TUTORIAL_INDEX].moveRef.current.style.visibility = "hidden";
 
-    // const toyMoveId = setInterval(toyMove, FPS_OFFSET, 0.2);
     let bgMoveId: string | number | NodeJS.Timer | undefined;
 
     if (backgroundRef.current !== null) {
@@ -133,16 +132,13 @@ export default function Sandbox() {
     }
 
     backgroundInitialize();
-    window.addEventListener("resize", backgroundInitialize);
 
     return () => {
-      window.removeEventListener("resize", backgroundInitialize);
-      // clearInterval(toyMoveId);
       if (bgMoveId !== undefined) {
         clearInterval(bgMoveId);
       }
     };
-  });
+  }, [backgroundShrinkRef.current]);
 
   const alignModeChange = useCallback((mode: AlignType) => {
     if (screenRef.current === null || bgShadowRef.current === null) return;
@@ -215,33 +211,21 @@ export default function Sandbox() {
     }
 
     if (backgroundSize.width !== bgWidth || backgroundSize.height !== bgHeight) {
-      if (backgroundShrinkRef.current) {
-        let offsetLeft = -(bgWidth - screenWidth) / 2;
-        let offsetTop = -(bgHeight - screenHeight) / 2;
+      let offsetLeft = -(bgWidth - screenWidth) / 2;
+      let offsetTop = -(bgHeight - screenHeight) / 2;
 
-        backgroundOffset.current = { left: offsetLeft, top: offsetTop };
-        backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
+      backgroundOffset.current = { left: offsetLeft, top: offsetTop };
+      backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
 
-        setBackgroundSize({ width: bgWidth, height: bgHeight });
-      } else {
-        setBackgroundSize({ width: bgWidth, height: bgHeight });
-
-        let offsetLeft = -(bgWidth - screenWidth) / 2;
-        let offsetTop = -(bgHeight - screenHeight) / 2;
-
-        backgroundOffset.current = { left: offsetLeft, top: offsetTop };
-        backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
-      }
+      setBackgroundSize({ width: bgWidth, height: bgHeight });
     }
-  }, [backgroundSize.height, backgroundSize.width]);
+  }, [backgroundSize]);
 
-  const backgroundMove = () => {
+  const backgroundMove = useCallback(() => {
     if (screenRef.current === null || backgroundRef.current === null) return;
 
     const stdWidth = screenRef.current.offsetWidth / 2;
     const stdHeight = screenRef.current.offsetHeight / 2;
-    const offsetLeft = backgroundOffset.current.left;
-    const offsetTop = backgroundOffset.current.top;
     let meanX = 0;
     let meanY = 0;
 
@@ -261,7 +245,7 @@ export default function Sandbox() {
 
     backgroundRef.current.style.left = -moveX + "px";
     backgroundRef.current.style.top = -moveY + "px";
-  };
+  }, []);
 
   const toyMove = useCallback((t?: number) => {
     const data: Array<Circle | null> = toyList.current.map((v, i) => {
@@ -279,7 +263,7 @@ export default function Sandbox() {
       const toyRotateRef = v.rotateRef;
       if (toyMoveRef.current === null || screenRef.current === null || toyRotateRef.current === null) return;
 
-      const toyPhysics = toyList.current[i].physics;
+      const toyPhysics = v.physics;
 
       let startX = toyMoveRef.current.offsetLeft;
       let startY = toyMoveRef.current.offsetTop;
@@ -345,9 +329,9 @@ export default function Sandbox() {
 
   const toyGravityDrop = useCallback((index: number) => {
     const toyRef = toyList.current[index].moveRef;
-    if (toyRef.current === null || screenRef.current === null) return;
-
     const toyPhysics = toyList.current[index].physics;
+
+    if (toyRef.current === null || screenRef.current === null || toyPhysics.FIXED) return;
 
     let vx = toyPhysics.V.vx;
     let vy = toyPhysics.V.vy;
@@ -356,6 +340,7 @@ export default function Sandbox() {
     toyPhysics.DST.Y += vy;
 
     toyPhysics.V.vy += 2;
+    console.log(index, vy);
 
     if (
       (vy < 30 || toyRef.current.offsetTop < toyRef.current.offsetHeight) &&
@@ -363,6 +348,7 @@ export default function Sandbox() {
     ) {
       setTimeout(toyGravityDrop, FPS_OFFSET, index);
     } else {
+      // console.log(index, vx, vy);
       toyPhysics.DST.X = toyRef.current.offsetLeft;
       toyPhysics.DST.Y = toyRef.current.offsetTop;
 
@@ -378,11 +364,17 @@ export default function Sandbox() {
     if (screenRef.current === null) return;
 
     const toyPhysics = toyList.current[index].physics;
+
     if (outer) {
       toyPhysics.DST = randomCoordinate(screenRef.current.offsetWidth, -200);
     } else {
       toyPhysics.DST = randomCoordinate(screenRef.current.offsetWidth, screenRef.current.offsetHeight * UNDER_BOUND);
     }
+
+    toyPhysics.X = [0];
+    toyPhysics.Y = [0];
+    toyPhysics.V = { vx: 0, vy: 0 };
+    toyPhysics.dR = 0;
   }, []);
 
   const shake = useCallback(() => {
@@ -399,6 +391,7 @@ export default function Sandbox() {
     mouseDownRef.current = true;
 
     let focus = Number((e.target as HTMLDivElement).id.charAt(0));
+
     toyFocus.current = focus;
     const toyMoveRef = toyList.current[focus].moveRef;
     const toyRotateRef = toyList.current[focus].rotateRef;
@@ -453,11 +446,11 @@ export default function Sandbox() {
   };
 
   const logBtn = () => {
-    // console.log(toyPhysicsList.current);
+    console.log(toyList.current);
     // console.log(backgroundRef.current?.offsetWidth, backgroundRef.current?.offsetHeight);
-    console.log(backgroundRef.current?.style.transform);
+    // console.log(backgroundRef.current?.style.transform);
     // console.log(screenRef.current?.offsetWidth, screenRef.current?.offsetHeight);
-    console.log(backgroundSize);
+    // console.log(backgroundSize);
   };
 
   return (
