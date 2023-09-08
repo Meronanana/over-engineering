@@ -1,6 +1,15 @@
 "use client";
 
-import { MouseEventHandler, MutableRefObject, RefObject, createRef, useEffect, useRef, useState } from "react";
+import {
+  MouseEventHandler,
+  MutableRefObject,
+  RefObject,
+  createRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -41,7 +50,7 @@ enum AlignType {
 export default function Sandbox() {
   console.log("rerender!");
 
-  const [backgroundShrink, setBackgroundShrink] = useState(true);
+  // const [backgroundShrink, setBackgroundShrink] = useState(true);
   const [backgroundSize, setBackgroundSize] = useState({ width: 1920, height: 1080 });
 
   const screenRef: RefObject<HTMLElement> = useRef<HTMLElement>(null);
@@ -55,6 +64,7 @@ export default function Sandbox() {
   const toyFocus: MutableRefObject<number> = useRef<number>(-1);
   const backgroundOffset = useRef({ left: 0, top: 0 });
   const alignRef = useRef(AlignType.Free);
+  const backgroundShrinkRef = useRef(true);
 
   const toyList = useRef<Array<Toy>>([
     {
@@ -92,6 +102,14 @@ export default function Sandbox() {
   ]);
 
   useEffect(() => {
+    const toyMoveId = setInterval(toyMove, FPS_OFFSET, 0.2);
+
+    return () => {
+      clearInterval(toyMoveId);
+    };
+  }, []);
+
+  useEffect(() => {
     toyList.current.forEach((v, i) => {
       if (v.physics.DST.X === -1 && v.physics.DST.Y === -1) {
         spread(i, false);
@@ -102,11 +120,11 @@ export default function Sandbox() {
     if (toyList.current[TUTORIAL_INDEX].moveRef.current)
       toyList.current[TUTORIAL_INDEX].moveRef.current.style.visibility = "hidden";
 
-    const toyMoveId = setInterval(toyMove, FPS_OFFSET, 0.2);
+    // const toyMoveId = setInterval(toyMove, FPS_OFFSET, 0.2);
     let bgMoveId: string | number | NodeJS.Timer | undefined;
 
     if (backgroundRef.current !== null) {
-      if (!backgroundShrink) {
+      if (!backgroundShrinkRef.current) {
         bgMoveId = setInterval(backgroundMove, FPS_OFFSET);
       } else {
         backgroundRef.current.style.left = "0px";
@@ -119,14 +137,14 @@ export default function Sandbox() {
 
     return () => {
       window.removeEventListener("resize", backgroundInitialize);
-      clearInterval(toyMoveId);
+      // clearInterval(toyMoveId);
       if (bgMoveId !== undefined) {
         clearInterval(bgMoveId);
       }
     };
-  }, [backgroundShrink]);
+  });
 
-  const alignModeChange = (mode: AlignType) => {
+  const alignModeChange = useCallback((mode: AlignType) => {
     if (screenRef.current === null || bgShadowRef.current === null) return;
 
     if (mode === AlignType.Grid) {
@@ -173,9 +191,9 @@ export default function Sandbox() {
       shake();
       bgShadowRef.current.className = "";
     }
-  };
+  }, []);
 
-  const backgroundInitialize = () => {
+  const backgroundInitialize = useCallback(() => {
     if (screenRef.current === null || backgroundRef.current === null) return;
 
     const screenWidth = screenRef.current.offsetWidth;
@@ -191,13 +209,13 @@ export default function Sandbox() {
       bgWidth = (bgHeight * 16) / 9;
     }
 
-    if (!backgroundShrink) {
+    if (!backgroundShrinkRef.current) {
       bgWidth += 160;
       bgHeight += 90;
     }
 
     if (backgroundSize.width !== bgWidth || backgroundSize.height !== bgHeight) {
-      if (backgroundShrink) {
+      if (backgroundShrinkRef.current) {
         let offsetLeft = -(bgWidth - screenWidth) / 2;
         let offsetTop = -(bgHeight - screenHeight) / 2;
 
@@ -215,7 +233,7 @@ export default function Sandbox() {
         backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
       }
     }
-  };
+  }, [backgroundSize.height, backgroundSize.width]);
 
   const backgroundMove = () => {
     if (screenRef.current === null || backgroundRef.current === null) return;
@@ -245,7 +263,7 @@ export default function Sandbox() {
     backgroundRef.current.style.top = -moveY + "px";
   };
 
-  const toyMove = (t?: number) => {
+  const toyMove = useCallback((t?: number) => {
     const data: Array<Circle | null> = toyList.current.map((v, i) => {
       if (v.moveRef.current && i !== TUTORIAL_INDEX) {
         return { x: v.moveRef.current.offsetLeft, y: v.moveRef.current.offsetTop, d: v.moveRef.current.offsetWidth };
@@ -323,9 +341,9 @@ export default function Sandbox() {
       toyMoveRef.current.style.transform = `translate(-50%, -50%) `;
       toyRotateRef.current.style.transform = `rotate(${rotate}deg)`;
     });
-  };
+  }, []);
 
-  const toyGravityDrop = (index: number) => {
+  const toyGravityDrop = useCallback((index: number) => {
     const toyRef = toyList.current[index].moveRef;
     if (toyRef.current === null || screenRef.current === null) return;
 
@@ -354,9 +372,9 @@ export default function Sandbox() {
       toyPhysics.V.vy = 0;
       toyPhysics.dR = 0;
     }
-  };
+  }, []);
 
-  const spread = (index: number, outer: boolean) => {
+  const spread = useCallback((index: number, outer: boolean) => {
     if (screenRef.current === null) return;
 
     const toyPhysics = toyList.current[index].physics;
@@ -365,16 +383,16 @@ export default function Sandbox() {
     } else {
       toyPhysics.DST = randomCoordinate(screenRef.current.offsetWidth, screenRef.current.offsetHeight * UNDER_BOUND);
     }
-  };
+  }, []);
 
-  const shake = () => {
+  const shake = useCallback(() => {
     toyList.current.forEach((v, i) => {
       v.physics.V.vx = Math.round(Math.random() * 30) - 15;
       v.physics.V.vy = Math.round(Math.random() * -30);
 
       toyGravityDrop(i);
     });
-  };
+  }, []);
 
   const mouseDownEvent: MouseEventHandler<HTMLDivElement> = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (mouseDownRef.current || alignRef.current === AlignType.Grid) return;
@@ -496,9 +514,16 @@ export default function Sandbox() {
           <IconShrink
             className="sidemenu-button"
             onClick={() => {
-              setBackgroundShrink((state) => !state);
+              backgroundShrinkRef.current = !backgroundShrinkRef.current;
+              backgroundInitialize();
             }}
-            color={backgroundShrink === true ? "aquamarine" : alignRef.current === AlignType.Grid ? "white" : "gray"}
+            color={
+              backgroundShrinkRef.current === true
+                ? "aquamarine"
+                : alignRef.current === AlignType.Grid
+                ? "white"
+                : "gray"
+            }
           />
           <IconGrid
             className="sidemenu-button"
