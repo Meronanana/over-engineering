@@ -11,9 +11,8 @@ import {
   useState,
 } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
-import { Toy, ToyPhysics, defaultToyPhysics } from "./model/toy";
+import { Toy, defaultToyPhysics } from "./model/toy";
 import Background from "/public/assets/images/sandbox-background.svg";
 import IconShrink from "/public/assets/icons/Icon-Shrink.svg";
 import IconGrid from "/public/assets/icons/Icon-Grid.svg";
@@ -48,9 +47,8 @@ enum AlignType {
 }
 
 export default function Sandbox() {
-  console.log("rerender!");
+  console.log("re-render!");
 
-  // const [backgroundShrink, setBackgroundShrink] = useState(true);
   const [backgroundSize, setBackgroundSize] = useState({ width: 1920, height: 1080 });
 
   const screenRef: RefObject<HTMLElement> = useRef<HTMLElement>(null);
@@ -103,9 +101,11 @@ export default function Sandbox() {
 
   useEffect(() => {
     const toyMoveId = setInterval(toyMove, FPS_OFFSET, 0.2);
+    window.addEventListener("resize", backgroundInitialize);
 
     return () => {
       clearInterval(toyMoveId);
+      window.removeEventListener("resize", backgroundInitialize);
     };
   }, []);
 
@@ -120,7 +120,6 @@ export default function Sandbox() {
     if (toyList.current[TUTORIAL_INDEX].moveRef.current)
       toyList.current[TUTORIAL_INDEX].moveRef.current.style.visibility = "hidden";
 
-    // const toyMoveId = setInterval(toyMove, FPS_OFFSET, 0.2);
     let bgMoveId: string | number | NodeJS.Timer | undefined;
 
     if (backgroundRef.current !== null) {
@@ -133,16 +132,13 @@ export default function Sandbox() {
     }
 
     backgroundInitialize();
-    window.addEventListener("resize", backgroundInitialize);
 
     return () => {
-      window.removeEventListener("resize", backgroundInitialize);
-      // clearInterval(toyMoveId);
       if (bgMoveId !== undefined) {
         clearInterval(bgMoveId);
       }
     };
-  });
+  }, [backgroundShrinkRef.current]);
 
   const alignModeChange = useCallback((mode: AlignType) => {
     if (screenRef.current === null || bgShadowRef.current === null) return;
@@ -233,15 +229,13 @@ export default function Sandbox() {
         backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
       }
     }
-  }, [backgroundSize.height, backgroundSize.width]);
+  }, [backgroundSize]);
 
-  const backgroundMove = () => {
+  const backgroundMove = useCallback(() => {
     if (screenRef.current === null || backgroundRef.current === null) return;
 
     const stdWidth = screenRef.current.offsetWidth / 2;
     const stdHeight = screenRef.current.offsetHeight / 2;
-    const offsetLeft = backgroundOffset.current.left;
-    const offsetTop = backgroundOffset.current.top;
     let meanX = 0;
     let meanY = 0;
 
@@ -261,7 +255,7 @@ export default function Sandbox() {
 
     backgroundRef.current.style.left = -moveX + "px";
     backgroundRef.current.style.top = -moveY + "px";
-  };
+  }, []);
 
   const toyMove = useCallback((t?: number) => {
     const data: Array<Circle | null> = toyList.current.map((v, i) => {
