@@ -340,15 +340,13 @@ export default function Sandbox() {
     toyPhysics.DST.Y += vy;
 
     toyPhysics.V.vy += 2;
-    console.log(index, vy);
 
     if (
       (vy < 30 || toyRef.current.offsetTop < toyRef.current.offsetHeight) &&
       toyPhysics.DST.Y < Math.round(screenRef.current.offsetHeight * UNDER_BOUND)
     ) {
-      setTimeout(toyGravityDrop, FPS_OFFSET, index);
+      if (alignRef.current !== AlignType.Grid) setTimeout(toyGravityDrop, FPS_OFFSET, index);
     } else {
-      // console.log(index, vx, vy);
       toyPhysics.DST.X = toyRef.current.offsetLeft;
       toyPhysics.DST.Y = toyRef.current.offsetTop;
 
@@ -379,8 +377,8 @@ export default function Sandbox() {
 
   const shake = useCallback(() => {
     toyList.current.forEach((v, i) => {
-      v.physics.V.vx = Math.round(Math.random() * 30) - 15;
-      v.physics.V.vy = Math.round(Math.random() * -30);
+      v.physics.V.vx += Math.round(Math.random() * 30) - 15;
+      v.physics.V.vy += Math.round(Math.random() * -30);
 
       toyGravityDrop(i);
     });
