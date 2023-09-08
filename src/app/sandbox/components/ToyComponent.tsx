@@ -1,21 +1,34 @@
 import { Key, LegacyRef, MutableRefObject, RefObject, useRef, useState } from "react";
+import Image from "next/image";
 import { Toy } from "../model/toy";
-import "../sandbox.scss";
 import { MouseEventHandler } from "react";
-import { lerp } from "@/utils/physicalEngine";
+import "../sandbox.scss";
 
 interface Props {
-  key: Key;
-  metadata: Toy;
-  toyRef: RefObject<HTMLDivElement>;
+  idx: number;
+  toyData: Toy;
   mouseDownEvent: MouseEventHandler;
 }
 
-export default function ToyComponent({ key, metadata, toyRef, mouseDownEvent }: Props) {
-  console.log(key);
+export default function ToyComponent({ idx, toyData, mouseDownEvent }: Props) {
   return (
-    <div className="toy-div" key={key} ref={toyRef} onMouseDown={mouseDownEvent}>
-      .
+    <div className="toy-div" id={`${idx}toy`} ref={toyData.moveRef} onMouseDown={mouseDownEvent}>
+      <div id={`${idx}toy`} ref={toyData.rotateRef}>
+        {typeof toyData.image === "function" ? (
+          <toyData.image className="toy-image" />
+        ) : typeof toyData.image === "object" ? (
+          <Image className="toy-image" src={toyData.image} alt={""} />
+        ) : (
+          <div className="toy-image">A</div>
+        )}
+      </div>
+      {/* {idx === TUTORIAL_INDEX ? (
+        <div className="toy-tutorial-message" ref={tutorialMessageRef}>
+          AAAA
+        </div>
+      ) : (
+        <></>
+      )} */}
     </div>
   );
 }

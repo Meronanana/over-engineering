@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { MutableRefObject, RefObject } from "react";
 import { useSleep } from "../../utils/hooks";
-import { Toy } from "./model/toy";
-import { Coordinate, ToyPhysics } from "@/utils/physicalEngine";
-import { SPIN_SPEED_OFFSET } from "./model/constants";
+import { Toy, ToyPhysics } from "./model/toy";
+import { Coordinate } from "@/utils/physicalEngine";
+import { SPIN_SPEED_OFFSET, TUTORIAL_INDEX } from "./model/constants";
 
 export const SandboxTutorial = async (
   toys: Array<Toy>,
@@ -15,10 +15,9 @@ export const SandboxTutorial = async (
   spread: Function,
   dockerCoor: Coordinate
 ) => {
-  const tutorialIndex = 0;
-  const toyMoveRef = toys[tutorialIndex].moveRef;
-  const toyRotateRef = toys[tutorialIndex].rotateRef;
-  const toyPhysics = toyPhysicsList.current[tutorialIndex];
+  const toyMoveRef = toys[TUTORIAL_INDEX].moveRef;
+  const toyRotateRef = toys[TUTORIAL_INDEX].rotateRef;
+  const toyPhysics = toyPhysicsList.current[TUTORIAL_INDEX];
 
   if (
     toyMoveRef.current === null ||
@@ -33,8 +32,9 @@ export const SandboxTutorial = async (
   tutorialMessageRef.current.innerHTML = "TUTORIAL";
   bgShadowRef.current.className = "sandbox-shadow";
   toyMoveRef.current.style.visibility = "visible";
+  toyPhysics.FIXED = false;
 
-  spread(tutorialIndex, false);
+  spread(TUTORIAL_INDEX, false);
 
   await useSleep(1500);
 
@@ -45,7 +45,7 @@ export const SandboxTutorial = async (
   tutorialMessageRef.current.innerHTML = "THROW";
   toyPhysics.V = { vx: Math.floor(Math.random() * 40) - 20, vy: -30 };
   toyPhysics.dR = toyPhysics.V.vx * SPIN_SPEED_OFFSET;
-  toyGravityDrop(tutorialIndex);
+  toyGravityDrop(TUTORIAL_INDEX);
 
   await useSleep(2000);
 
@@ -57,11 +57,12 @@ export const SandboxTutorial = async (
 
   await useSleep(3500);
 
-  spread(tutorialIndex, true);
+  spread(TUTORIAL_INDEX, true);
 
   await useSleep(200);
 
   toyMoveRef.current.style.visibility = "hidden";
   bgShadowRef.current.className = "";
   dockerRef.current.className = "sandbox-docker";
+  toyPhysics.FIXED = true;
 };
