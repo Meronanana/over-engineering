@@ -211,23 +211,13 @@ export default function Sandbox() {
     }
 
     if (backgroundSize.width !== bgWidth || backgroundSize.height !== bgHeight) {
-      if (backgroundShrinkRef.current) {
-        let offsetLeft = -(bgWidth - screenWidth) / 2;
-        let offsetTop = -(bgHeight - screenHeight) / 2;
+      let offsetLeft = -(bgWidth - screenWidth) / 2;
+      let offsetTop = -(bgHeight - screenHeight) / 2;
 
-        backgroundOffset.current = { left: offsetLeft, top: offsetTop };
-        backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
+      backgroundOffset.current = { left: offsetLeft, top: offsetTop };
+      backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
 
-        setBackgroundSize({ width: bgWidth, height: bgHeight });
-      } else {
-        setBackgroundSize({ width: bgWidth, height: bgHeight });
-
-        let offsetLeft = -(bgWidth - screenWidth) / 2;
-        let offsetTop = -(bgHeight - screenHeight) / 2;
-
-        backgroundOffset.current = { left: offsetLeft, top: offsetTop };
-        backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
-      }
+      setBackgroundSize({ width: bgWidth, height: bgHeight });
     }
   }, [backgroundSize]);
 
@@ -273,7 +263,7 @@ export default function Sandbox() {
       const toyRotateRef = v.rotateRef;
       if (toyMoveRef.current === null || screenRef.current === null || toyRotateRef.current === null) return;
 
-      const toyPhysics = toyList.current[i].physics;
+      const toyPhysics = v.physics;
 
       let startX = toyMoveRef.current.offsetLeft;
       let startY = toyMoveRef.current.offsetTop;
@@ -339,9 +329,9 @@ export default function Sandbox() {
 
   const toyGravityDrop = useCallback((index: number) => {
     const toyRef = toyList.current[index].moveRef;
-    if (toyRef.current === null || screenRef.current === null) return;
-
     const toyPhysics = toyList.current[index].physics;
+
+    if (toyRef.current === null || screenRef.current === null || toyPhysics.FIXED) return;
 
     let vx = toyPhysics.V.vx;
     let vy = toyPhysics.V.vy;
@@ -350,6 +340,7 @@ export default function Sandbox() {
     toyPhysics.DST.Y += vy;
 
     toyPhysics.V.vy += 2;
+    console.log(index, vy);
 
     if (
       (vy < 30 || toyRef.current.offsetTop < toyRef.current.offsetHeight) &&
@@ -357,6 +348,7 @@ export default function Sandbox() {
     ) {
       setTimeout(toyGravityDrop, FPS_OFFSET, index);
     } else {
+      // console.log(index, vx, vy);
       toyPhysics.DST.X = toyRef.current.offsetLeft;
       toyPhysics.DST.Y = toyRef.current.offsetTop;
 
@@ -372,11 +364,17 @@ export default function Sandbox() {
     if (screenRef.current === null) return;
 
     const toyPhysics = toyList.current[index].physics;
+
     if (outer) {
       toyPhysics.DST = randomCoordinate(screenRef.current.offsetWidth, -200);
     } else {
       toyPhysics.DST = randomCoordinate(screenRef.current.offsetWidth, screenRef.current.offsetHeight * UNDER_BOUND);
     }
+
+    toyPhysics.X = [0];
+    toyPhysics.Y = [0];
+    toyPhysics.V = { vx: 0, vy: 0 };
+    toyPhysics.dR = 0;
   }, []);
 
   const shake = useCallback(() => {
@@ -393,6 +391,7 @@ export default function Sandbox() {
     mouseDownRef.current = true;
 
     let focus = Number((e.target as HTMLDivElement).id.charAt(0));
+
     toyFocus.current = focus;
     const toyMoveRef = toyList.current[focus].moveRef;
     const toyRotateRef = toyList.current[focus].rotateRef;
@@ -447,11 +446,11 @@ export default function Sandbox() {
   };
 
   const logBtn = () => {
-    // console.log(toyPhysicsList.current);
+    console.log(toyList.current);
     // console.log(backgroundRef.current?.offsetWidth, backgroundRef.current?.offsetHeight);
-    console.log(backgroundRef.current?.style.transform);
+    // console.log(backgroundRef.current?.style.transform);
     // console.log(screenRef.current?.offsetWidth, screenRef.current?.offsetHeight);
-    console.log(backgroundSize);
+    // console.log(backgroundSize);
   };
 
   return (
