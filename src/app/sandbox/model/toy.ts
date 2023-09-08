@@ -19,3 +19,13 @@ export interface ToyPhysics {
   dR: number; // 현재 회전각속도
   FIXED: boolean; // 이동 가능 여부
 }
+
+export const defaultToyPhysics = {
+  X: [0],
+  Y: [0],
+  DST: { X: -1, Y: -1 } as Coordinate,
+  V: { vx: 0, vy: 0 } as Vector,
+  R: 0,
+  dR: 0,
+  FIXED: false,
+};
