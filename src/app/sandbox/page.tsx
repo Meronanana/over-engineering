@@ -43,7 +43,6 @@ export default function Sandbox() {
 
   const [backgroundShrink, setBackgroundShrink] = useState(true);
   const [backgroundSize, setBackgroundSize] = useState({ width: 1920, height: 1080 });
-  const [initialized, setInitialized] = useState<boolean>(false);
 
   const screenRef: RefObject<HTMLElement> = useRef<HTMLElement>(null);
   const backgroundRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
@@ -92,11 +91,10 @@ export default function Sandbox() {
     },
   ]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    toyList.current.forEach((v) => {
-      if (screenRef.current && v.physics.DST.X === -1 && v.physics.DST.Y === -1) {
-        v.physics.DST = randomCoordinate(screenRef.current.offsetWidth, screenRef.current.offsetHeight * UNDER_BOUND);
+    toyList.current.forEach((v, i) => {
+      if (v.physics.DST.X === -1 && v.physics.DST.Y === -1) {
+        spread(i, false);
       }
     });
 
@@ -104,19 +102,15 @@ export default function Sandbox() {
     if (toyList.current[TUTORIAL_INDEX].moveRef.current)
       toyList.current[TUTORIAL_INDEX].moveRef.current.style.visibility = "hidden";
 
-    if (!initialized) setInitialized(true);
-
     const toyMoveId = setInterval(toyMove, FPS_OFFSET, 0.2);
     let bgMoveId: string | number | NodeJS.Timer | undefined;
 
     if (backgroundRef.current !== null) {
       if (!backgroundShrink) {
         bgMoveId = setInterval(backgroundMove, FPS_OFFSET);
-        // console.log("false");
       } else {
         backgroundRef.current.style.left = "0px";
         backgroundRef.current.style.top = "0px";
-        // console.log("true");
       }
     }
 
@@ -130,49 +124,7 @@ export default function Sandbox() {
         clearInterval(bgMoveId);
       }
     };
-  });
-
-  const backgroundInitialize = () => {
-    if (screenRef.current === null || backgroundRef.current === null) return;
-
-    const screenWidth = screenRef.current.offsetWidth;
-    const screenHeight = screenRef.current.offsetHeight;
-
-    let bgWidth, bgHeight;
-
-    if ((screenHeight * 16) / 9 < screenWidth) {
-      bgWidth = screenWidth;
-      bgHeight = (bgWidth * 9) / 16;
-    } else {
-      bgHeight = screenHeight;
-      bgWidth = (bgHeight * 16) / 9;
-    }
-
-    if (!backgroundShrink) {
-      bgWidth += 160;
-      bgHeight += 90;
-    }
-
-    if (backgroundSize.width !== bgWidth || backgroundSize.height !== bgHeight) {
-      if (backgroundShrink) {
-        let offsetLeft = -(bgWidth - screenWidth) / 2;
-        let offsetTop = -(bgHeight - screenHeight) / 2;
-
-        backgroundOffset.current = { left: offsetLeft, top: offsetTop };
-        backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
-
-        setBackgroundSize({ width: bgWidth, height: bgHeight });
-      } else {
-        setBackgroundSize({ width: bgWidth, height: bgHeight });
-
-        let offsetLeft = -(bgWidth - screenWidth) / 2;
-        let offsetTop = -(bgHeight - screenHeight) / 2;
-
-        backgroundOffset.current = { left: offsetLeft, top: offsetTop };
-        backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
-      }
-    }
-  };
+  }, [backgroundShrink]);
 
   const alignModeChange = (mode: AlignType) => {
     if (screenRef.current === null || bgShadowRef.current === null) return;
@@ -220,6 +172,48 @@ export default function Sandbox() {
 
       shake();
       bgShadowRef.current.className = "";
+    }
+  };
+
+  const backgroundInitialize = () => {
+    if (screenRef.current === null || backgroundRef.current === null) return;
+
+    const screenWidth = screenRef.current.offsetWidth;
+    const screenHeight = screenRef.current.offsetHeight;
+
+    let bgWidth, bgHeight;
+
+    if ((screenHeight * 16) / 9 < screenWidth) {
+      bgWidth = screenWidth;
+      bgHeight = (bgWidth * 9) / 16;
+    } else {
+      bgHeight = screenHeight;
+      bgWidth = (bgHeight * 16) / 9;
+    }
+
+    if (!backgroundShrink) {
+      bgWidth += 160;
+      bgHeight += 90;
+    }
+
+    if (backgroundSize.width !== bgWidth || backgroundSize.height !== bgHeight) {
+      if (backgroundShrink) {
+        let offsetLeft = -(bgWidth - screenWidth) / 2;
+        let offsetTop = -(bgHeight - screenHeight) / 2;
+
+        backgroundOffset.current = { left: offsetLeft, top: offsetTop };
+        backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
+
+        setBackgroundSize({ width: bgWidth, height: bgHeight });
+      } else {
+        setBackgroundSize({ width: bgWidth, height: bgHeight });
+
+        let offsetLeft = -(bgWidth - screenWidth) / 2;
+        let offsetTop = -(bgHeight - screenHeight) / 2;
+
+        backgroundOffset.current = { left: offsetLeft, top: offsetTop };
+        backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
+      }
     }
   };
 
@@ -462,26 +456,7 @@ export default function Sandbox() {
         ref={screenRef}
       >
         {toyList.current.map((v, i) => {
-          return (
-            <div className="toy-div" id={`${i}toy`} ref={v.moveRef} onMouseDown={mouseDownEvent} key={i}>
-              <div id={`${i}toy`} ref={v.rotateRef}>
-                {typeof v.image === "function" ? (
-                  <v.image className="toy-image" />
-                ) : typeof v.image === "object" ? (
-                  <Image className="toy-image" src={v.image} alt={""} />
-                ) : (
-                  <div className="toy-image">A</div>
-                )}
-              </div>
-              {i === TUTORIAL_INDEX ? (
-                <div className="toy-tutorial-message" ref={tutorialMessageRef}>
-                  AAAA
-                </div>
-              ) : (
-                <></>
-              )}
-            </div>
-          );
+          return <ToyComponent idx={i} toyData={v} mouseDownEvent={mouseDownEvent} key={i} />;
         })}
         <Link href="/" className={alignRef.current === AlignType.Grid ? "sandbox-title on-grid" : "sandbox-title"}>
           over-engineering
