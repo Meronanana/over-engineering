@@ -14,16 +14,10 @@ import Link from "next/link";
 
 import { SandboxAlignType, Toy, defaultToyPhysics } from "./model/types";
 import Background from "/public/assets/images/sandbox-background.svg";
-import IconShrink from "/public/assets/icons/Icon-Shrink.svg";
-import IconGrid from "/public/assets/icons/Icon-Grid.svg";
-import IconShake from "/public/assets/icons/Icon-Shake.svg";
-import IconLog from "/public/assets/icons/Icon-Log.svg";
-import IconTutorial from "/public/assets/icons/Icon-Tutorial.svg";
 
 import ToyTutoMouse from "/public/assets/icons/toy-tuto-mouse.svg";
 import ToyLinkQR from "/public/assets/icons/toy-link-qr.png";
 import ToyDeadlock from "/public/assets/icons/toy-deadlock.svg";
-import ToyNWJNS from "/public/assets/images/nwjns/haerin-fow-1.png";
 
 import ToyComponent from "./components/ToyComponent";
 
@@ -40,6 +34,7 @@ import {
   TUTORIAL_INDEX,
 } from "./model/constants";
 import SandboxController from "./components/SandboxController";
+import { charaSelector } from "@/utils/nwjnsCharacter";
 
 export default function Sandbox() {
   console.log("re-render!");
@@ -51,7 +46,7 @@ export default function Sandbox() {
   const bgShadowRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
   const dockerRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
-  const tutorialMessageRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+  // const tutorialMessageRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
   const mouseDownRef: MutableRefObject<boolean> = useRef<boolean>(false);
   const toyFocus: MutableRefObject<number> = useRef<number>(-1);
@@ -82,7 +77,7 @@ export default function Sandbox() {
       rotateRef: createRef(),
       physics: { ...defaultToyPhysics },
       link: "",
-      image: ToyNWJNS,
+      image: charaSelector(),
     },
     {
       name: "tutorial",
