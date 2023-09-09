@@ -1,7 +1,7 @@
-import { Key, LegacyRef, MutableRefObject, RefObject, useRef, useState } from "react";
+import { MouseEventHandler } from "react";
 import Image from "next/image";
 import { Toy } from "../model/types";
-import { MouseEventHandler } from "react";
+
 import "../sandbox.scss";
 
 interface Props {
