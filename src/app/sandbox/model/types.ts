@@ -1,6 +1,12 @@
 import { Coordinate, Vector } from "@/utils/physicalEngine";
 import { RefObject } from "react";
 
+export enum SandboxAlignType {
+  Grid = 0,
+  Free = 1,
+  Shake = 2,
+}
+
 export interface Toy {
   name: string;
   moveRef: RefObject<HTMLDivElement>;
