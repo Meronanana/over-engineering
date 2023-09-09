@@ -12,7 +12,7 @@ import {
 } from "react";
 import Link from "next/link";
 
-import { Toy, defaultToyPhysics } from "./model/toy";
+import { SandboxAlignType, Toy, defaultToyPhysics } from "./model/types";
 import Background from "/public/assets/images/sandbox-background.svg";
 import IconShrink from "/public/assets/icons/Icon-Shrink.svg";
 import IconGrid from "/public/assets/icons/Icon-Grid.svg";
@@ -39,12 +39,7 @@ import {
   GRID_COLS,
   TUTORIAL_INDEX,
 } from "./model/constants";
-
-enum AlignType {
-  Grid = 0,
-  Free = 1,
-  Shake = 2,
-}
+import SandboxController from "./components/SandboxController";
 
 export default function Sandbox() {
   console.log("re-render!");
@@ -61,7 +56,7 @@ export default function Sandbox() {
   const mouseDownRef: MutableRefObject<boolean> = useRef<boolean>(false);
   const toyFocus: MutableRefObject<number> = useRef<number>(-1);
   const backgroundOffset = useRef({ left: 0, top: 0 });
-  const alignRef = useRef(AlignType.Free);
+  const alignRef = useRef(SandboxAlignType.Free);
   const backgroundShrinkRef = useRef(true);
 
   const toyList = useRef<Array<Toy>>([
@@ -140,12 +135,12 @@ export default function Sandbox() {
     };
   }, [backgroundShrinkRef.current]);
 
-  const alignModeChange = useCallback((mode: AlignType) => {
+  const alignModeChange = useCallback((mode: SandboxAlignType) => {
     if (screenRef.current === null || bgShadowRef.current === null) return;
 
-    if (mode === AlignType.Grid) {
-      alignRef.current = AlignType.Grid;
+    alignRef.current = mode;
 
+    if (mode === SandboxAlignType.Grid) {
       const stdWidth = Math.round(screenRef.current.offsetWidth / (GRID_COLS + 1));
       const stdHeight = Math.round((screenRef.current.offsetHeight * UNDER_BOUND) / (GRID_ROWS + 1));
       const coors: Array<Coordinate> = [];
@@ -170,9 +165,7 @@ export default function Sandbox() {
       });
 
       bgShadowRef.current.className = "sandbox-shadow";
-    } else if (mode === AlignType.Free) {
-      alignRef.current = AlignType.Free;
-
+    } else if (mode === SandboxAlignType.Free) {
       toyList.current.forEach((v, i) => {
         v.physics.V.vx = Math.round(Math.random() * 6) - 3;
         v.physics.V.vy = Math.round(Math.random() * 6) - 3;
@@ -181,9 +174,7 @@ export default function Sandbox() {
       });
 
       bgShadowRef.current.className = "";
-    } else if (mode === AlignType.Shake) {
-      alignRef.current = AlignType.Shake;
-
+    } else if (mode === SandboxAlignType.Shake) {
       shake();
       bgShadowRef.current.className = "";
     }
@@ -300,7 +291,7 @@ export default function Sandbox() {
       // 객체 충돌 감지
       if (
         i !== toyFocus.current &&
-        alignRef.current !== AlignType.Grid &&
+        alignRef.current !== SandboxAlignType.Grid &&
         !(toyPhysics.V.vx === 0 && toyPhysics.V.vy === 0)
       ) {
         const vector = reactionByCircleCollision(data, i, toyPhysics.V);
@@ -328,6 +319,7 @@ export default function Sandbox() {
   }, []);
 
   const toyGravityDrop = useCallback((index: number) => {
+    console.log("dd");
     const toyRef = toyList.current[index].moveRef;
     const toyPhysics = toyList.current[index].physics;
 
@@ -345,7 +337,7 @@ export default function Sandbox() {
       (vy < 30 || toyRef.current.offsetTop < toyRef.current.offsetHeight) &&
       toyPhysics.DST.Y < Math.round(screenRef.current.offsetHeight * UNDER_BOUND)
     ) {
-      if (alignRef.current !== AlignType.Grid) setTimeout(toyGravityDrop, FPS_OFFSET, index);
+      if (alignRef.current !== SandboxAlignType.Grid) setTimeout(toyGravityDrop, FPS_OFFSET, index);
     } else {
       toyPhysics.DST.X = toyRef.current.offsetLeft;
       toyPhysics.DST.Y = toyRef.current.offsetTop;
@@ -385,7 +377,7 @@ export default function Sandbox() {
   }, []);
 
   const mouseDownEvent: MouseEventHandler<HTMLDivElement> = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (mouseDownRef.current || alignRef.current === AlignType.Grid) return;
+    if (mouseDownRef.current || alignRef.current === SandboxAlignType.Grid) return;
     mouseDownRef.current = true;
 
     let focus = Number((e.target as HTMLDivElement).id.charAt(0));
@@ -467,66 +459,14 @@ export default function Sandbox() {
         {toyList.current.map((v, i) => {
           return <ToyComponent idx={i} toyData={v} mouseDownEvent={mouseDownEvent} key={i} />;
         })}
-        <Link href="/" className={alignRef.current === AlignType.Grid ? "sandbox-title on-grid" : "sandbox-title"}>
-          over-engineering
-        </Link>
-        <div className="master-docker">
-          {/* <IconTutorial
-            className="sidemenu-button"
-            onClick={() => {
-              if (screenRef.current === null) return;
-              const coor =
-                screenRef.current.offsetHeight < screenRef.current.offsetWidth
-                  ? {
-                      X: screenRef.current.offsetWidth - screenRef.current.offsetHeight * 0.15,
-                      Y: screenRef.current.offsetHeight * 0.5,
-                    }
-                  : { X: screenRef.current.offsetWidth * 0.85, Y: screenRef.current.offsetHeight * 0.5 };
-              SandboxTutorial(
-                dummyToys,
-                toyPhysicsList,
-                bgShadowRef,
-                tutorialMessageRef,
-                dockerRef,
-                toyGravityDrop,
-                spread,
-                coor
-              );
-            }}
-            color={align === AlignType.Grid ? "white" : "gray"}
-          /> */}
-          <IconLog
-            className="sidemenu-button"
-            onClick={logBtn}
-            color={alignRef.current === AlignType.Grid ? "white" : "gray"}
-          />
-        </div>
-        <div className="sandbox-docker" ref={dockerRef}>
-          <IconShrink
-            className="sidemenu-button"
-            onClick={() => {
-              backgroundShrinkRef.current = !backgroundShrinkRef.current;
-              backgroundInitialize();
-            }}
-            color={
-              backgroundShrinkRef.current === true
-                ? "aquamarine"
-                : alignRef.current === AlignType.Grid
-                ? "white"
-                : "gray"
-            }
-          />
-          <IconGrid
-            className="sidemenu-button"
-            onClick={() => alignModeChange(alignRef.current === AlignType.Grid ? AlignType.Free : AlignType.Grid)}
-            color={alignRef.current === AlignType.Grid ? "aquamarine" : "gray"}
-          />
-          <IconShake
-            className="sidemenu-button"
-            onClick={() => alignModeChange(AlignType.Shake)}
-            color={alignRef.current === AlignType.Grid ? "white" : "gray"}
-          />
-        </div>
+        <SandboxController
+          alignRef={alignRef}
+          dockerRef={dockerRef}
+          backgroundShrinkRef={backgroundShrinkRef}
+          backgroundInitialize={backgroundInitialize}
+          alignModeChange={alignModeChange}
+          logBtn={logBtn}
+        />
       </main>
     </>
   );
