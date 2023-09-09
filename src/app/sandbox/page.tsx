@@ -1,10 +1,18 @@
 "use client";
 
-import { MouseEventHandler, MutableRefObject, RefObject, createRef, useEffect, useRef, useState } from "react";
+import {
+  MouseEventHandler,
+  MutableRefObject,
+  RefObject,
+  createRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Link from "next/link";
-import Image from "next/image";
 
-import { Toy } from "./model/toy";
+import { Toy, defaultToyPhysics } from "./model/toy";
 import Background from "/public/assets/images/sandbox-background.svg";
 import IconShrink from "/public/assets/icons/Icon-Shrink.svg";
 import IconGrid from "/public/assets/icons/Icon-Grid.svg";
@@ -20,15 +28,7 @@ import ToyNWJNS from "/public/assets/images/nwjns/haerin-fow-1.png";
 import ToyComponent from "./components/ToyComponent";
 
 import "./sandbox.scss";
-import {
-  Circle,
-  Coordinate,
-  ToyPhysics,
-  Vector,
-  lerp,
-  randomCoordinate,
-  reactionByCircleCollision,
-} from "@/utils/physicalEngine";
+import { Circle, Coordinate, Vector, lerp, randomCoordinate, reactionByCircleCollision } from "@/utils/physicalEngine";
 import { SandboxTutorial } from "./demonstrations";
 import {
   GVT_SPEED_OFFSET,
@@ -47,10 +47,9 @@ enum AlignType {
 }
 
 export default function Sandbox() {
-  const [backgroundShrink, setBackgroundShrink] = useState(true);
-  const [align, setAlign] = useState<AlignType>(1);
+  console.log("re-render!");
+
   const [backgroundSize, setBackgroundSize] = useState({ width: 1920, height: 1080 });
-  const [initialized, setInitialized] = useState<boolean>(false);
 
   const screenRef: RefObject<HTMLElement> = useRef<HTMLElement>(null);
   const backgroundRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
@@ -61,80 +60,92 @@ export default function Sandbox() {
 
   const mouseDownRef: MutableRefObject<boolean> = useRef<boolean>(false);
   const toyFocus: MutableRefObject<number> = useRef<number>(-1);
-  const toyPhysicsList = useRef<Array<ToyPhysics>>([]);
   const backgroundOffset = useRef({ left: 0, top: 0 });
+  const alignRef = useRef(AlignType.Free);
+  const backgroundShrinkRef = useRef(true);
 
-  const dummyToys: Array<Toy> = [
-    { moveRef: createRef(), rotateRef: createRef(), name: "qr-code", link: "", image: ToyLinkQR },
-    { moveRef: createRef(), rotateRef: createRef(), name: "dead-lock", link: "", image: ToyDeadlock },
-    { moveRef: createRef(), rotateRef: createRef(), name: "nwjns-powerpuffgirl", link: "", image: ToyNWJNS },
-    { moveRef: createRef(), rotateRef: createRef(), name: "tutorial", link: "", image: ToyTutoMouse },
-  ];
+  const toyList = useRef<Array<Toy>>([
+    {
+      name: "qr-code",
+      moveRef: createRef(),
+      rotateRef: createRef(),
+      physics: { ...defaultToyPhysics },
+      link: "",
+      image: ToyLinkQR,
+    },
+    {
+      name: "dead-lock",
+      moveRef: createRef(),
+      rotateRef: createRef(),
+      physics: { ...defaultToyPhysics },
+      link: "",
+      image: ToyDeadlock,
+    },
+    {
+      name: "nwjns-powerpuffgirl",
+      moveRef: createRef(),
+      rotateRef: createRef(),
+      physics: { ...defaultToyPhysics },
+      link: "",
+      image: ToyNWJNS,
+    },
+    {
+      name: "tutorial",
+      moveRef: createRef(),
+      rotateRef: createRef(),
+      physics: { ...defaultToyPhysics },
+      link: "",
+      image: ToyTutoMouse,
+    },
+  ]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (toyPhysicsList.current.length === 0) {
-      dummyToys.forEach(() => {
-        if (screenRef.current) {
-          toyPhysicsList.current.push({
-            X: [0],
-            Y: [0],
-            DST: randomCoordinate(screenRef.current.offsetWidth, screenRef.current.offsetHeight * UNDER_BOUND),
-            V: { vx: 0, vy: 0 } as Vector,
-            R: 0,
-            dR: 0,
-            FIXED: false,
-          });
-        } else {
-          toyPhysicsList.current.push({
-            X: [0],
-            Y: [0],
-            DST: { X: -1, Y: -1 } as Coordinate,
-            V: { vx: 0, vy: 0 } as Vector,
-            R: 0,
-            dR: 0,
-            FIXED: false,
-          });
-        }
-      });
-    }
-
-    toyPhysicsList.current[TUTORIAL_INDEX].FIXED = true;
-    if (dummyToys[TUTORIAL_INDEX].moveRef.current)
-      dummyToys[TUTORIAL_INDEX].moveRef.current.style.visibility = "hidden";
-
-    if (!initialized) setInitialized(true);
-
     const toyMoveId = setInterval(toyMove, FPS_OFFSET, 0.2);
+    window.addEventListener("resize", backgroundInitialize);
+
+    return () => {
+      clearInterval(toyMoveId);
+      window.removeEventListener("resize", backgroundInitialize);
+    };
+  }, []);
+
+  useEffect(() => {
+    toyList.current.forEach((v, i) => {
+      if (v.physics.DST.X === -1 && v.physics.DST.Y === -1) {
+        spread(i, false);
+      }
+    });
+
+    toyList.current[TUTORIAL_INDEX].physics.FIXED = true;
+    if (toyList.current[TUTORIAL_INDEX].moveRef.current)
+      toyList.current[TUTORIAL_INDEX].moveRef.current.style.visibility = "hidden";
+
     let bgMoveId: string | number | NodeJS.Timer | undefined;
 
     if (backgroundRef.current !== null) {
-      if (!backgroundShrink) {
+      if (!backgroundShrinkRef.current) {
         bgMoveId = setInterval(backgroundMove, FPS_OFFSET);
-        console.log("false");
       } else {
         backgroundRef.current.style.left = "0px";
         backgroundRef.current.style.top = "0px";
-        console.log("true");
       }
     }
 
     backgroundInitialize();
-    window.addEventListener("resize", backgroundInitialize);
 
     return () => {
-      window.removeEventListener("resize", backgroundInitialize);
-      clearInterval(toyMoveId);
       if (bgMoveId !== undefined) {
         clearInterval(bgMoveId);
       }
     };
-  });
+  }, [backgroundShrinkRef.current]);
 
-  useEffect(() => {
-    if (!initialized) return;
+  const alignModeChange = useCallback((mode: AlignType) => {
+    if (screenRef.current === null || bgShadowRef.current === null) return;
 
-    if (align === AlignType.Grid && screenRef.current) {
+    if (mode === AlignType.Grid) {
+      alignRef.current = AlignType.Grid;
+
       const stdWidth = Math.round(screenRef.current.offsetWidth / (GRID_COLS + 1));
       const stdHeight = Math.round((screenRef.current.offsetHeight * UNDER_BOUND) / (GRID_ROWS + 1));
       const coors: Array<Coordinate> = [];
@@ -144,10 +155,9 @@ export default function Sandbox() {
           coors.push({ X: stdWidth * j, Y: stdHeight * i });
         }
       }
-
       coors.forEach((v, i) => {
-        if (toyPhysicsList.current.length > i) {
-          const toyPhysics = toyPhysicsList.current[i];
+        if (toyList.current.length > i) {
+          const toyPhysics = toyList.current[i].physics;
 
           toyPhysics.DST = v;
           toyPhysics.R = 0;
@@ -158,20 +168,28 @@ export default function Sandbox() {
           toyPhysics.dR = 0;
         }
       });
-    } else if (align === AlignType.Free && screenRef.current) {
-      toyPhysicsList.current.forEach((v, i) => {
-        v.V.vx = Math.round(Math.random() * 6) - 3;
-        v.V.vy = Math.round(Math.random() * 6) - 3;
+
+      bgShadowRef.current.className = "sandbox-shadow";
+    } else if (mode === AlignType.Free) {
+      alignRef.current = AlignType.Free;
+
+      toyList.current.forEach((v, i) => {
+        v.physics.V.vx = Math.round(Math.random() * 6) - 3;
+        v.physics.V.vy = Math.round(Math.random() * 6) - 3;
 
         toyGravityDrop(i);
       });
-    } else if (align === AlignType.Shake && screenRef.current) {
-      shake();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [align]);
 
-  const backgroundInitialize = () => {
+      bgShadowRef.current.className = "";
+    } else if (mode === AlignType.Shake) {
+      alignRef.current = AlignType.Shake;
+
+      shake();
+      bgShadowRef.current.className = "";
+    }
+  }, []);
+
+  const backgroundInitialize = useCallback(() => {
     if (screenRef.current === null || backgroundRef.current === null) return;
 
     const screenWidth = screenRef.current.offsetWidth;
@@ -187,43 +205,31 @@ export default function Sandbox() {
       bgWidth = (bgHeight * 16) / 9;
     }
 
-    if (!backgroundShrink) {
+    if (!backgroundShrinkRef.current) {
       bgWidth += 160;
       bgHeight += 90;
     }
 
     if (backgroundSize.width !== bgWidth || backgroundSize.height !== bgHeight) {
-      if (backgroundShrink) {
-        let offsetLeft = -(bgWidth - screenWidth) / 2;
-        let offsetTop = -(bgHeight - screenHeight) / 2;
+      let offsetLeft = -(bgWidth - screenWidth) / 2;
+      let offsetTop = -(bgHeight - screenHeight) / 2;
 
-        backgroundOffset.current = { left: offsetLeft, top: offsetTop };
-        backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
+      backgroundOffset.current = { left: offsetLeft, top: offsetTop };
+      backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
 
-        setBackgroundSize({ width: bgWidth, height: bgHeight });
-      } else {
-        setBackgroundSize({ width: bgWidth, height: bgHeight });
-
-        let offsetLeft = -(bgWidth - screenWidth) / 2;
-        let offsetTop = -(bgHeight - screenHeight) / 2;
-
-        backgroundOffset.current = { left: offsetLeft, top: offsetTop };
-        backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
-      }
+      setBackgroundSize({ width: bgWidth, height: bgHeight });
     }
-  };
+  }, [backgroundSize]);
 
-  const backgroundMove = () => {
+  const backgroundMove = useCallback(() => {
     if (screenRef.current === null || backgroundRef.current === null) return;
 
     const stdWidth = screenRef.current.offsetWidth / 2;
     const stdHeight = screenRef.current.offsetHeight / 2;
-    const offsetLeft = backgroundOffset.current.left;
-    const offsetTop = backgroundOffset.current.top;
     let meanX = 0;
     let meanY = 0;
 
-    dummyToys.forEach((v) => {
+    toyList.current.forEach((v) => {
       const toyRef = v.moveRef;
       if (toyRef.current === null) return;
 
@@ -231,18 +237,18 @@ export default function Sandbox() {
       meanY += toyRef.current.offsetTop;
     });
 
-    meanX /= dummyToys.length;
-    meanY /= dummyToys.length;
+    meanX /= toyList.current.length;
+    meanY /= toyList.current.length;
 
     const moveX = Math.round(((meanX - stdWidth) * 90) / stdWidth);
     const moveY = Math.round(((meanY - stdHeight) * 45) / stdHeight);
 
     backgroundRef.current.style.left = -moveX + "px";
     backgroundRef.current.style.top = -moveY + "px";
-  };
+  }, []);
 
-  const toyMove = (t?: number) => {
-    const data: Array<Circle | null> = dummyToys.map((v, i) => {
+  const toyMove = useCallback((t?: number) => {
+    const data: Array<Circle | null> = toyList.current.map((v, i) => {
       if (v.moveRef.current && i !== TUTORIAL_INDEX) {
         return { x: v.moveRef.current.offsetLeft, y: v.moveRef.current.offsetTop, d: v.moveRef.current.offsetWidth };
       } else {
@@ -250,20 +256,14 @@ export default function Sandbox() {
       }
     });
 
-    dummyToys.forEach((v, i) => {
-      if (toyPhysicsList.current[i].FIXED) return;
+    toyList.current.forEach((v, i) => {
+      if (v.physics.FIXED) return;
 
       const toyMoveRef = v.moveRef;
       const toyRotateRef = v.rotateRef;
-      if (
-        toyMoveRef.current === null ||
-        screenRef.current === null ||
-        toyPhysicsList.current === null ||
-        toyRotateRef.current === null
-      )
-        return;
+      if (toyMoveRef.current === null || screenRef.current === null || toyRotateRef.current === null) return;
 
-      const toyPhysics = toyPhysicsList.current[i];
+      const toyPhysics = v.physics;
 
       let startX = toyMoveRef.current.offsetLeft;
       let startY = toyMoveRef.current.offsetTop;
@@ -298,7 +298,11 @@ export default function Sandbox() {
       }
 
       // 객체 충돌 감지
-      if (i !== toyFocus.current && align !== AlignType.Grid && !(toyPhysics.V.vx === 0 && toyPhysics.V.vy === 0)) {
+      if (
+        i !== toyFocus.current &&
+        alignRef.current !== AlignType.Grid &&
+        !(toyPhysics.V.vx === 0 && toyPhysics.V.vy === 0)
+      ) {
         const vector = reactionByCircleCollision(data, i, toyPhysics.V);
         if (vector !== null) {
           toyPhysics.V = vector;
@@ -321,13 +325,13 @@ export default function Sandbox() {
       toyMoveRef.current.style.transform = `translate(-50%, -50%) `;
       toyRotateRef.current.style.transform = `rotate(${rotate}deg)`;
     });
-  };
+  }, []);
 
-  const toyGravityDrop = (index: number) => {
-    const toyRef = dummyToys[index].moveRef;
-    if (toyPhysicsList.current === null || toyRef.current === null || screenRef.current === null) return;
+  const toyGravityDrop = useCallback((index: number) => {
+    const toyRef = toyList.current[index].moveRef;
+    const toyPhysics = toyList.current[index].physics;
 
-    const toyPhysics = toyPhysicsList.current[index];
+    if (toyRef.current === null || screenRef.current === null || toyPhysics.FIXED) return;
 
     let vx = toyPhysics.V.vx;
     let vy = toyPhysics.V.vy;
@@ -341,7 +345,7 @@ export default function Sandbox() {
       (vy < 30 || toyRef.current.offsetTop < toyRef.current.offsetHeight) &&
       toyPhysics.DST.Y < Math.round(screenRef.current.offsetHeight * UNDER_BOUND)
     ) {
-      setTimeout(toyGravityDrop, FPS_OFFSET, index);
+      if (alignRef.current !== AlignType.Grid) setTimeout(toyGravityDrop, FPS_OFFSET, index);
     } else {
       toyPhysics.DST.X = toyRef.current.offsetLeft;
       toyPhysics.DST.Y = toyRef.current.offsetTop;
@@ -352,39 +356,44 @@ export default function Sandbox() {
       toyPhysics.V.vy = 0;
       toyPhysics.dR = 0;
     }
-  };
+  }, []);
 
-  const spread = (index: number, outer: boolean) => {
+  const spread = useCallback((index: number, outer: boolean) => {
     if (screenRef.current === null) return;
 
-    const toyPhysics = toyPhysicsList.current[index];
+    const toyPhysics = toyList.current[index].physics;
+
     if (outer) {
       toyPhysics.DST = randomCoordinate(screenRef.current.offsetWidth, -200);
     } else {
       toyPhysics.DST = randomCoordinate(screenRef.current.offsetWidth, screenRef.current.offsetHeight * UNDER_BOUND);
     }
-  };
 
-  const shake = () => {
-    if (toyPhysicsList.current === null) return;
+    toyPhysics.X = [0];
+    toyPhysics.Y = [0];
+    toyPhysics.V = { vx: 0, vy: 0 };
+    toyPhysics.dR = 0;
+  }, []);
 
-    toyPhysicsList.current.forEach((v, i) => {
-      v.V.vx = Math.round(Math.random() * 30) - 15;
-      v.V.vy = Math.round(Math.random() * -30);
+  const shake = useCallback(() => {
+    toyList.current.forEach((v, i) => {
+      v.physics.V.vx += Math.round(Math.random() * 30) - 15;
+      v.physics.V.vy += Math.round(Math.random() * -30);
 
       toyGravityDrop(i);
     });
-  };
+  }, []);
 
   const mouseDownEvent: MouseEventHandler<HTMLDivElement> = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (mouseDownRef.current || align === AlignType.Grid) return;
+    if (mouseDownRef.current || alignRef.current === AlignType.Grid) return;
     mouseDownRef.current = true;
 
     let focus = Number((e.target as HTMLDivElement).id.charAt(0));
+
     toyFocus.current = focus;
-    const toyMoveRef = dummyToys[focus].moveRef;
-    const toyRotateRef = dummyToys[focus].rotateRef;
-    const toyPhysics = toyPhysicsList.current[focus];
+    const toyMoveRef = toyList.current[focus].moveRef;
+    const toyRotateRef = toyList.current[focus].rotateRef;
+    const toyPhysics = toyList.current[focus].physics;
 
     if (toyMoveRef.current && toyRotateRef.current) {
       toyPhysics.DST.X = e.clientX;
@@ -399,8 +408,8 @@ export default function Sandbox() {
     mouseDownRef.current = false;
 
     const focus = toyFocus.current;
-    const toyRef = dummyToys[focus].moveRef;
-    const toyPhysics = toyPhysicsList.current[focus];
+    const toyRef = toyList.current[focus].moveRef;
+    const toyPhysics = toyList.current[focus].physics;
 
     if (toyPhysics && toyRef.current) {
       let vx = Math.round(toyPhysics.X.reduce((sum, cur) => sum + cur, 0) * (GVT_SPEED_OFFSET * 0.7));
@@ -421,7 +430,7 @@ export default function Sandbox() {
 
     const moveX = e.movementX;
     const moveY = e.movementY;
-    const toyPhysics = toyPhysicsList.current[toyFocus.current];
+    const toyPhysics = toyList.current[toyFocus.current].physics;
 
     toyPhysics.DST.X += e.movementX;
     toyPhysics.DST.Y += e.movementY;
@@ -435,17 +444,17 @@ export default function Sandbox() {
   };
 
   const logBtn = () => {
-    // console.log(toyPhysicsList.current);
+    console.log(toyList.current);
     // console.log(backgroundRef.current?.offsetWidth, backgroundRef.current?.offsetHeight);
-    console.log(backgroundRef.current?.style.transform);
+    // console.log(backgroundRef.current?.style.transform);
     // console.log(screenRef.current?.offsetWidth, screenRef.current?.offsetHeight);
-    console.log(backgroundSize);
+    // console.log(backgroundSize);
   };
 
   return (
     <>
       <div className="sandbox-background" ref={backgroundRef}>
-        <div className={align === AlignType.Grid ? "sandbox-shadow" : ""} ref={bgShadowRef}></div>
+        <div className="" ref={bgShadowRef}></div>
         <Background width={backgroundSize.width} height={backgroundSize.height} />
       </div>
       <main
@@ -455,30 +464,10 @@ export default function Sandbox() {
         onMouseMove={mouseMoveEvent}
         ref={screenRef}
       >
-        {dummyToys.map((v, i) => {
-          return (
-            <div className="toy-div" id={`${i}toy`} ref={v.moveRef} onMouseDown={mouseDownEvent} key={i}>
-              <div id={`${i}toy`} ref={v.rotateRef}>
-                {typeof v.image === "function" ? (
-                  <v.image className="toy-image" />
-                ) : // <ToyDeadlock id={`${i}toy`} />
-                typeof v.image === "object" ? (
-                  <Image className="toy-image" src={v.image} alt={""} />
-                ) : (
-                  <div className="toy-image">A</div>
-                )}
-              </div>
-              {i === TUTORIAL_INDEX ? (
-                <div className="toy-tutorial-message" ref={tutorialMessageRef}>
-                  AAAA
-                </div>
-              ) : (
-                <></>
-              )}
-            </div>
-          );
+        {toyList.current.map((v, i) => {
+          return <ToyComponent idx={i} toyData={v} mouseDownEvent={mouseDownEvent} key={i} />;
         })}
-        <Link href="/" className={align === AlignType.Grid ? "sandbox-title on-grid" : "sandbox-title"}>
+        <Link href="/" className={alignRef.current === AlignType.Grid ? "sandbox-title on-grid" : "sandbox-title"}>
           over-engineering
         </Link>
         <div className="master-docker">
@@ -506,25 +495,36 @@ export default function Sandbox() {
             }}
             color={align === AlignType.Grid ? "white" : "gray"}
           /> */}
-          <IconLog className="sidemenu-button" onClick={logBtn} color={align === AlignType.Grid ? "white" : "gray"} />
+          <IconLog
+            className="sidemenu-button"
+            onClick={logBtn}
+            color={alignRef.current === AlignType.Grid ? "white" : "gray"}
+          />
         </div>
         <div className="sandbox-docker" ref={dockerRef}>
           <IconShrink
             className="sidemenu-button"
             onClick={() => {
-              setBackgroundShrink((state) => !state);
+              backgroundShrinkRef.current = !backgroundShrinkRef.current;
+              backgroundInitialize();
             }}
-            color={backgroundShrink === true ? "aquamarine" : align === AlignType.Grid ? "white" : "gray"}
+            color={
+              backgroundShrinkRef.current === true
+                ? "aquamarine"
+                : alignRef.current === AlignType.Grid
+                ? "white"
+                : "gray"
+            }
           />
           <IconGrid
             className="sidemenu-button"
-            onClick={() => setAlign(align === AlignType.Grid ? AlignType.Free : AlignType.Grid)}
-            color={align === AlignType.Grid ? "aquamarine" : "gray"}
+            onClick={() => alignModeChange(alignRef.current === AlignType.Grid ? AlignType.Free : AlignType.Grid)}
+            color={alignRef.current === AlignType.Grid ? "aquamarine" : "gray"}
           />
           <IconShake
             className="sidemenu-button"
-            onClick={() => (align === AlignType.Shake ? shake() : setAlign(AlignType.Shake))}
-            color={align === AlignType.Grid ? "white" : "gray"}
+            onClick={() => alignModeChange(AlignType.Shake)}
+            color={alignRef.current === AlignType.Grid ? "white" : "gray"}
           />
         </div>
       </main>
