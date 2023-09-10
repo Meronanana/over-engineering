@@ -1,4 +1,4 @@
-import { MouseEventHandler } from "react";
+import { MouseEventHandler, TouchEventHandler } from "react";
 import Image from "next/image";
 import { Toy } from "../model/types";
 
@@ -8,11 +8,18 @@ interface Props {
   idx: number;
   toyData: Toy;
   mouseDownEvent: MouseEventHandler;
+  touchStartEvent: TouchEventHandler;
 }
 
-export default function ToyComponent({ idx, toyData, mouseDownEvent }: Props) {
+export default function ToyComponent({ idx, toyData, mouseDownEvent, touchStartEvent }: Props) {
   return (
-    <div className="toy-div" id={`${idx}toy`} ref={toyData.moveRef} onMouseDown={mouseDownEvent}>
+    <div
+      className="toy-div"
+      id={`${idx}toy`}
+      ref={toyData.moveRef}
+      onMouseDown={mouseDownEvent}
+      onTouchStart={touchStartEvent}
+    >
       <div id={`${idx}toy`} ref={toyData.rotateRef}>
         {typeof toyData.image === "function" ? (
           <toyData.image className="toy-image" />
