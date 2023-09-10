@@ -4,6 +4,7 @@ import {
   MouseEventHandler,
   MutableRefObject,
   RefObject,
+  TouchEventHandler,
   createRef,
   useCallback,
   useEffect,
@@ -41,7 +42,7 @@ export default function Sandbox() {
 
   const [backgroundSize, setBackgroundSize] = useState({ width: 1920, height: 1080 });
 
-  const screenRef: RefObject<HTMLElement> = useRef<HTMLElement>(null);
+  const screenRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const backgroundRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const bgShadowRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
@@ -314,7 +315,6 @@ export default function Sandbox() {
   }, []);
 
   const toyGravityDrop = useCallback((index: number) => {
-    console.log("dd");
     const toyRef = toyList.current[index].moveRef;
     const toyPhysics = toyList.current[index].physics;
 
@@ -390,7 +390,26 @@ export default function Sandbox() {
     }
   };
 
-  const mouseUpEvent: MouseEventHandler = (e: React.MouseEvent) => {
+  const touchStartEvent: TouchEventHandler<HTMLDivElement> = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (mouseDownRef.current || alignRef.current === SandboxAlignType.Grid) return;
+    mouseDownRef.current = true;
+
+    let focus = Number((e.target as HTMLDivElement).id.charAt(0));
+
+    toyFocus.current = focus;
+    const toyMoveRef = toyList.current[focus].moveRef;
+    const toyRotateRef = toyList.current[focus].rotateRef;
+    const toyPhysics = toyList.current[focus].physics;
+
+    if (toyMoveRef.current && toyRotateRef.current) {
+      toyPhysics.DST.X = e.touches[0].clientX;
+      toyPhysics.DST.Y = e.touches[0].clientY;
+
+      toyPhysics.R = Number(toyRotateRef.current.style.transform.substring(7).split("d")[0]);
+    }
+  };
+
+  const mouseUpEvent = () => {
     if (!mouseDownRef.current) return;
     mouseDownRef.current = false;
 
@@ -430,6 +449,24 @@ export default function Sandbox() {
     }
   };
 
+  const touchMoveEvent: TouchEventHandler = (e: React.TouchEvent) => {
+    if (!mouseDownRef.current) return;
+
+    const endX = e.touches[0].clientX;
+    const endY = e.touches[0].clientY;
+    const toyPhysics = toyList.current[toyFocus.current].physics;
+
+    toyPhysics.X.push(endX - toyPhysics.DST.X);
+    toyPhysics.Y.push(endY - toyPhysics.DST.Y);
+    if (toyPhysics.X.length > 5) {
+      toyPhysics.X.shift();
+      toyPhysics.Y.shift();
+    }
+
+    toyPhysics.DST.X = endX;
+    toyPhysics.DST.Y = endY;
+  };
+
   const logBtn = () => {
     console.log(toyList.current);
     // console.log(backgroundRef.current?.offsetWidth, backgroundRef.current?.offsetHeight);
@@ -440,19 +477,30 @@ export default function Sandbox() {
 
   return (
     <>
+      <meta name="viewport" content="width=device-width, inital-scale=1.0, user-scalable=no" />
       <div className="sandbox-background" ref={backgroundRef}>
         <div className="" ref={bgShadowRef}></div>
         <Background width={backgroundSize.width} height={backgroundSize.height} />
       </div>
-      <main
+      <div
         className="sandbox-screen"
         onMouseLeave={mouseUpEvent}
         onMouseUp={mouseUpEvent}
         onMouseMove={mouseMoveEvent}
+        onTouchEnd={mouseUpEvent}
+        onTouchMove={touchMoveEvent}
         ref={screenRef}
       >
         {toyList.current.map((v, i) => {
-          return <ToyComponent idx={i} toyData={v} mouseDownEvent={mouseDownEvent} key={i} />;
+          return (
+            <ToyComponent
+              idx={i}
+              toyData={v}
+              mouseDownEvent={mouseDownEvent}
+              touchStartEvent={touchStartEvent}
+              key={i}
+            />
+          );
         })}
         <SandboxController
           alignRef={alignRef}
@@ -462,7 +510,7 @@ export default function Sandbox() {
           alignModeChange={alignModeChange}
           logBtn={logBtn}
         />
-      </main>
+      </div>
     </>
   );
 }
