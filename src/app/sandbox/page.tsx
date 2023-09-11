@@ -33,6 +33,9 @@ import {
   GRID_ROWS,
   GRID_COLS,
   TUTORIAL_INDEX,
+  GRID_4_BY_2,
+  GRID_3_BY_3,
+  GRID_2_BY_4,
 } from "./model/constants";
 import SandboxController from "./components/SandboxController";
 import { charaSelector } from "@/utils/nwjnsCharacter";
@@ -137,12 +140,28 @@ export default function Sandbox() {
     alignRef.current = mode;
 
     if (mode === SandboxAlignType.Grid) {
-      const stdWidth = Math.round(screenRef.current.offsetWidth / (GRID_COLS + 1));
-      const stdHeight = Math.round((screenRef.current.offsetHeight * UNDER_BOUND) / (GRID_ROWS + 1));
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+      const screenRatio = screenWidth / screenHeight;
+
+      let rows, cols;
+      if (screenRatio > 1.4) {
+        rows = GRID_4_BY_2.rows;
+        cols = GRID_4_BY_2.cols;
+      } else if (screenRatio > 0.7) {
+        rows = GRID_3_BY_3.rows;
+        cols = GRID_3_BY_3.cols;
+      } else {
+        rows = GRID_2_BY_4.rows;
+        cols = GRID_2_BY_4.cols;
+      }
+
+      const stdWidth = Math.round(screenWidth / (cols + 1));
+      const stdHeight = Math.round((screenHeight * UNDER_BOUND) / (rows + 1));
       const coors: Array<Coordinate> = [];
 
-      for (let i = 1; i <= GRID_ROWS; i++) {
-        for (let j = 1; j <= GRID_COLS; j++) {
+      for (let i = 1; i <= rows; i++) {
+        for (let j = 1; j <= cols; j++) {
           coors.push({ X: stdWidth * j, Y: stdHeight * i });
         }
       }
@@ -482,7 +501,7 @@ export default function Sandbox() {
         <div className="" ref={bgShadowRef}></div>
         <Background width={backgroundSize.width} height={backgroundSize.height} />
       </div>
-      <div
+      <main
         className="sandbox-screen"
         onMouseLeave={mouseUpEvent}
         onMouseUp={mouseUpEvent}
@@ -510,7 +529,7 @@ export default function Sandbox() {
           alignModeChange={alignModeChange}
           logBtn={logBtn}
         />
-      </div>
+      </main>
     </>
   );
 }
