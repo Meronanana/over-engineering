@@ -73,8 +73,8 @@ $angle: 0deg;
   position: absolute;
   top: -10%;
   left: 50%;
-  width: 12vmin;
-  height: 12vmin;
+  width: 40px;
+  height: 40px;
   transform: translate(-50%, -50%);
 
   -webkit-user-select: none;
@@ -86,10 +86,13 @@ $angle: 0deg;
 }
 
 .toy-image {
-  pointer-events: none;
+  position: relative;
+  display: block;
 
-  width: 100%;
-  height: 100%;
+  // width: 100%;
+  // height: 100%;
+
+  pointer-events: none;
 }
 
 .toy-tutorial-message {

@@ -482,7 +482,7 @@ export default function Sandbox() {
         <div className="" ref={bgShadowRef}></div>
         <Background width={backgroundSize.width} height={backgroundSize.height} />
       </div>
-      <div
+      <main
         className="sandbox-screen"
         onMouseLeave={mouseUpEvent}
         onMouseUp={mouseUpEvent}
@@ -510,7 +510,7 @@ export default function Sandbox() {
           alignModeChange={alignModeChange}
           logBtn={logBtn}
         />
-      </div>
+      </main>
     </>
   );
 }
