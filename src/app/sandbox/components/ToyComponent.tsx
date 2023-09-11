@@ -30,9 +30,8 @@ export default function ToyComponent({ idx, toyData, mouseDownEvent, touchStartE
     if (toyMoveRef.current === null) return;
 
     const sizeIndex: number = window.innerWidth + window.innerHeight;
-    console.log(sizeIndex);
+
     for (let i = WINDOW_SIZE_INDEXS.length - 1; i >= 0; i--) {
-      // console.log(i);
       if (WINDOW_SIZE_INDEXS[i] <= sizeIndex) {
         toyMoveRef.current.style.width = TOY_SIZES[i] + "px";
         toyMoveRef.current.style.height = TOY_SIZES[i] + "px";
