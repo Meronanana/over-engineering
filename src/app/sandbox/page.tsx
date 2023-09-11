@@ -41,7 +41,7 @@ import SandboxController from "./components/SandboxController";
 import { charaSelector } from "@/utils/nwjnsCharacter";
 
 export default function Sandbox() {
-  console.log("re-render!");
+  // console.log("re-render!");
 
   const [backgroundSize, setBackgroundSize] = useState({ width: 1920, height: 1080 });
 
