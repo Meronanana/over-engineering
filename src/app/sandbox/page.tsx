@@ -273,10 +273,11 @@ export default function Sandbox() {
 
       let startX = toyMoveRef.current.offsetLeft;
       let startY = toyMoveRef.current.offsetTop;
-      let endX = toyPhysics.DST.X;
-      let endY = toyPhysics.DST.Y;
 
       if (startX > window.innerWidth || startY > window.innerHeight) spread(i, false);
+
+      let endX = toyPhysics.DST.X;
+      let endY = toyPhysics.DST.Y;
 
       if (t !== undefined) {
         let newX = lerp(startX, endX, t);
@@ -330,7 +331,9 @@ export default function Sandbox() {
 
       toyMoveRef.current.style.left = endX + "px";
       toyMoveRef.current.style.top = endY + "px";
-      toyMoveRef.current.style.transform = `translate(-50%, -50%) `;
+      // toyMoveRef.current.style.transform = `translate(${endX}px, ${endY}px)`;
+      // toyMoveRef.current.style.transform = `translate(${100}px, ${100}px)`;
+      // toyMoveRef.current.style.transform = `translate(-50%, -50%) `;
       toyRotateRef.current.style.transform = `rotate(${rotate}deg)`;
     });
   }, []);
@@ -489,7 +492,13 @@ export default function Sandbox() {
   };
 
   const logBtn = () => {
-    console.log(toyList.current);
+    // console.log(toyList.current);
+    const startTime = Date.now();
+    // toyMove(0.2);
+    backgroundMove();
+    const endTime = Date.now();
+    console.log(startTime, endTime);
+    console.log(endTime - startTime);
     // console.log(backgroundRef.current?.offsetWidth, backgroundRef.current?.offsetHeight);
     // console.log(backgroundRef.current?.style.transform);
     // console.log(screenRef.current?.offsetWidth, screenRef.current?.offsetHeight);
@@ -498,7 +507,7 @@ export default function Sandbox() {
 
   return (
     <>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+      {/* <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" /> */}
       <div className="sandbox-background" ref={backgroundRef}>
         <div className="" ref={bgShadowRef}></div>
         <Background width={backgroundSize.width} height={backgroundSize.height} />
