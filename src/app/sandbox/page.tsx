@@ -276,6 +276,8 @@ export default function Sandbox() {
       let endX = toyPhysics.DST.X;
       let endY = toyPhysics.DST.Y;
 
+      if (startX > window.innerWidth || startY > window.innerHeight) spread(i, false);
+
       if (t !== undefined) {
         let newX = lerp(startX, endX, t);
         let newY = lerp(startY, endY, t);
