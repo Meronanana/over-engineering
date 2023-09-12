@@ -10,12 +10,8 @@ module.exports = {
     });
     return config;
   },
-  module: {
-    rules: [
-      {
-        test: /\.scss$/,
-        use: ["style-loader", "css-loader", "sass-loader"],
-      },
-    ],
+  images: {
+    deviceSizes: [640, 1080, 1440, 1920],
+    imageSizes: [80, 160, 160, 320],
   },
 };

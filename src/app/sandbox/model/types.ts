@@ -1,4 +1,5 @@
 import { Coordinate, Vector } from "@/utils/physicalEngine";
+import { StaticImageData } from "next/image";
 import { RefObject } from "react";
 
 export enum SandboxAlignType {
@@ -13,7 +14,7 @@ export interface Toy {
   rotateRef: RefObject<HTMLDivElement>;
   physics: ToyPhysics;
   link: string;
-  image: any;
+  image: StaticImageData | any;
 }
 
 export interface ToyPhysics {

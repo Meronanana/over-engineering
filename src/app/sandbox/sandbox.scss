@@ -1,10 +1,10 @@
 $angle: 0deg;
 
 .sandbox-screen {
-  position: absolute;
+  position: fixed;
   overflow: hidden;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
 }
 
 .sandbox-background {
@@ -37,6 +37,21 @@ $angle: 0deg;
 }
 
 .sandbox-title.on-grid {
+  color: white;
+}
+
+.sandbox-tail {
+  position: absolute;
+  bottom: 0%;
+  left: 50%;
+  padding: 1vh;
+  color: gray;
+  font-size: 2vmin;
+  transition: 0.5s;
+  transform: translate(-50%, 0%);
+}
+
+.sandbox-tail.on-grid {
   color: white;
 }
 
@@ -73,8 +88,8 @@ $angle: 0deg;
   position: absolute;
   top: -10%;
   left: 50%;
-  width: 12vmin;
-  height: 12vmin;
+  width: 40px;
+  height: 40px;
   transform: translate(-50%, -50%);
 
   -webkit-user-select: none;
@@ -86,10 +101,13 @@ $angle: 0deg;
 }
 
 .toy-image {
-  pointer-events: none;
+  position: relative;
+  display: block;
 
-  width: 100%;
-  height: 100%;
+  // width: 100%;
+  // height: 100%;
+
+  pointer-events: none;
 }
 
 .toy-tutorial-message {

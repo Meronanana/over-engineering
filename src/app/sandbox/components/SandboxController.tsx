@@ -27,10 +27,16 @@ export default function SandboxController({
   logBtn,
 }: Props) {
   const [align, setAlign] = useState(SandboxAlignType.Free);
+
   return (
     <div>
       <Link href="/" className={align === SandboxAlignType.Grid ? "sandbox-title on-grid" : "sandbox-title"}>
         over-engineering
+      </Link>
+      <Link href="https://github.com/Meronanana/over-engineering" legacyBehavior>
+        <a className={align === SandboxAlignType.Grid ? "sandbox-tail on-grid" : "sandbox-tail"} target="_blank">
+          Portfolio by JaeSeong Jeong, 2023
+        </a>
       </Link>
       <div className="master-docker">
         {/* <IconTutorial
