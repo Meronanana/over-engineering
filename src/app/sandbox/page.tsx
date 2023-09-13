@@ -30,8 +30,6 @@ import {
   SPIN_SPEED_OFFSET,
   FPS_OFFSET,
   UNDER_BOUND,
-  GRID_ROWS,
-  GRID_COLS,
   TUTORIAL_INDEX,
   GRID_4_BY_2,
   GRID_3_BY_3,
@@ -331,9 +329,6 @@ export default function Sandbox() {
 
       toyMoveRef.current.style.left = endX + "px";
       toyMoveRef.current.style.top = endY + "px";
-      // toyMoveRef.current.style.transform = `translate(${endX}px, ${endY}px)`;
-      // toyMoveRef.current.style.transform = `translate(${100}px, ${100}px)`;
-      // toyMoveRef.current.style.transform = `translate(-50%, -50%) `;
       toyRotateRef.current.style.transform = `rotate(${rotate}deg)`;
     });
   }, []);
@@ -493,16 +488,12 @@ export default function Sandbox() {
 
   const logBtn = () => {
     // console.log(toyList.current);
-    const startTime = Date.now();
+    // const startTime = Date.now();
     // toyMove(0.2);
-    backgroundMove();
-    const endTime = Date.now();
-    console.log(startTime, endTime);
-    console.log(endTime - startTime);
-    // console.log(backgroundRef.current?.offsetWidth, backgroundRef.current?.offsetHeight);
-    // console.log(backgroundRef.current?.style.transform);
-    // console.log(screenRef.current?.offsetWidth, screenRef.current?.offsetHeight);
-    // console.log(backgroundSize);
+    // backgroundMove();
+    // const endTime = Date.now();
+    // console.log(startTime, endTime);
+    // console.log(endTime - startTime);
   };
 
   return (
