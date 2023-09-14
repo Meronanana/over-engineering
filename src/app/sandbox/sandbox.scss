@@ -22,7 +22,8 @@ $angle: 0deg;
   background-color: black;
   opacity: 0;
 
-  animation: shadowOn 0.5s linear forwards;
+  transition: 0.5s;
+  // animation: shadowOn 0.5s linear forwards;
 }
 
 .sandbox-title {

@@ -48,7 +48,6 @@ export default function Sandbox() {
   const bgShadowRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
   const dockerRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
-  // const tutorialMessageRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
   const mouseDownRef: MutableRefObject<boolean> = useRef<boolean>(false);
   const toyFocus: MutableRefObject<number> = useRef<number>(-1);
@@ -177,7 +176,7 @@ export default function Sandbox() {
         }
       });
 
-      bgShadowRef.current.className = "sandbox-shadow";
+      bgShadowRef.current.style.opacity = "0.3";
     } else if (mode === SandboxAlignType.Free) {
       toyList.current.forEach((v, i) => {
         v.physics.V.vx = Math.round(Math.random() * 6) - 3;
@@ -186,10 +185,10 @@ export default function Sandbox() {
         toyGravityDrop(i);
       });
 
-      bgShadowRef.current.className = "";
+      bgShadowRef.current.style.opacity = "0";
     } else if (mode === SandboxAlignType.Shake) {
       shake();
-      bgShadowRef.current.className = "";
+      bgShadowRef.current.style.opacity = "0";
     }
   }, []);
 
@@ -500,7 +499,7 @@ export default function Sandbox() {
     <>
       {/* <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" /> */}
       <div className="sandbox-background" ref={backgroundRef}>
-        <div className="" ref={bgShadowRef}></div>
+        <div className="sandbox-shadow" ref={bgShadowRef}></div>
         <Background width={backgroundSize.width} height={backgroundSize.height} />
       </div>
       <main
