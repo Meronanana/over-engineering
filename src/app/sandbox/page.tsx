@@ -347,13 +347,16 @@ export default function Sandbox() {
     toyPhysics.V.vy += 2;
 
     if (
+      toyFocus.current !== index &&
       (vy < 30 || toyRef.current.offsetTop < toyRef.current.offsetHeight) &&
       toyPhysics.DST.Y < Math.round(screenRef.current.offsetHeight * UNDER_BOUND)
     ) {
       if (alignRef.current !== SandboxAlignType.Grid) setTimeout(toyGravityDrop, FPS_OFFSET, index);
     } else {
-      toyPhysics.DST.X = toyRef.current.offsetLeft;
-      toyPhysics.DST.Y = toyRef.current.offsetTop;
+      if (toyFocus.current !== index) {
+        toyPhysics.DST.X = toyRef.current.offsetLeft;
+        toyPhysics.DST.Y = toyRef.current.offsetTop;
+      }
 
       toyPhysics.X = [];
       toyPhysics.Y = [];
@@ -444,10 +447,12 @@ export default function Sandbox() {
       toyPhysics.dR = vx * SPIN_SPEED_OFFSET;
     }
 
-    toyGravityDrop(focus);
-
     toyFocus.current = -1;
+
+    toyGravityDrop(focus);
   };
+
+  const touchEndEvent = mouseUpEvent;
 
   const mouseMoveEvent: MouseEventHandler = (e: React.MouseEvent) => {
     if (!mouseDownRef.current) return;
@@ -507,7 +512,7 @@ export default function Sandbox() {
         onMouseLeave={mouseUpEvent}
         onMouseUp={mouseUpEvent}
         onMouseMove={mouseMoveEvent}
-        onTouchEnd={mouseUpEvent}
+        onTouchEnd={touchEndEvent}
         onTouchMove={touchMoveEvent}
         ref={screenRef}
       >
