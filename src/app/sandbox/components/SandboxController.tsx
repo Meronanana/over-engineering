@@ -15,7 +15,7 @@ interface Props {
   backgroundShrinkRef: MutableRefObject<boolean>;
   backgroundInitialize: Function;
   alignModeChange: Function;
-  logBtn: Function;
+  setDiscriptionModal: Function;
 }
 
 export default function SandboxController({
@@ -24,7 +24,7 @@ export default function SandboxController({
   backgroundShrinkRef,
   backgroundInitialize,
   alignModeChange,
-  logBtn,
+  setDiscriptionModal,
 }: Props) {
   const [align, setAlign] = useState(SandboxAlignType.Free);
 
@@ -65,7 +65,7 @@ export default function SandboxController({
           /> */}
         <IconLog
           className="docker-button"
-          onClick={logBtn}
+          onClick={setDiscriptionModal}
           color={align === SandboxAlignType.Grid ? "white" : "gray"}
         />
       </div>
