@@ -1,11 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+export interface ModalState {
+  visiable: boolean;
+  child: React.ReactElement | null;
+}
+
 export const modalStateSlice = createSlice({
   name: "modalState",
   initialState: {
     visiable: false,
     child: null,
-  },
+  } as ModalState,
   reducers: {
     modalOpen: (state) => {
       state.visiable = true;
