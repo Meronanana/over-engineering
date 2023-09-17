@@ -12,16 +12,19 @@ export default function Modal() {
   const dispatch = useDispatch();
 
   const modalRef: RefObject<HTMLDivElement> = useRef(null);
+  const bgRef: RefObject<HTMLDivElement> = useRef(null);
 
   useEffect(() => {
-    if (modalRef.current === null) return;
+    if (modalRef.current === null || bgRef.current === null) return;
 
     if (visiable) {
       modalRef.current.style.pointerEvents = "auto";
-      modalRef.current.style.opacity = "0.3";
+      modalRef.current.style.opacity = "1";
+      bgRef.current.style.opacity = "0.3";
     } else {
-      modalRef.current.style.opacity = "0";
       modalRef.current.style.pointerEvents = "none";
+      modalRef.current.style.opacity = "0";
+      bgRef.current.style.opacity = "0";
     }
   }, [visiable]);
 
@@ -31,7 +34,8 @@ export default function Modal() {
   const touchEndEvent = mouseUpEvent;
 
   return (
-    <div className="modal-background" ref={modalRef} onMouseUp={mouseUpEvent} onTouchEnd={touchEndEvent}>
+    <div className="global-modal" ref={modalRef}>
+      <div className="modal-background" ref={bgRef} onMouseUp={mouseUpEvent} onTouchEnd={touchEndEvent} />
       {child}
     </div>
   );

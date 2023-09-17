@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export interface ModalState {
   visiable: boolean;
-  child: React.ReactElement | null;
+  child: JSX.Element | null;
 }
 
 export const modalStateSlice = createSlice({
@@ -21,7 +21,7 @@ export const modalStateSlice = createSlice({
     modalSwitch: (state) => {
       state.visiable = !state.visiable;
     },
-    setChild: (state, action) => {
+    setChild: (state, action: { payload: JSX.Element }) => {
       state.child = action.payload;
     },
   },

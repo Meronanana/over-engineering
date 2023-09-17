@@ -7,7 +7,7 @@ import IconGrid from "/public/assets/icons/Icon-Grid.svg";
 import IconShake from "/public/assets/icons/Icon-Shake.svg";
 import IconLog from "/public/assets/icons/Icon-Log.svg";
 
-import "../sandbox.scss";
+import "./components.scss";
 
 interface Props {
   alignRef: MutableRefObject<SandboxAlignType>;

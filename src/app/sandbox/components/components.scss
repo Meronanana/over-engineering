@@ -1,0 +1,142 @@
+.toy-div {
+  position: absolute;
+  top: -10%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  color: rgb(99, 62, 191);
+}
+
+.toy-image {
+  position: relative;
+  display: block;
+
+  pointer-events: none;
+}
+
+.sandbox-description {
+  position: absolute;
+  overflow-y: scroll;
+
+  top: 50%;
+  left: 50%;
+  width: 60vw;
+  height: 80vh;
+
+  border-radius: 1vh;
+  padding: 2vh;
+
+  background-color: rgba(0, 0, 0, 0.7);
+
+  color: white;
+  font-size: auto;
+
+  transform: translate(-50%, -50%);
+}
+.sandbox-description::-webkit-scrollbar {
+  width: 0px;
+}
+
+.sandbox-description h1 {
+  font-size: large;
+  text-align: justify;
+}
+
+.sandbox-description h2 {
+  font-size: medium;
+}
+
+.sandbox-description h3 {
+  text-align: justify;
+  font-size: small;
+
+  margin-bottom: 5px;
+}
+
+.sandbox-text {
+  position: absolute;
+  left: 50%;
+  padding: 1vh;
+  color: gray;
+  font-size: 2vh;
+  transition: 0.5s;
+  transform: translate(-50%, 0%);
+}
+
+.sandbox-title {
+  @extend .sandbox-text;
+  top: 0%;
+}
+
+.sandbox-title.on-grid {
+  color: white;
+}
+
+.sandbox-tail {
+  @extend .sandbox-text;
+  bottom: 0%;
+}
+
+.sandbox-tail.on-grid {
+  color: white;
+}
+
+.sandbox-docker {
+  position: absolute;
+  top: 50%;
+  right: 0%;
+  padding: 1vmin;
+
+  display: flex;
+  flex-direction: column;
+
+  transform: translate(0%, -50%);
+}
+
+.sandbox-docker.tutorial {
+  border-color: white;
+}
+
+.master-docker {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  padding: 1vmin;
+
+  display: flex;
+  flex-direction: column;
+
+  transform: translate(0%, -50%);
+}
+
+.docker-button {
+  width: 4vh;
+  height: 4vh;
+  margin: 1vh 0vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0.7;
+  transition: 0.5s;
+}
+
+@media (max-height: 600px) {
+  .sandbox-text {
+    font-size: 12px;
+  }
+  .docker-button {
+    width: 24px;
+    height: 24px;
+    margin: 6px 0px;
+  }
+}

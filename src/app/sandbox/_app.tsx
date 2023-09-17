@@ -38,7 +38,8 @@ import {
 } from "./model/constants";
 import SandboxController from "./components/SandboxController";
 import { charaSelector } from "@/utils/nwjnsCharacter";
-import { modalSwitch } from "@/utils/redux/modalState";
+import { modalSwitch, setChild } from "@/utils/redux/modalState";
+import SandboxDescription from "./components/SandboxDescription";
 
 export default function Sandbox() {
   // console.log("re-render!");
@@ -94,6 +95,8 @@ export default function Sandbox() {
   ]);
 
   useEffect(() => {
+    dispatch(setChild((<SandboxDescription />) as JSX.Element));
+
     const toyMoveId = setInterval(toyMove, FPS_OFFSET, 0.2);
     window.addEventListener("resize", backgroundInitialize);
 
