@@ -1,5 +1,3 @@
-$angle: 0deg;
-
 .sandbox-screen {
   position: fixed;
   overflow: hidden;
@@ -10,8 +8,6 @@ $angle: 0deg;
 .sandbox-background {
   position: fixed;
   overflow: hidden;
-
-  // transition: 0.5s;
 }
 
 .sandbox-shadow {
@@ -23,18 +19,21 @@ $angle: 0deg;
   opacity: 0;
 
   transition: 0.5s;
-  // animation: shadowOn 0.5s linear forwards;
 }
 
-.sandbox-title {
+.sandbox-text {
   position: absolute;
-  top: 0%;
   left: 50%;
   padding: 1vh;
   color: gray;
-  font-size: 2vmin;
+  font-size: 2vh;
   transition: 0.5s;
   transform: translate(-50%, 0%);
+}
+
+.sandbox-title {
+  @extend .sandbox-text;
+  top: 0%;
 }
 
 .sandbox-title.on-grid {
@@ -42,14 +41,8 @@ $angle: 0deg;
 }
 
 .sandbox-tail {
-  position: absolute;
+  @extend .sandbox-text;
   bottom: 0%;
-  left: 50%;
-  padding: 1vh;
-  color: gray;
-  font-size: 2vmin;
-  transition: 0.5s;
-  transform: translate(-50%, 0%);
 }
 
 .sandbox-tail.on-grid {
@@ -82,7 +75,6 @@ $angle: 0deg;
 
 .sandbox-docker.tutorial {
   border-color: white;
-  // animation: tutorial-highlight 3s linear forwards;
 }
 
 .toy-div {
@@ -119,7 +111,6 @@ $angle: 0deg;
 
   text-align: center;
   color: white;
-  // background-color: yellow;
 }
 
 .toy-div.dummy {
@@ -142,9 +133,9 @@ $angle: 0deg;
 }
 
 .docker-button {
-  width: 4vmin;
-  height: 4vmin;
-  margin: 1vmin 0vmin;
+  width: 4vh;
+  height: 4vh;
+  margin: 1vh 0vh;
 
   display: flex;
   flex-direction: column;
@@ -155,15 +146,14 @@ $angle: 0deg;
   transition: 0.5s;
 }
 
-@keyframes shadowOn {
-  100% {
-    opacity: 0.3;
+@media (max-height: 600px) {
+  .sandbox-text {
+    font-size: 12px;
   }
-}
-
-@keyframes shadowOff {
-  100% {
-    opacity: 0;
+  .docker-button {
+    width: 24px;
+    height: 24px;
+    margin: 6px 0px;
   }
 }
 
