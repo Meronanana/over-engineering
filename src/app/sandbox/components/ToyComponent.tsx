@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Toy } from "../model/types";
 import { TOY_SIZES, WINDOW_SIZE_INDEXS } from "../model/constants";
 
-import "../sandbox.scss";
+import "./components.scss";
 
 interface Props {
   idx: number;
