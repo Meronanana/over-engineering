@@ -1,3 +1,19 @@
+h1 {
+  font-size: large;
+  text-align: justify;
+}
+
+h2 {
+  font-size: medium;
+}
+
+h3 {
+  text-align: justify;
+  font-size: small;
+
+  margin-bottom: 5px;
+}
+
 .toy-div {
   position: absolute;
   top: -10%;
@@ -21,6 +37,43 @@
   pointer-events: none;
 }
 
+.toy-description {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  top: 50%;
+  left: 50%;
+  width: 80vw;
+  height: 40vh;
+
+  border-radius: 1vh;
+  padding: 5vh;
+
+  background-color: rgba(255, 255, 255, 0.95);
+
+  color: white;
+  font-size: auto;
+
+  transform: translate(-50%, -50%);
+}
+
+.toy-description .toy-image {
+  width: 30vh;
+  height: 30vh;
+}
+
+.toy-description .description-text {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+
+  color: black;
+  font-size: auto;
+}
+
 .sandbox-description {
   position: absolute;
   overflow-y: scroll;
@@ -42,22 +95,6 @@
 }
 .sandbox-description::-webkit-scrollbar {
   width: 0px;
-}
-
-.sandbox-description h1 {
-  font-size: large;
-  text-align: justify;
-}
-
-.sandbox-description h2 {
-  font-size: medium;
-}
-
-.sandbox-description h3 {
-  text-align: justify;
-  font-size: small;
-
-  margin-bottom: 5px;
 }
 
 .sandbox-text {

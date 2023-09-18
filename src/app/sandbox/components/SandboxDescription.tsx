@@ -13,7 +13,7 @@ export default function SandboxDescription() {
       ? {
           height: "2px",
           backgroundColor: "white",
-          marginTop: "10px",
+          marginTop: "20px",
           marginBottom: "20px",
         }
       : {
@@ -29,9 +29,6 @@ export default function SandboxDescription() {
     <div className="sandbox-description">
       <h1>over-engineering</h1>
       <Spliter />
-      <h2>Owner: Jaeseong Jeong</h2>
-      <h2>Contributer: not yet</h2>
-      <Spliter />
       <h3>{`
       \0\0엔지니어가 되는 이유는 무엇인가요? 엔지니어는 작품이 올바르게 동작할 수 있도록 합니다. 
       상상을 현실로 만듭니다. '상상을 현실로' 그 자체가 엔지니어가 되려는 이유일 것입니다. 
@@ -43,7 +40,7 @@ export default function SandboxDescription() {
       over-engineering은 여러 작품이 모여 구성됩니다. 작품은 하나의 주제를 다룬 이야기입니다. 다양한 작품을 감상하세요. 
       각 작품에서 웹 기술을 활용한 창의적인 Interaction을 경험하세요. 작품을 보이는 그대로 느끼고, 의미를 생각해보세요.
       `}</h3>
-      <h3>{`over-engineering에 참여하고싶다면, 다음 연락처로 문의주십시오.`}</h3>
+      <h3>{`over-engineering은 엔지니어와 디자이너를 찾고 있습니다. 참여하고싶다면, 다음 연락처로 문의주세요.`}</h3>
       <h3>{`gik1819@naver.com`}</h3>
       <Spliter big />
       <h1>Sandbox</h1>
@@ -51,7 +48,10 @@ export default function SandboxDescription() {
       <h2>Engineer: Jaeseong Jeong</h2>
       <h2>Designer: Jaeseong Jeong</h2>
       <Spliter />
-      <h3>{`설명 추가하기`}</h3>
+      <h3>{`'Sandbox'는 여러분을 가장 먼저 맞이하는 작품입니다.`}</h3>
+      <Spliter big />
+      <h2>Owner: Jaeseong Jeong</h2>
+      <h2>Contributer: not yet</h2>
     </div>
   );
 }

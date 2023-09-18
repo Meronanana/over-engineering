@@ -38,8 +38,9 @@ import {
 } from "./model/constants";
 import SandboxController from "./components/SandboxController";
 import { charaSelector } from "@/utils/nwjnsCharacter";
-import { modalSwitch, setChild } from "@/utils/redux/modalState";
+import { modalOpen, modalSwitch, setChild } from "@/utils/redux/modalState";
 import SandboxDescription from "./components/SandboxDescription";
+import ToyDescription from "./components/ToyDescription";
 
 export default function Sandbox() {
   // console.log("re-render!");
@@ -53,11 +54,12 @@ export default function Sandbox() {
 
   const dockerRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
-  const mouseDownRef: MutableRefObject<boolean> = useRef<boolean>(false);
+  const mouseDownState: MutableRefObject<boolean> = useRef<boolean>(false);
   const toyFocus: MutableRefObject<number> = useRef<number>(-1);
   const backgroundOffset = useRef({ left: 0, top: 0 });
   const alignRef = useRef(SandboxAlignType.Free);
   const backgroundShrinkRef = useRef(true);
+  const mouseDownTime: MutableRefObject<number> = useRef<number>(0);
 
   const toyList = useRef<Array<Toy>>([
     {
@@ -69,7 +71,7 @@ export default function Sandbox() {
       image: ToyLinkQR,
     },
     {
-      name: "dead-lock",
+      name: "deadlock",
       moveRef: createRef(),
       rotateRef: createRef(),
       physics: { ...defaultToyPhysics },
@@ -95,8 +97,6 @@ export default function Sandbox() {
   ]);
 
   useEffect(() => {
-    dispatch(setChild((<SandboxDescription />) as JSX.Element));
-
     const toyMoveId = setInterval(toyMove, FPS_OFFSET, 0.2);
     window.addEventListener("resize", backgroundInitialize);
 
@@ -328,7 +328,7 @@ export default function Sandbox() {
 
       // 바닥 하한선 감지
       if (screenRef.current.offsetHeight * UNDER_BOUND < endY) {
-        if (!mouseDownRef.current) endX = startX;
+        if (!mouseDownState.current) endX = startX;
         endY = Math.round(screenRef.current.offsetHeight * UNDER_BOUND);
       }
 
@@ -399,69 +399,90 @@ export default function Sandbox() {
   }, []);
 
   const mouseDownEvent: MouseEventHandler<HTMLDivElement> = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (mouseDownRef.current || alignRef.current === SandboxAlignType.Grid) return;
-    mouseDownRef.current = true;
+    mouseDownTime.current = Date.now();
 
-    let focus = Number((e.target as HTMLDivElement).id.charAt(0));
+    const focus = Number((e.target as HTMLDivElement).id.charAt(0));
 
-    toyFocus.current = focus;
-    const toyMoveRef = toyList.current[focus].moveRef;
-    const toyRotateRef = toyList.current[focus].rotateRef;
-    const toyPhysics = toyList.current[focus].physics;
+    if (!mouseDownState.current && alignRef.current === SandboxAlignType.Grid) {
+      toyFocus.current = focus;
+    } else if (!mouseDownState.current) {
+      mouseDownState.current = true;
 
-    if (toyMoveRef.current && toyRotateRef.current) {
-      toyPhysics.DST.X = e.clientX;
-      toyPhysics.DST.Y = e.clientY;
+      toyFocus.current = focus;
+      const toyMoveRef = toyList.current[focus].moveRef;
+      const toyRotateRef = toyList.current[focus].rotateRef;
+      const toyPhysics = toyList.current[focus].physics;
 
-      toyPhysics.R = Number(toyRotateRef.current.style.transform.substring(7).split("d")[0]);
+      if (toyMoveRef.current && toyRotateRef.current) {
+        toyPhysics.DST.X = e.clientX;
+        toyPhysics.DST.Y = e.clientY;
+
+        toyPhysics.R = Number(toyRotateRef.current.style.transform.substring(7).split("d")[0]);
+      }
     }
   };
 
   const touchStartEvent: TouchEventHandler<HTMLDivElement> = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (mouseDownRef.current || alignRef.current === SandboxAlignType.Grid) return;
-    mouseDownRef.current = true;
+    mouseDownTime.current = Date.now();
 
-    let focus = Number((e.target as HTMLDivElement).id.charAt(0));
+    const focus = Number((e.target as HTMLDivElement).id.charAt(0));
 
-    toyFocus.current = focus;
-    const toyMoveRef = toyList.current[focus].moveRef;
-    const toyRotateRef = toyList.current[focus].rotateRef;
-    const toyPhysics = toyList.current[focus].physics;
+    if (!mouseDownState.current && alignRef.current === SandboxAlignType.Grid) {
+      toyFocus.current = focus;
+    } else if (!mouseDownState.current) {
+      mouseDownState.current = true;
 
-    if (toyMoveRef.current && toyRotateRef.current) {
-      toyPhysics.DST.X = e.touches[0].clientX;
-      toyPhysics.DST.Y = e.touches[0].clientY;
+      toyFocus.current = focus;
+      const toyMoveRef = toyList.current[focus].moveRef;
+      const toyRotateRef = toyList.current[focus].rotateRef;
+      const toyPhysics = toyList.current[focus].physics;
 
-      toyPhysics.R = Number(toyRotateRef.current.style.transform.substring(7).split("d")[0]);
+      if (toyMoveRef.current && toyRotateRef.current) {
+        toyPhysics.DST.X = e.touches[0].clientX;
+        toyPhysics.DST.Y = e.touches[0].clientY;
+
+        toyPhysics.R = Number(toyRotateRef.current.style.transform.substring(7).split("d")[0]);
+      }
     }
   };
 
   const mouseUpEvent = () => {
-    if (!mouseDownRef.current) return;
-    mouseDownRef.current = false;
-
     const focus = toyFocus.current;
-    const toyRef = toyList.current[focus].moveRef;
-    const toyPhysics = toyList.current[focus].physics;
+    if (focus === -1) return;
 
-    if (toyPhysics && toyRef.current) {
-      let vx = Math.round(toyPhysics.X.reduce((sum, cur) => sum + cur, 0) * (GVT_SPEED_OFFSET * 0.7));
-      let vy = Math.round(toyPhysics.Y.reduce((sum, cur) => sum + cur, 0) * GVT_SPEED_OFFSET);
+    const toyData = toyList.current[focus];
+    const toyPhysics = toyData.physics;
+
+    const clickEndTime = Date.now();
+
+    toyFocus.current = -1;
+
+    const vx = Math.round(toyPhysics.X.reduce((sum, cur) => sum + cur, 0) * (GVT_SPEED_OFFSET * 0.7));
+    const vy = Math.round(toyPhysics.Y.reduce((sum, cur) => sum + cur, 0) * GVT_SPEED_OFFSET);
+    const speed = Math.abs(vx) + Math.abs(vy);
+
+    if (clickEndTime - mouseDownTime.current < 100 && speed < 5) {
+      dispatch(
+        setChild((<ToyDescription name={toyData.name} link={toyData.link} Img={toyData.image} />) as JSX.Element)
+      );
+      dispatch(modalOpen());
+    } else {
+      if (!mouseDownState.current) return;
+
       toyPhysics.V.vx = vx;
       toyPhysics.V.vy = vy;
 
       toyPhysics.dR = vx * SPIN_SPEED_OFFSET;
+
+      toyGravityDrop(focus);
     }
-
-    toyFocus.current = -1;
-
-    toyGravityDrop(focus);
+    mouseDownState.current = false;
   };
 
   const touchEndEvent = mouseUpEvent;
 
   const mouseMoveEvent: MouseEventHandler = (e: React.MouseEvent) => {
-    if (!mouseDownRef.current) return;
+    if (!mouseDownState.current) return;
 
     const moveX = e.movementX;
     const moveY = e.movementY;
@@ -479,7 +500,7 @@ export default function Sandbox() {
   };
 
   const touchMoveEvent: TouchEventHandler = (e: React.TouchEvent) => {
-    if (!mouseDownRef.current) return;
+    if (!mouseDownState.current) return;
 
     const endX = e.touches[0].clientX;
     const endY = e.touches[0].clientY;
@@ -507,6 +528,7 @@ export default function Sandbox() {
   };
 
   const setDiscriptionModal = () => {
+    dispatch(setChild((<SandboxDescription />) as JSX.Element));
     dispatch(modalSwitch());
   };
 
