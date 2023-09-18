@@ -39,14 +39,16 @@ export default function ToyDescription({ name, link, Img }: Props) {
   const Spliter = ({ big }: SpliterProps): JSX.Element => {
     const style: CSSProperties = big
       ? {
+          width: "100%",
           height: "2px",
-          backgroundColor: "white",
+          backgroundColor: "black",
           marginTop: "20px",
           marginBottom: "20px",
         }
       : {
+          width: "100%",
           height: "1px",
-          backgroundColor: "white",
+          backgroundColor: "black",
           marginTop: "5px",
           marginBottom: "5px",
         };
