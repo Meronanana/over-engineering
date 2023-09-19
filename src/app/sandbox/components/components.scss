@@ -205,16 +205,14 @@ h3 {
   }
 }
 
-@media (orientation: landscape) {
+@media (orientation: landscape) and (pointer: coarse) {
   .sandbox-docker {
     right: 44px;
   }
   .master-docker {
     left: 44px;
   }
-
   .sandbox-tail {
-    @extend .sandbox-text;
     bottom: 10px;
   }
 }
