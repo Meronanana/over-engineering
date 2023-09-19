@@ -213,10 +213,8 @@ h3 {
     left: 44px;
   }
 
-  @supports (-webkit-appearance: none) {
-    .sandbox-tail {
-      @extend .sandbox-text;
-      bottom: 20px;
-    }
+  .sandbox-tail {
+    @extend .sandbox-text;
+    bottom: 10px;
   }
 }
