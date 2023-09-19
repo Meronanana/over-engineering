@@ -101,8 +101,10 @@ h3 {
   position: absolute;
   left: 50%;
   padding: 1vh;
+
   color: gray;
   font-size: 2vh;
+
   transition: 0.5s;
   transform: translate(-50%, 0%);
 }
@@ -128,7 +130,7 @@ h3 {
 .sandbox-docker {
   position: absolute;
   top: 50%;
-  right: 0%;
+  right: calc(0% + env(safe-area-inset-right));
   padding: 1vmin;
 
   display: flex;
@@ -144,7 +146,7 @@ h3 {
 .master-docker {
   position: absolute;
   top: 50%;
-  left: 0%;
+  left: calc(0% + env(safe-area-inset-left));
   padding: 1vmin;
 
   display: flex;

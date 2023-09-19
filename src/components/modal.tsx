@@ -28,8 +28,9 @@ export default function Modal() {
     }
   }, [visiable]);
 
-  const mouseUpEvent = () => {
+  const mouseUpEvent = (e: any) => {
     dispatch(modalClose());
+    e.preventDefault();
   };
   const touchEndEvent = mouseUpEvent;
 
