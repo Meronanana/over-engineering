@@ -528,7 +528,8 @@ export default function Sandbox() {
 
   return (
     <>
-      {/* <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" /> */}
+      {/* <meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1.0, user-scalable=no" /> */}
+      <meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1.0" />
       <div className="sandbox-background" ref={backgroundRef}>
         <div className="sandbox-shadow" ref={bgShadowRef}></div>
         <Background width={backgroundSize.width} height={backgroundSize.height} />

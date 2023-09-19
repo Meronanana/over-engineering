@@ -10,6 +10,8 @@ h2 {
 h3 {
   text-align: justify;
   font-size: small;
+  letter-spacing: -0.5px;
+  word-spacing: -1px;
 
   margin-bottom: 5px;
 }
@@ -130,7 +132,7 @@ h3 {
 .sandbox-docker {
   position: absolute;
   top: 50%;
-  right: calc(0% + env(safe-area-inset-right));
+  right: 0%;
   padding: 1vmin;
 
   display: flex;
@@ -146,7 +148,7 @@ h3 {
 .master-docker {
   position: absolute;
   top: 50%;
-  left: calc(0% + env(safe-area-inset-left));
+  left: 0%;
   padding: 1vmin;
 
   display: flex;
@@ -200,5 +202,21 @@ h3 {
     width: 24px;
     height: 24px;
     margin: 6px 0px;
+  }
+}
+
+@media (orientation: landscape) {
+  .sandbox-docker {
+    right: 44px;
+  }
+  .master-docker {
+    left: 44px;
+  }
+
+  @supports (-webkit-appearance: none) {
+    .sandbox-tail {
+      @extend .sandbox-text;
+      bottom: 20px;
+    }
   }
 }
