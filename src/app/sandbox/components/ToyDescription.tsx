@@ -62,7 +62,7 @@ export default function ToyDescription({ name, link, Img }: Props) {
         <h1>{name}</h1>
         <h3>{descriptions[`${name}`]}</h3>
         <Spliter />
-        <h2>{name === "qr-code" ? `Take QR-Code!` : <Link href={link}>{link !== "" ? "Visit" : "Preparing"}</Link>}</h2>
+        <h2>{name === "qr-code" ? `Take QR!` : <Link href={link}>{link !== "" ? "Visit" : "Preparing"}</Link>}</h2>
       </div>
     </div>
   );
