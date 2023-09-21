@@ -1,6 +1,15 @@
 /** @type {import('next').NextConfig} */
 
 module.exports = {
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/sandbox",
+        permanent: true,
+      },
+    ];
+  },
   reactStrictMode: true,
   webpack: (config) => {
     config.module.rules.push({
