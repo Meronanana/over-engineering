@@ -83,7 +83,7 @@ export default function Sandbox() {
       moveRef: createRef(),
       rotateRef: createRef(),
       physics: { ...defaultToyPhysics },
-      link: "",
+      link: "/nwjns-powerpuffgirl",
       image: charaSelector(),
     },
     {
