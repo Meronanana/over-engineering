@@ -20,4 +20,17 @@ export const charaSelector = (): StaticImageData => {
   return characters[Math.floor(Math.random() * characters.length)];
 };
 
-export { HaerinRev2, HaerinRev3, DanielleRev2, DanielleRev3 };
+export {
+  HaerinFow1,
+  HaerinFow2,
+  HaerinFow3,
+  HaerinRev1,
+  HaerinRev2,
+  HaerinRev3,
+  DanielleFow1,
+  DanielleFow2,
+  DanielleFow3,
+  DanielleRev1,
+  DanielleRev2,
+  DanielleRev3,
+};
