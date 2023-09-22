@@ -1,0 +1,49 @@
+.nwjns-background-blur {
+  filter: blur(var(--blur));
+  -webkit-filter: blur(var(--blur));
+
+  opacity: 0.5;
+
+  background-color: rgb(174, 255, 0);
+}
+
+.nwjns-background-blur.top {
+  position: absolute;
+  top: 0px;
+  left: 50%;
+
+  width: 100vw;
+  // height: 20vh;
+
+  transform: translateX(-50%);
+}
+.nwjns-background-blur.bottom {
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+
+  width: 100vw;
+  // height: 20vh;
+
+  transform: translateX(-50%);
+}
+.nwjns-background-blur.left {
+  position: absolute;
+  left: 0px;
+
+  // width: 40vw;
+  height: 100vh;
+}
+.nwjns-background-blur.right {
+  position: absolute;
+  right: 0px;
+
+  // width: 40vw;
+  height: 100vh;
+}
+
+.temp {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
