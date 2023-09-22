@@ -14,10 +14,12 @@ import {
 } from "@/utils/nwjnsCharacter";
 import { StaticImageData } from "next/image";
 import { RefObject, createRef } from "react";
+import { hoveringSequence } from "../utils/stream";
 
 export type NWJNSCharacter = {
   name: string;
   ref: RefObject<HTMLDivElement>;
+  hover: Generator;
   images: NWJNSImage;
 };
 
@@ -34,6 +36,7 @@ export const defaultCharacters: Array<NWJNSCharacter> = [
   {
     name: "haerin",
     ref: createRef(),
+    hover: hoveringSequence(),
     images: {
       fow1: HaerinFow1,
       fow2: HaerinFow2,
@@ -46,6 +49,7 @@ export const defaultCharacters: Array<NWJNSCharacter> = [
   {
     name: "danielle",
     ref: createRef(),
+    hover: hoveringSequence(),
     images: {
       fow1: DanielleFow1,
       fow2: DanielleFow2,

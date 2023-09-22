@@ -2,10 +2,12 @@
 
 import { RefObject, useEffect, useRef } from "react";
 import Link from "next/link";
+
 import { BACKGROUND_BLUR, STAGE_HEIGHT, STAGE_WIDTH, STANDARD_HEIGHT } from "./model/constants";
+import { NWJNSCharacter, defaultCharacters } from "./model/types";
+import { FPS_OFFSET } from "@/utils/constants";
 
 import "./nwjns.scss";
-import { NWJNSCharacter, defaultCharacters } from "./model/types";
 
 export default function NWJNS_Powerpuffgirl() {
   const stageRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
@@ -22,8 +24,11 @@ export default function NWJNS_Powerpuffgirl() {
     setBackground();
     window.addEventListener("resize", setBackground);
 
+    const hoverInterval = setInterval(charaHovering, FPS_OFFSET);
+
     return () => {
       window.removeEventListener("resize", setBackground);
+      clearInterval(hoverInterval);
     };
   }, []);
 
@@ -60,11 +65,27 @@ export default function NWJNS_Powerpuffgirl() {
     }
   };
 
+  const charaHovering = () => {
+    charaRef.current.map((v) => {
+      const charaRef = v.ref;
+
+      if (charaRef.current === null) return;
+
+      const nowY = charaRef.current.offsetTop;
+
+      charaRef.current.style.top = nowY + (v.hover.next().value as number) + "px";
+    });
+  };
+
   return (
     <main>
       <div className="nwjns-stage" ref={stageRef}></div>
       {charaRef.current.map((v, i) => {
-        return <div className="chara-div"></div>;
+        return (
+          <div className="chara-div" ref={v.ref}>
+            A
+          </div>
+        );
       })}
       <div className="nwjns-background-blur top" ref={bgTopRef}></div>
       <div className="nwjns-background-blur bottom" ref={bgBottomRef}></div>
