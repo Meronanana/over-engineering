@@ -1,18 +1,18 @@
-export interface Vector {
+export type Vector = {
   vx: number;
   vy: number;
-}
+};
 
-export interface Coordinate {
+export type Coordinate = {
   X: number;
   Y: number;
-}
+};
 
-export interface Circle {
+export type Circle = {
   x: number;
   y: number;
   d: number;
-}
+};
 
 export const lerp = (start: number, end: number, t: number): number => {
   return start * (1 - t) + end * t;
@@ -57,6 +57,27 @@ export const reactionByCircleCollision = (data: Array<Circle | null>, index: num
       result = { vx: Math.floor(speed * Math.cos(direction)), vy: Math.floor(-speed * Math.sin(direction)) };
     }
   });
+
+  return result;
+};
+
+export const getBezierArray = (n: number): Array<number> => {
+  const result: Array<number> = [];
+
+  const delay = 5;
+  n -= delay * 2;
+
+  for (let i = 0; i < delay; i++) {
+    result.push(0);
+  }
+  for (let i = 1; i <= n; i++) {
+    const t = i / n;
+
+    result.push(t * t * (3 - 2 * t));
+  }
+  for (let i = 0; i < delay; i++) {
+    result.push(1);
+  }
 
   return result;
 };

@@ -14,12 +14,13 @@ import {
 } from "@/utils/nwjnsCharacter";
 import { StaticImageData } from "next/image";
 import { RefObject, createRef } from "react";
+import { Coordinate, Vector } from "@/utils/physicalEngine";
 import { hoveringSequence } from "../utils/stream";
 
 export type NWJNSCharacter = {
   name: string;
   ref: RefObject<HTMLDivElement>;
-  hover: Generator;
+  physics: NWJNSPhysics;
   images: NWJNSImage;
 };
 
@@ -32,11 +33,39 @@ export type NWJNSImage = {
   rev3: StaticImageData;
 };
 
+export type NWJNSPhysics = {
+  DST: Coordinate;
+  HOVER: Vector;
+  HOVER_SEQ: Generator<number>;
+};
+
+export const haerinImages = {
+  fow1: HaerinFow1,
+  fow2: HaerinFow2,
+  fow3: HaerinFow3,
+  rev1: HaerinRev1,
+  rev2: HaerinRev2,
+  rev3: HaerinRev3,
+};
+
+export const danielleImages = {
+  fow1: DanielleFow1,
+  fow2: DanielleFow2,
+  fow3: DanielleFow3,
+  rev1: DanielleRev1,
+  rev2: DanielleRev2,
+  rev3: DanielleRev3,
+};
+
 export const defaultCharacters: Array<NWJNSCharacter> = [
   {
     name: "haerin",
     ref: createRef(),
-    hover: hoveringSequence(),
+    physics: {
+      DST: { X: 0, Y: 0 } as Coordinate,
+      HOVER: { vx: 0, vy: 0 } as Vector,
+      HOVER_SEQ: hoveringSequence(),
+    },
     images: {
       fow1: HaerinFow1,
       fow2: HaerinFow2,
@@ -49,7 +78,11 @@ export const defaultCharacters: Array<NWJNSCharacter> = [
   {
     name: "danielle",
     ref: createRef(),
-    hover: hoveringSequence(),
+    physics: {
+      DST: { X: 0, Y: 0 } as Coordinate,
+      HOVER: { vx: 0, vy: 0 } as Vector,
+      HOVER_SEQ: hoveringSequence(),
+    },
     images: {
       fow1: DanielleFow1,
       fow2: DanielleFow2,

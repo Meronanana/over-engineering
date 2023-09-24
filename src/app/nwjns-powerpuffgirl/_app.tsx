@@ -1,11 +1,15 @@
 "use client";
 
-import { RefObject, useEffect, useRef } from "react";
+import { MouseEventHandler, RefObject, useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
 
 import { BACKGROUND_BLUR, STAGE_HEIGHT, STAGE_WIDTH, STANDARD_HEIGHT } from "./model/constants";
 import { NWJNSCharacter, defaultCharacters } from "./model/types";
 import { FPS_OFFSET } from "@/utils/constants";
+
+import { Coordinate } from "@/utils/physicalEngine";
+import { moveSequence } from "./utils/stream";
+import { useSleep } from "@/utils/hooks";
 
 import "./nwjns.scss";
 
@@ -16,7 +20,7 @@ export default function NWJNS_Powerpuffgirl() {
   const bgLeftRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const bgRightRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
-  const charaRef = useRef<Array<NWJNSCharacter>>([...defaultCharacters]);
+  const charaList = useRef<Array<NWJNSCharacter>>([...defaultCharacters]);
 
   useEffect(() => {
     document.documentElement.style.setProperty("--blur", `${BACKGROUND_BLUR}px`);
@@ -24,11 +28,11 @@ export default function NWJNS_Powerpuffgirl() {
     setBackground();
     window.addEventListener("resize", setBackground);
 
-    const hoverInterval = setInterval(charaHovering, FPS_OFFSET);
+    const moveInterval = setInterval(charaMove, FPS_OFFSET);
 
     return () => {
       window.removeEventListener("resize", setBackground);
-      clearInterval(hoverInterval);
+      clearInterval(moveInterval);
     };
   }, []);
 
@@ -48,8 +52,6 @@ export default function NWJNS_Powerpuffgirl() {
       const horizonal = (window.innerWidth - STAGE_WIDTH[i]) / 2;
       const vertical = (window.innerHeight - STAGE_HEIGHT[i]) / 2;
 
-      // console.log(i, horizonal, vertical);
-
       stageRef.current.style.width = STAGE_WIDTH[i] + "px";
       stageRef.current.style.height = STAGE_HEIGHT[i] + "px";
 
@@ -65,24 +67,53 @@ export default function NWJNS_Powerpuffgirl() {
     }
   };
 
-  const charaHovering = () => {
-    charaRef.current.map((v) => {
+  const charaMove = useCallback(() => {
+    charaList.current.forEach((v, i) => {
       const charaRef = v.ref;
-
+      const charaPhysics = v.physics;
       if (charaRef.current === null) return;
 
-      const nowY = charaRef.current.offsetTop;
+      charaPhysics.HOVER.vy = charaPhysics.HOVER_SEQ.next().value;
 
-      charaRef.current.style.top = nowY + (v.hover.next().value as number) + "px";
+      let endX = charaPhysics.DST.X + charaPhysics.HOVER.vx;
+      let endY = charaPhysics.DST.Y + charaPhysics.HOVER.vy;
+
+      charaRef.current.style.left = endX + "px";
+      charaRef.current.style.top = endY + "px";
     });
+  }, []);
+
+  const singleMove = async (end: Coordinate) => {
+    const charaRef = charaList.current[0].ref;
+
+    if (charaRef.current === null) return;
+    const start = { X: charaRef.current.offsetLeft, Y: charaRef.current.offsetTop };
+    const seq = moveSequence(start, end, 70);
+
+    let seqNow;
+    do {
+      await useSleep(FPS_OFFSET);
+
+      seqNow = seq.next();
+
+      charaList.current[0].physics.DST.X = seqNow.value.X;
+      charaList.current[0].physics.DST.Y = seqNow.value.Y;
+    } while (!seqNow.done);
+  };
+
+  const mouseClickEvent: MouseEventHandler = (e: React.MouseEvent) => {
+    const clickX = e.clientX;
+    const clickY = e.clientY;
+
+    singleMove({ X: clickX, Y: clickY });
   };
 
   return (
-    <main>
+    <main className="nwjns-screen" onClick={mouseClickEvent}>
       <div className="nwjns-stage" ref={stageRef}></div>
-      {charaRef.current.map((v, i) => {
+      {charaList.current.map((v, i) => {
         return (
-          <div className="chara-div" ref={v.ref}>
+          <div className="chara-div" ref={v.ref} key={`${i}div`}>
             A
           </div>
         );
