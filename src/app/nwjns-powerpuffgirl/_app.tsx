@@ -9,7 +9,7 @@ import { FPS_OFFSET } from "@/utils/constants";
 
 import { Coordinate } from "@/utils/physicalEngine";
 import { moveSequence } from "./utils/stream";
-import { useSleep } from "@/utils/hooks";
+import { sleep } from "@/utils/hooks";
 
 import "./nwjns.scss";
 
@@ -120,7 +120,7 @@ export default function NWJNS_Powerpuffgirl() {
     let seqNow;
     let i = 0;
     do {
-      await useSleep(FPS_OFFSET);
+      await sleep(FPS_OFFSET);
 
       i++;
       seqNow = seq.next();
