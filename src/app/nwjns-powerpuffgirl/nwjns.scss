@@ -23,10 +23,10 @@
 .nwjns-background-blur {
   filter: blur(var(--blur));
   -webkit-filter: blur(var(--blur));
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(var(--blur));
 
-  opacity: 0.5;
-
-  background-color: rgb(174, 255, 0);
+  background-color: rgba(174, 255, 0, 0.5);
 }
 
 .nwjns-background-blur.top {
@@ -67,8 +67,8 @@
 .chara-div {
   position: absolute;
 
-  // top: 15%;
-  // left: 25%;
+  top: 50%;
+  left: -10%;
 
   width: 10vh;
   height: 10vh;

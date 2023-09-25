@@ -30,6 +30,18 @@ export default function NWJNS_Powerpuffgirl() {
 
     const moveInterval = setInterval(charaMove, FPS_OFFSET);
 
+    // charaList.current.map((v, i) =>
+    //   singleMove(i, { X: window.innerWidth * 0.1 + 50 * i, Y: window.innerHeight * 0.4 + 100 * i }, 50)
+    // );
+    {
+      const frames = 50;
+      singleMove(0, { X: window.innerWidth * 0.15 - 50, Y: window.innerHeight * 0.5 - 100 }, frames);
+      singleMove(1, { X: window.innerWidth * 0.15, Y: window.innerHeight * 0.5 }, frames);
+      singleMove(2, { X: window.innerWidth * 0.15 - 50, Y: window.innerHeight * 0.5 + 100 }, frames);
+      singleMove(3, { X: window.innerWidth * 0.15 + 50, Y: window.innerHeight * 0.5 - 100 }, frames);
+      singleMove(4, { X: window.innerWidth * 0.15 + 50, Y: window.innerHeight * 0.5 + 100 }, frames);
+    }
+
     return () => {
       window.removeEventListener("resize", setBackground);
       clearInterval(moveInterval);
@@ -83,12 +95,13 @@ export default function NWJNS_Powerpuffgirl() {
     });
   }, []);
 
-  const singleMove = async (end: Coordinate) => {
-    const charaRef = charaList.current[0].ref;
+  const singleMove = async (index: number, end: Coordinate, frames: number = 70) => {
+    const charaRef = charaList.current[index].ref;
+    const charaPhysics = charaList.current[index].physics;
 
     if (charaRef.current === null) return;
     const start = { X: charaRef.current.offsetLeft, Y: charaRef.current.offsetTop };
-    const seq = moveSequence(start, end, 70);
+    const seq = moveSequence(start, end, frames);
 
     let seqNow;
     do {
@@ -96,16 +109,16 @@ export default function NWJNS_Powerpuffgirl() {
 
       seqNow = seq.next();
 
-      charaList.current[0].physics.DST.X = seqNow.value.X;
-      charaList.current[0].physics.DST.Y = seqNow.value.Y;
+      charaPhysics.DST.X = seqNow.value.X;
+      charaPhysics.DST.Y = seqNow.value.Y;
     } while (!seqNow.done);
   };
 
   const mouseClickEvent: MouseEventHandler = (e: React.MouseEvent) => {
-    const clickX = e.clientX;
-    const clickY = e.clientY;
-
-    singleMove({ X: clickX, Y: clickY });
+    charaList.current.map((v, i) => {
+      if (v.ref.current === null) return;
+      singleMove(i, { X: v.ref.current.offsetLeft + window.innerWidth * 0.35, Y: v.ref.current.offsetTop });
+    });
   };
 
   return (

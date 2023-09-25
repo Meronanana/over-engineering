@@ -59,12 +59,64 @@ export const danielleImages = {
 
 export const defaultCharacters: Array<NWJNSCharacter> = [
   {
+    name: "minji",
+    ref: createRef(),
+    physics: {
+      DST: { X: 0, Y: 0 } as Coordinate,
+      HOVER: { vx: 0, vy: 0 } as Vector,
+      HOVER_SEQ: hoveringSequence(0),
+    },
+    images: {
+      fow1: DanielleFow1,
+      fow2: DanielleFow2,
+      fow3: DanielleFow3,
+      rev1: DanielleRev1,
+      rev2: DanielleRev2,
+      rev3: DanielleRev3,
+    },
+  },
+  {
+    name: "hanni",
+    ref: createRef(),
+    physics: {
+      DST: { X: 0, Y: 0 } as Coordinate,
+      HOVER: { vx: 0, vy: 0 } as Vector,
+      HOVER_SEQ: hoveringSequence(1),
+    },
+    images: {
+      fow1: DanielleFow1,
+      fow2: DanielleFow2,
+      fow3: DanielleFow3,
+      rev1: DanielleRev1,
+      rev2: DanielleRev2,
+      rev3: DanielleRev3,
+    },
+  },
+
+  {
+    name: "danielle",
+    ref: createRef(),
+    physics: {
+      DST: { X: 0, Y: 0 } as Coordinate,
+      HOVER: { vx: 0, vy: 0 } as Vector,
+      HOVER_SEQ: hoveringSequence(2),
+    },
+    images: {
+      fow1: DanielleFow1,
+      fow2: DanielleFow2,
+      fow3: DanielleFow3,
+      rev1: DanielleRev1,
+      rev2: DanielleRev2,
+      rev3: DanielleRev3,
+    },
+  },
+  {
     name: "haerin",
     ref: createRef(),
     physics: {
       DST: { X: 0, Y: 0 } as Coordinate,
       HOVER: { vx: 0, vy: 0 } as Vector,
-      HOVER_SEQ: hoveringSequence(),
+      HOVER_SEQ: hoveringSequence(3),
     },
     images: {
       fow1: HaerinFow1,
@@ -76,12 +128,12 @@ export const defaultCharacters: Array<NWJNSCharacter> = [
     },
   },
   {
-    name: "danielle",
+    name: "hyein",
     ref: createRef(),
     physics: {
       DST: { X: 0, Y: 0 } as Coordinate,
       HOVER: { vx: 0, vy: 0 } as Vector,
-      HOVER_SEQ: hoveringSequence(),
+      HOVER_SEQ: hoveringSequence(4),
     },
     images: {
       fow1: DanielleFow1,
