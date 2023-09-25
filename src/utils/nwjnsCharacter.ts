@@ -1,5 +1,8 @@
 import { StaticImageData } from "next/image";
 
+import HaerinSprite from "/public/assets/images/nwjns/haerin-sprite.png";
+import DanielleSprite from "/public/assets/images/nwjns/danielle-sprite.png";
+
 import HaerinFow1 from "/public/assets/images/nwjns/haerin-fow-1.png";
 import HaerinFow2 from "/public/assets/images/nwjns/haerin-fow-2.png";
 import HaerinFow3 from "/public/assets/images/nwjns/haerin-fow-3.png";
@@ -20,4 +23,19 @@ export const charaSelector = (): StaticImageData => {
   return characters[Math.floor(Math.random() * characters.length)];
 };
 
-export { HaerinRev2, HaerinRev3, DanielleRev2, DanielleRev3 };
+export {
+  HaerinSprite,
+  DanielleSprite,
+  HaerinFow1,
+  HaerinFow2,
+  HaerinFow3,
+  HaerinRev1,
+  HaerinRev2,
+  HaerinRev3,
+  DanielleFow1,
+  DanielleFow2,
+  DanielleFow3,
+  DanielleRev1,
+  DanielleRev2,
+  DanielleRev3,
+};

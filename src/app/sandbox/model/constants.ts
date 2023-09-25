@@ -1,6 +1,5 @@
 export const GVT_SPEED_OFFSET: number = 0.1;
 export const SPIN_SPEED_OFFSET: number = 0.2;
-export const FPS_OFFSET: number = 1000 / 60; // 60fps
 export const UNDER_BOUND: number = 0.8;
 export const GRID_2_BY_4 = { cols: 2, rows: 4 };
 export const GRID_3_BY_3 = { cols: 3, rows: 3 };
