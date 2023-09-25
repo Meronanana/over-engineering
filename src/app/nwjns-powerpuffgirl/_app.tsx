@@ -118,11 +118,26 @@ export default function NWJNS_Powerpuffgirl() {
     if (charaRef.current === null) return;
     const start = { X: charaRef.current.offsetLeft, Y: charaRef.current.offsetTop };
     const seq = moveSequence(start, end, frames);
+    const charaSize = offsetRef.current.charaSize;
     let seqNow;
+    let i = 0;
     do {
       await useSleep(FPS_OFFSET);
 
+      i++;
       seqNow = seq.next();
+
+      if (start.X <= end.X) {
+        if (i === 1) charaRef.current.style.backgroundPosition = `${-charaSize}px 0`;
+        if (i === 10) charaRef.current.style.backgroundPosition = `${-charaSize * 0}px 0`;
+        if (i === frames - 10) charaRef.current.style.backgroundPosition = `${-charaSize}px 0`;
+        if (i === frames) charaRef.current.style.backgroundPosition = `${-charaSize * 2}px 0`;
+      } else {
+        if (i === 1) charaRef.current.style.backgroundPosition = `${-charaSize * 4}px 0`;
+        if (i === 10) charaRef.current.style.backgroundPosition = `${-charaSize * 3}px 0`;
+        if (i === frames - 10) charaRef.current.style.backgroundPosition = `${-charaSize * 4}px 0`;
+        if (i === frames) charaRef.current.style.backgroundPosition = `${-charaSize * 5}px 0`;
+      }
 
       charaPhysics.DST.X = seqNow.value.X;
       charaPhysics.DST.Y = seqNow.value.Y;
@@ -139,9 +154,9 @@ export default function NWJNS_Powerpuffgirl() {
     singleMove(3, { X: window.innerWidth * 0.15 + distLong, Y: window.innerHeight * 0.5 - distShort }, frames);
     singleMove(4, { X: window.innerWidth * 0.15 + distShort, Y: window.innerHeight * 0.5 + distLong }, frames);
 
-    if (charaList.current[3].ref.current) {
-      charaList.current[3].ref.current.style.backgroundPosition = `${-distShort * 3}px 0`;
-    }
+    // if (charaList.current[3].ref.current) {
+    //   charaList.current[3].ref.current.style.backgroundPosition = `${-distShort * 3}px 0`;
+    // }
   };
 
   const mouseClickEvent: MouseEventHandler = (e: React.MouseEvent) => {
@@ -155,13 +170,7 @@ export default function NWJNS_Powerpuffgirl() {
     <main className="nwjns-screen">
       <div className="nwjns-stage" ref={stageRef} onClick={mouseClickEvent}></div>
       {charaList.current.map((v, i) => {
-        return i === 3 ? (
-          <div className="chara-div haerin" ref={v.ref} key={`${i}div`}></div>
-        ) : (
-          <div className="chara-div" ref={v.ref} key={`${i}div`}>
-            A
-          </div>
-        );
+        return <div className={`chara-div ${v.name}`} ref={v.ref} key={`${i}div`}></div>;
       })}
       <div className="nwjns-background-blur top" ref={bgTopRef}></div>
       <div className="nwjns-background-blur bottom" ref={bgBottomRef}></div>

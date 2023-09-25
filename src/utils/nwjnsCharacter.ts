@@ -1,6 +1,7 @@
 import { StaticImageData } from "next/image";
 
 import HaerinSprite from "/public/assets/images/nwjns/haerin-sprite.png";
+import DanielleSprite from "/public/assets/images/nwjns/danielle-sprite.png";
 
 import HaerinFow1 from "/public/assets/images/nwjns/haerin-fow-1.png";
 import HaerinFow2 from "/public/assets/images/nwjns/haerin-fow-2.png";
@@ -24,6 +25,7 @@ export const charaSelector = (): StaticImageData => {
 
 export {
   HaerinSprite,
+  DanielleSprite,
   HaerinFow1,
   HaerinFow2,
   HaerinFow3,

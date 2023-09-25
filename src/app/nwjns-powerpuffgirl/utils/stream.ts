@@ -54,7 +54,7 @@ export function* hoveringSequence(index: number): Generator<number> {
   }
 }
 
-export function* moveSequence(start: Coordinate, end: Coordinate, frames: number): Generator<Coordinate, Coordinate> {
+export function* moveSequence(start: Coordinate, end: Coordinate, frames: number): Generator<Coordinate> {
   const moveX = end.X - start.X;
   const moveY = end.Y - start.Y;
   const xRoute = getBezierArray(frames).map((v) => v * moveX + start.X);

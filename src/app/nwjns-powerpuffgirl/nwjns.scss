@@ -86,7 +86,16 @@
 
   background-image: url("../../../public/assets/images/nwjns/haerin-sprite.png");
   background-repeat: no-repeat;
-  background-position: -60px 0;
+  background-position: 0 0;
+  background-size: cover;
+}
+.chara-div.danielle {
+  border-radius: 0px;
+  border-width: 0px;
+
+  background-image: url("../../../public/assets/images/nwjns/danielle-sprite.png");
+  background-repeat: no-repeat;
+  background-position: 0 0;
   background-size: cover;
 }
 
