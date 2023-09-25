@@ -39,23 +39,29 @@ export type NWJNSPhysics = {
   HOVER_SEQ: Generator<number>;
 };
 
-export const haerinImages = {
-  fow1: HaerinFow1,
-  fow2: HaerinFow2,
-  fow3: HaerinFow3,
-  rev1: HaerinRev1,
-  rev2: HaerinRev2,
-  rev3: HaerinRev3,
+export type Offsets = {
+  stageWidth: number;
+  stageHeight: number;
+  charaSize: number;
 };
 
-export const danielleImages = {
-  fow1: DanielleFow1,
-  fow2: DanielleFow2,
-  fow3: DanielleFow3,
-  rev1: DanielleRev1,
-  rev2: DanielleRev2,
-  rev3: DanielleRev3,
-};
+// export const haerinImages = {
+//   fow1: HaerinFow1,
+//   fow2: HaerinFow2,
+//   fow3: HaerinFow3,
+//   rev1: HaerinRev1,
+//   rev2: HaerinRev2,
+//   rev3: HaerinRev3,
+// };
+
+// export const danielleImages = {
+//   fow1: DanielleFow1,
+//   fow2: DanielleFow2,
+//   fow3: DanielleFow3,
+//   rev1: DanielleRev1,
+//   rev2: DanielleRev2,
+//   rev3: DanielleRev3,
+// };
 
 export const defaultCharacters: Array<NWJNSCharacter> = [
   {

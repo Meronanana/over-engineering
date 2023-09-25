@@ -80,7 +80,24 @@
   transform: translate(-50%, -50%);
 }
 
+.chara-div.haerin {
+  border-radius: 0px;
+  border-width: 0px;
+
+  background-image: url("../../../public/assets/images/nwjns/haerin-sprite.png");
+  background-repeat: no-repeat;
+  background-position: -60px 0;
+  background-size: cover;
+}
+
 .temp {
   position: absolute;
   z-index: 1;
+}
+
+.reset {
+  position: absolute;
+  z-index: 1;
+
+  right: 0%;
 }

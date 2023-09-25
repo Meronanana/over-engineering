@@ -3,8 +3,8 @@
 import { MouseEventHandler, RefObject, useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
 
-import { BACKGROUND_BLUR, STAGE_HEIGHT, STAGE_WIDTH, STANDARD_HEIGHT } from "./model/constants";
-import { NWJNSCharacter, defaultCharacters } from "./model/types";
+import { BACKGROUND_BLUR, CHARACTER_SIZE, STAGE_HEIGHT, STAGE_WIDTH, STANDARD_HEIGHT } from "./model/constants";
+import { NWJNSCharacter, Offsets, defaultCharacters } from "./model/types";
 import { FPS_OFFSET } from "@/utils/constants";
 
 import { Coordinate } from "@/utils/physicalEngine";
@@ -14,6 +14,7 @@ import { useSleep } from "@/utils/hooks";
 import "./nwjns.scss";
 
 export default function NWJNS_Powerpuffgirl() {
+  const offsetRef = useRef<Offsets>({ stageWidth: 0, stageHeight: 0, charaSize: 0 });
   const stageRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const bgTopRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const bgBottomRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
@@ -23,10 +24,8 @@ export default function NWJNS_Powerpuffgirl() {
   const charaList = useRef<Array<NWJNSCharacter>>([...defaultCharacters]);
 
   useEffect(() => {
-    document.documentElement.style.setProperty("--blur", `${BACKGROUND_BLUR}px`);
-
-    setBackground();
-    window.addEventListener("resize", setBackground);
+    initialize();
+    window.addEventListener("resize", initialize);
 
     const moveInterval = setInterval(charaMove, FPS_OFFSET);
 
@@ -35,20 +34,22 @@ export default function NWJNS_Powerpuffgirl() {
     // );
     {
       const frames = 50;
-      singleMove(0, { X: window.innerWidth * 0.15 - 50, Y: window.innerHeight * 0.5 - 100 }, frames);
+      const distShort = offsetRef.current.charaSize;
+      const distLong = (distShort / 4) * 5;
+      singleMove(0, { X: window.innerWidth * 0.15 - distShort, Y: window.innerHeight * 0.5 - distLong }, frames);
       singleMove(1, { X: window.innerWidth * 0.15, Y: window.innerHeight * 0.5 }, frames);
-      singleMove(2, { X: window.innerWidth * 0.15 - 50, Y: window.innerHeight * 0.5 + 100 }, frames);
-      singleMove(3, { X: window.innerWidth * 0.15 + 50, Y: window.innerHeight * 0.5 - 100 }, frames);
-      singleMove(4, { X: window.innerWidth * 0.15 + 50, Y: window.innerHeight * 0.5 + 100 }, frames);
+      singleMove(2, { X: window.innerWidth * 0.15 - distLong, Y: window.innerHeight * 0.5 + distShort }, frames);
+      singleMove(3, { X: window.innerWidth * 0.15 + distLong, Y: window.innerHeight * 0.5 - distShort }, frames);
+      singleMove(4, { X: window.innerWidth * 0.15 + distShort, Y: window.innerHeight * 0.5 + distLong }, frames);
     }
 
     return () => {
-      window.removeEventListener("resize", setBackground);
+      window.removeEventListener("resize", initialize);
       clearInterval(moveInterval);
     };
   }, []);
 
-  const setBackground = () => {
+  const initialize = () => {
     if (
       stageRef.current === null ||
       bgTopRef.current === null ||
@@ -58,11 +59,18 @@ export default function NWJNS_Powerpuffgirl() {
     )
       return;
 
+    document.documentElement.style.setProperty("--blur", `${BACKGROUND_BLUR}px`);
+
     for (let i = STANDARD_HEIGHT.length - 1; i >= 0; i--) {
       if (STANDARD_HEIGHT[i] >= window.innerHeight) continue;
 
       const horizonal = (window.innerWidth - STAGE_WIDTH[i]) / 2;
       const vertical = (window.innerHeight - STAGE_HEIGHT[i]) / 2;
+
+      offsetRef.current.stageWidth = STAGE_WIDTH[i];
+      offsetRef.current.stageHeight = STAGE_HEIGHT[i];
+      offsetRef.current.charaSize = CHARACTER_SIZE[i];
+      document.documentElement.style.setProperty("--chara-size", `${CHARACTER_SIZE[i]}px`);
 
       stageRef.current.style.width = STAGE_WIDTH[i] + "px";
       stageRef.current.style.height = STAGE_HEIGHT[i] + "px";
@@ -74,6 +82,14 @@ export default function NWJNS_Powerpuffgirl() {
 
       bgTopRef.current.style.width = STAGE_WIDTH[i] + 5 + "px";
       bgBottomRef.current.style.width = STAGE_WIDTH[i] + 5 + "px";
+
+      charaList.current.map((v) => {
+        const charaRef = v.ref;
+        if (charaRef.current === null) return;
+
+        charaRef.current.style.width = CHARACTER_SIZE[i] + "px";
+        charaRef.current.style.height = CHARACTER_SIZE[i] + "px";
+      });
 
       break;
     }
@@ -102,7 +118,6 @@ export default function NWJNS_Powerpuffgirl() {
     if (charaRef.current === null) return;
     const start = { X: charaRef.current.offsetLeft, Y: charaRef.current.offsetTop };
     const seq = moveSequence(start, end, frames);
-
     let seqNow;
     do {
       await useSleep(FPS_OFFSET);
@@ -114,6 +129,21 @@ export default function NWJNS_Powerpuffgirl() {
     } while (!seqNow.done);
   };
 
+  const interactionInitialize = () => {
+    const frames = 70;
+    const distShort = offsetRef.current.charaSize;
+    const distLong = (distShort / 4) * 5;
+    singleMove(0, { X: window.innerWidth * 0.15 - distShort, Y: window.innerHeight * 0.5 - distLong }, frames);
+    singleMove(1, { X: window.innerWidth * 0.15, Y: window.innerHeight * 0.5 }, frames);
+    singleMove(2, { X: window.innerWidth * 0.15 - distLong, Y: window.innerHeight * 0.5 + distShort }, frames);
+    singleMove(3, { X: window.innerWidth * 0.15 + distLong, Y: window.innerHeight * 0.5 - distShort }, frames);
+    singleMove(4, { X: window.innerWidth * 0.15 + distShort, Y: window.innerHeight * 0.5 + distLong }, frames);
+
+    if (charaList.current[3].ref.current) {
+      charaList.current[3].ref.current.style.backgroundPosition = `${-distShort * 3}px 0`;
+    }
+  };
+
   const mouseClickEvent: MouseEventHandler = (e: React.MouseEvent) => {
     charaList.current.map((v, i) => {
       if (v.ref.current === null) return;
@@ -122,10 +152,12 @@ export default function NWJNS_Powerpuffgirl() {
   };
 
   return (
-    <main className="nwjns-screen" onClick={mouseClickEvent}>
-      <div className="nwjns-stage" ref={stageRef}></div>
+    <main className="nwjns-screen">
+      <div className="nwjns-stage" ref={stageRef} onClick={mouseClickEvent}></div>
       {charaList.current.map((v, i) => {
-        return (
+        return i === 3 ? (
+          <div className="chara-div haerin" ref={v.ref} key={`${i}div`}></div>
+        ) : (
           <div className="chara-div" ref={v.ref} key={`${i}div`}>
             A
           </div>
@@ -139,6 +171,9 @@ export default function NWJNS_Powerpuffgirl() {
       <Link href={"/sandbox"} className="temp">
         뒤로가기
       </Link>
+      <div className="reset" onClick={interactionInitialize}>
+        초기화
+      </div>
     </main>
   );
 }
