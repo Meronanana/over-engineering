@@ -15,6 +15,7 @@ import "./nwjns.scss";
 
 export default function NWJNS_Powerpuffgirl() {
   const offsetRef = useRef<Offsets>({ stageWidth: 0, stageHeight: 0, charaSize: 0 });
+
   const stageRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const bgTopRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const bgBottomRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
@@ -160,10 +161,7 @@ export default function NWJNS_Powerpuffgirl() {
       if (stageRef.current) {
         stageRef.current.style.zIndex = "0";
       }
-    }, FPS_OFFSET * 70);
-    // if (charaList.current[3].ref.current) {
-    //   charaList.current[3].ref.current.style.backgroundPosition = `${-distShort * 3}px 0`;
-    // }
+    }, FPS_OFFSET * frames);
   };
 
   const mouseClickEvent: MouseEventHandler = (e: React.MouseEvent) => {
