@@ -29,9 +29,6 @@ export default function NWJNS_Powerpuffgirl() {
 
     const moveInterval = setInterval(charaMove, FPS_OFFSET);
 
-    // charaList.current.map((v, i) =>
-    //   singleMove(i, { X: window.innerWidth * 0.1 + 50 * i, Y: window.innerHeight * 0.4 + 100 * i }, 50)
-    // );
     {
       const frames = 50;
       const distShort = offsetRef.current.charaSize;
@@ -148,12 +145,22 @@ export default function NWJNS_Powerpuffgirl() {
     const frames = 70;
     const distShort = offsetRef.current.charaSize;
     const distLong = (distShort / 4) * 5;
+
+    if (stageRef.current) {
+      stageRef.current.style.zIndex = "1";
+    }
+
     singleMove(0, { X: window.innerWidth * 0.15 - distShort, Y: window.innerHeight * 0.5 - distLong }, frames);
     singleMove(1, { X: window.innerWidth * 0.15, Y: window.innerHeight * 0.5 }, frames);
     singleMove(2, { X: window.innerWidth * 0.15 - distLong, Y: window.innerHeight * 0.5 + distShort }, frames);
     singleMove(3, { X: window.innerWidth * 0.15 + distLong, Y: window.innerHeight * 0.5 - distShort }, frames);
     singleMove(4, { X: window.innerWidth * 0.15 + distShort, Y: window.innerHeight * 0.5 + distLong }, frames);
 
+    setTimeout(() => {
+      if (stageRef.current) {
+        stageRef.current.style.zIndex = "0";
+      }
+    }, FPS_OFFSET * 70);
     // if (charaList.current[3].ref.current) {
     //   charaList.current[3].ref.current.style.backgroundPosition = `${-distShort * 3}px 0`;
     // }
