@@ -45,6 +45,13 @@ export type Offsets = {
   charaSize: number;
 };
 
+export enum ScreenType {
+  Normal = 0,
+  Vertical = 1,
+  Mobile = 2,
+  Tablet = 3,
+}
+
 // export const haerinImages = {
 //   fow1: HaerinFow1,
 //   fow2: HaerinFow2,

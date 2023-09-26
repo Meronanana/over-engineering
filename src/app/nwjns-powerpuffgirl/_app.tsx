@@ -4,12 +4,12 @@ import { MouseEventHandler, RefObject, useCallback, useEffect, useRef } from "re
 import Link from "next/link";
 
 import { BACKGROUND_BLUR, CHARACTER_SIZE, STAGE_HEIGHT, STAGE_WIDTH, STANDARD_HEIGHT } from "./model/constants";
-import { NWJNSCharacter, Offsets, defaultCharacters } from "./model/types";
+import { NWJNSCharacter, Offsets, ScreenType, defaultCharacters } from "./model/types";
 import { FPS_OFFSET } from "@/utils/constants";
 
 import { Coordinate } from "@/utils/physicalEngine";
 import { moveSequence } from "./utils/stream";
-import { useSleep } from "@/utils/hooks";
+import { sleep } from "@/utils/hooks";
 
 import "./nwjns.scss";
 
@@ -21,6 +21,7 @@ export default function NWJNS_Powerpuffgirl() {
   const bgBottomRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const bgLeftRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const bgRightRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+  const pageBlockRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
   const charaList = useRef<Array<NWJNSCharacter>>([...defaultCharacters]);
 
@@ -59,35 +60,46 @@ export default function NWJNS_Powerpuffgirl() {
 
     document.documentElement.style.setProperty("--blur", `${BACKGROUND_BLUR}px`);
 
+    // 스크린 초기화
+    let screenType: ScreenType;
+    if (window.innerHeight < (window.innerWidth * 16) / 9) screenType = ScreenType.Normal;
+    else screenType = ScreenType.Vertical;
     for (let i = STANDARD_HEIGHT.length - 1; i >= 0; i--) {
-      if (STANDARD_HEIGHT[i] >= window.innerHeight) continue;
+      if (screenType === ScreenType.Normal) {
+        if (STANDARD_HEIGHT[i] > window.innerHeight) continue;
+      } else {
+        if (STAGE_WIDTH[i] > window.innerWidth) continue;
+      }
+      if (i == 0 && pageBlockRef.current) {
+        pageBlockRef.current.style.display = "flex";
+      } else if (pageBlockRef.current) {
+        pageBlockRef.current.style.display = "none";
+      }
 
-      const horizonal = (window.innerWidth - STAGE_WIDTH[i]) / 2;
-      const vertical = (window.innerHeight - STAGE_HEIGHT[i]) / 2;
+      console.log(STAGE_WIDTH[i], STAGE_HEIGHT[i]);
 
+      const horGap = (window.innerWidth - STAGE_WIDTH[i]) / 2;
+      const verGap = (window.innerHeight - STAGE_HEIGHT[i]) / 2;
+
+      // 오프셋 설정
       offsetRef.current.stageWidth = STAGE_WIDTH[i];
       offsetRef.current.stageHeight = STAGE_HEIGHT[i];
       offsetRef.current.charaSize = CHARACTER_SIZE[i];
-      document.documentElement.style.setProperty("--chara-size", `${CHARACTER_SIZE[i]}px`);
 
+      // 배경 resolution
       stageRef.current.style.width = STAGE_WIDTH[i] + "px";
       stageRef.current.style.height = STAGE_HEIGHT[i] + "px";
 
-      bgTopRef.current.style.height = vertical + "px";
-      bgBottomRef.current.style.height = vertical + "px";
-      bgLeftRef.current.style.width = horizonal + "px";
-      bgRightRef.current.style.width = horizonal + "px";
+      bgTopRef.current.style.height = verGap + "px";
+      bgBottomRef.current.style.height = verGap + "px";
+      bgLeftRef.current.style.width = horGap + "px";
+      bgRightRef.current.style.width = horGap + "px";
 
       bgTopRef.current.style.width = STAGE_WIDTH[i] + 5 + "px";
       bgBottomRef.current.style.width = STAGE_WIDTH[i] + 5 + "px";
 
-      charaList.current.map((v) => {
-        const charaRef = v.ref;
-        if (charaRef.current === null) return;
-
-        charaRef.current.style.width = CHARACTER_SIZE[i] + "px";
-        charaRef.current.style.height = CHARACTER_SIZE[i] + "px";
-      });
+      // Character size
+      document.documentElement.style.setProperty("--chara-size", `${CHARACTER_SIZE[i]}px`);
 
       break;
     }
@@ -120,7 +132,7 @@ export default function NWJNS_Powerpuffgirl() {
     let seqNow;
     let i = 0;
     do {
-      await useSleep(FPS_OFFSET);
+      await sleep(FPS_OFFSET);
 
       i++;
       seqNow = seq.next();
@@ -188,6 +200,7 @@ export default function NWJNS_Powerpuffgirl() {
       <div className="reset" onClick={interactionInitialize}>
         초기화
       </div>
+      <div className="nwjns-not-support" ref={pageBlockRef}>{`Screen size is too small`}</div>
     </main>
   );
 }
