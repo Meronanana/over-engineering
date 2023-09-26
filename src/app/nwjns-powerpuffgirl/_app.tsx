@@ -3,7 +3,14 @@
 import { MouseEventHandler, RefObject, useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
 
-import { BACKGROUND_BLUR, CHARACTER_SIZE, STAGE_HEIGHT, STAGE_WIDTH, STANDARD_HEIGHT } from "./model/constants";
+import {
+  BACKGROUND_BLUR,
+  CHARACTER_SIZE,
+  STAGE_HEIGHT,
+  STAGE_WIDTH,
+  STANDARD_HEIGHT,
+  THRESHOLD_RATIO,
+} from "./model/constants";
 import { NWJNSCharacter, Offsets, defaultCharacters } from "./model/types";
 
 import { ScreenType } from "@/utils/types";
@@ -28,29 +35,20 @@ export default function NWJNS_Powerpuffgirl() {
 
   useEffect(() => {
     console.log(window.navigator.userAgent);
-    initialize();
-    window.addEventListener("resize", initialize);
+    resizeInitialize();
+    window.addEventListener("resize", resizeInitialize);
 
     const moveInterval = setInterval(charaMove, FPS_OFFSET);
 
-    {
-      const frames = 50;
-      const distShort = offsetRef.current.charaSize;
-      const distLong = (distShort / 4) * 5;
-      singleMove(0, { X: window.innerWidth * 0.15 - distShort, Y: window.innerHeight * 0.5 - distLong }, frames);
-      singleMove(1, { X: window.innerWidth * 0.15, Y: window.innerHeight * 0.5 }, frames);
-      singleMove(2, { X: window.innerWidth * 0.15 - distLong, Y: window.innerHeight * 0.5 + distShort }, frames);
-      singleMove(3, { X: window.innerWidth * 0.15 + distLong, Y: window.innerHeight * 0.5 - distShort }, frames);
-      singleMove(4, { X: window.innerWidth * 0.15 + distShort, Y: window.innerHeight * 0.5 + distLong }, frames);
-    }
+    interactionInitialize(50);
 
     return () => {
-      window.removeEventListener("resize", initialize);
+      window.removeEventListener("resize", resizeInitialize);
       clearInterval(moveInterval);
     };
   }, []);
 
-  const initialize = () => {
+  const resizeInitialize = () => {
     if (
       stageRef.current === null ||
       bgTopRef.current === null ||
@@ -156,8 +154,7 @@ export default function NWJNS_Powerpuffgirl() {
     } while (!seqNow.done);
   };
 
-  const interactionInitialize = () => {
-    const frames = 70;
+  const interactionInitialize = (frames: number = 70) => {
     const distShort = offsetRef.current.charaSize;
     const distLong = (distShort * 5) / 4;
 
@@ -165,11 +162,19 @@ export default function NWJNS_Powerpuffgirl() {
       stageRef.current.style.zIndex = "1";
     }
 
-    singleMove(0, { X: window.innerWidth * 0.15 - distShort, Y: window.innerHeight * 0.5 - distLong }, frames);
-    singleMove(1, { X: window.innerWidth * 0.15, Y: window.innerHeight * 0.5 }, frames);
-    singleMove(2, { X: window.innerWidth * 0.15 - distLong, Y: window.innerHeight * 0.5 + distShort }, frames);
-    singleMove(3, { X: window.innerWidth * 0.15 + distLong, Y: window.innerHeight * 0.5 - distShort }, frames);
-    singleMove(4, { X: window.innerWidth * 0.15 + distShort, Y: window.innerHeight * 0.5 + distLong }, frames);
+    if (getWindowRatio() > THRESHOLD_RATIO) {
+      singleMove(0, { X: window.innerWidth * 0.15 - distShort, Y: window.innerHeight * 0.5 - distLong }, frames);
+      singleMove(1, { X: window.innerWidth * 0.15, Y: window.innerHeight * 0.5 }, frames);
+      singleMove(2, { X: window.innerWidth * 0.15 - distLong, Y: window.innerHeight * 0.5 + distShort }, frames);
+      singleMove(3, { X: window.innerWidth * 0.15 + distLong, Y: window.innerHeight * 0.5 - distShort }, frames);
+      singleMove(4, { X: window.innerWidth * 0.15 + distShort, Y: window.innerHeight * 0.5 + distLong }, frames);
+    } else {
+      singleMove(0, { X: -window.innerWidth * 0.3 - distShort, Y: window.innerHeight * 0.5 - distLong }, frames);
+      singleMove(1, { X: -window.innerWidth * 0.3, Y: window.innerHeight * 0.5 }, frames);
+      singleMove(2, { X: -window.innerWidth * 0.3 - distLong, Y: window.innerHeight * 0.5 + distShort }, frames);
+      singleMove(3, { X: -window.innerWidth * 0.3 + distLong, Y: window.innerHeight * 0.5 - distShort }, frames);
+      singleMove(4, { X: -window.innerWidth * 0.3 + distShort, Y: window.innerHeight * 0.5 + distLong }, frames);
+    }
 
     setTimeout(() => {
       if (stageRef.current) {
@@ -181,7 +186,12 @@ export default function NWJNS_Powerpuffgirl() {
   const mouseClickEvent: MouseEventHandler = (e: React.MouseEvent) => {
     charaList.current.map((v, i) => {
       if (v.ref.current === null) return;
-      singleMove(i, { X: v.ref.current.offsetLeft + window.innerWidth * 0.35, Y: v.ref.current.offsetTop });
+
+      if (getWindowRatio() > THRESHOLD_RATIO) {
+        singleMove(i, { X: v.ref.current.offsetLeft + window.innerWidth * 0.35, Y: v.ref.current.offsetTop });
+      } else {
+        singleMove(i, { X: v.ref.current.offsetLeft + window.innerWidth * 0.8, Y: v.ref.current.offsetTop });
+      }
     });
   };
 
@@ -199,7 +209,7 @@ export default function NWJNS_Powerpuffgirl() {
       <Link href={"/sandbox"} className="temp">
         뒤로가기
       </Link>
-      <div className="reset" onClick={interactionInitialize}>
+      <div className="reset" onClick={() => interactionInitialize()}>
         초기화
       </div>
       <div className="nwjns-not-support" ref={pageBlockRef}>{`Screen size is too small`}</div>
