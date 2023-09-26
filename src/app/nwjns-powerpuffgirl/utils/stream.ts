@@ -1,22 +1,7 @@
 import { Coordinate, getBezierArray } from "@/utils/physicalEngine";
 
 export function* hoveringSequence(index: number): Generator<number> {
-  const seq: Array<number> = [-1]; // (-2) 5개, (2) 10개, (-2) 5개
-  // for (let i = 1; i < 10; i++) {
-  //   seq.push(seq[seq.length - 1] - 1);
-  // }
-  // for (let i = 0; i < 2; i++) {
-  //   seq.push(seq[seq.length - 1]);
-  // }
-  // for (let i = 0; i < 20; i++) {
-  //   seq.push(seq[seq.length - 1] + 1);
-  // }
-  // for (let i = 0; i < 2; i++) {
-  //   seq.push(seq[seq.length - 1]);
-  // }
-  // for (let i = 0; i < 10; i++) {
-  //   seq.push(seq[seq.length - 1] - 1);
-  // }
+  const seq: Array<number> = [-1]; // 0 > -5 > 5 > 0
   for (let i = 1; i < 5; i++) {
     seq.push(seq[seq.length - 1] - 1);
     seq.push(seq[seq.length - 1]);
@@ -36,8 +21,6 @@ export function* hoveringSequence(index: number): Generator<number> {
     seq.push(seq[seq.length - 1]);
   }
 
-  // let escape: boolean = false;
-
   if (1 <= index && index <= 3) {
     for (let i = 0; i < 22; i++) {
       yield 0;
@@ -46,10 +29,7 @@ export function* hoveringSequence(index: number): Generator<number> {
 
   while (true) {
     for (let v of seq) {
-      // if (escape) return;
-
       yield v;
-      // alert(escape);
     }
   }
 }
