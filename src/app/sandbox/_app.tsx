@@ -29,7 +29,6 @@ import { SandboxTutorial } from "./demonstrations";
 import {
   GVT_SPEED_OFFSET,
   SPIN_SPEED_OFFSET,
-  FPS_OFFSET,
   UNDER_BOUND,
   TUTORIAL_INDEX,
   GRID_4_BY_2,
@@ -41,6 +40,7 @@ import { charaSelector } from "@/utils/nwjnsCharacter";
 import { modalOpen, modalSwitch, setChild } from "@/utils/redux/modalState";
 import SandboxDescription from "./components/SandboxDescription";
 import ToyDescription from "./components/ToyDescription";
+import { FPS_OFFSET } from "@/utils/constants";
 
 export default function Sandbox() {
   // console.log("re-render!");
@@ -83,7 +83,7 @@ export default function Sandbox() {
       moveRef: createRef(),
       rotateRef: createRef(),
       physics: { ...defaultToyPhysics },
-      link: "",
+      link: "/nwjns-powerpuffgirl",
       image: charaSelector(),
     },
     {
