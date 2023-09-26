@@ -16,6 +16,7 @@ import { StaticImageData } from "next/image";
 import { RefObject, createRef } from "react";
 import { Coordinate, Vector } from "@/utils/physicalEngine";
 import { hoveringSequence } from "../utils/stream";
+import { ScreenType } from "@/utils/types";
 
 export type NWJNSCharacter = {
   name: string;
@@ -43,14 +44,8 @@ export type Offsets = {
   stageWidth: number;
   stageHeight: number;
   charaSize: number;
+  screenType: ScreenType;
 };
-
-export enum ScreenType {
-  Normal = 0,
-  Vertical = 1,
-  Mobile = 2,
-  Tablet = 3,
-}
 
 // export const haerinImages = {
 //   fow1: HaerinFow1,

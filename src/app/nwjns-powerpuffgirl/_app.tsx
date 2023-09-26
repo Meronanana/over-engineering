@@ -4,17 +4,18 @@ import { MouseEventHandler, RefObject, useCallback, useEffect, useRef } from "re
 import Link from "next/link";
 
 import { BACKGROUND_BLUR, CHARACTER_SIZE, STAGE_HEIGHT, STAGE_WIDTH, STANDARD_HEIGHT } from "./model/constants";
-import { NWJNSCharacter, Offsets, ScreenType, defaultCharacters } from "./model/types";
-import { FPS_OFFSET } from "@/utils/constants";
+import { NWJNSCharacter, Offsets, defaultCharacters } from "./model/types";
 
+import { ScreenType } from "@/utils/types";
+import { FPS_OFFSET } from "@/utils/constants";
 import { Coordinate } from "@/utils/physicalEngine";
 import { moveSequence } from "./utils/stream";
-import { sleep } from "@/utils/hooks";
+import { getWindowRatio, sleep } from "@/utils/utilFunctions";
 
 import "./nwjns.scss";
 
 export default function NWJNS_Powerpuffgirl() {
-  const offsetRef = useRef<Offsets>({ stageWidth: 0, stageHeight: 0, charaSize: 0 });
+  const offsetRef = useRef<Offsets>({ stageWidth: 0, stageHeight: 0, charaSize: 0, screenType: ScreenType.Normal });
 
   const stageRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const bgTopRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
@@ -26,6 +27,7 @@ export default function NWJNS_Powerpuffgirl() {
   const charaList = useRef<Array<NWJNSCharacter>>([...defaultCharacters]);
 
   useEffect(() => {
+    console.log(window.navigator.userAgent);
     initialize();
     window.addEventListener("resize", initialize);
 
@@ -61,11 +63,8 @@ export default function NWJNS_Powerpuffgirl() {
     document.documentElement.style.setProperty("--blur", `${BACKGROUND_BLUR}px`);
 
     // 스크린 초기화
-    let screenType: ScreenType;
-    if (window.innerHeight < (window.innerWidth * 16) / 9) screenType = ScreenType.Normal;
-    else screenType = ScreenType.Vertical;
     for (let i = STANDARD_HEIGHT.length - 1; i >= 0; i--) {
-      if (screenType === ScreenType.Normal) {
+      if (getWindowRatio() > 9 / 16) {
         if (STANDARD_HEIGHT[i] > window.innerHeight) continue;
       } else {
         if (STAGE_WIDTH[i] > window.innerWidth) continue;
@@ -75,8 +74,6 @@ export default function NWJNS_Powerpuffgirl() {
       } else if (pageBlockRef.current) {
         pageBlockRef.current.style.display = "none";
       }
-
-      console.log(STAGE_WIDTH[i], STAGE_HEIGHT[i]);
 
       const horGap = (window.innerWidth - STAGE_WIDTH[i]) / 2;
       const verGap = (window.innerHeight - STAGE_HEIGHT[i]) / 2;
@@ -100,6 +97,11 @@ export default function NWJNS_Powerpuffgirl() {
 
       // Character size
       document.documentElement.style.setProperty("--chara-size", `${CHARACTER_SIZE[i]}px`);
+      charaList.current.forEach((v) => {
+        if (v.ref.current) {
+          v.ref.current.style.backgroundPosition = `${-CHARACTER_SIZE[i] * 2}px, 0`;
+        }
+      });
 
       break;
     }
@@ -138,9 +140,9 @@ export default function NWJNS_Powerpuffgirl() {
       seqNow = seq.next();
 
       if (start.X <= end.X) {
-        if (i === 1) charaRef.current.style.backgroundPosition = `${-charaSize}px 0`;
+        if (i === 1) charaRef.current.style.backgroundPosition = `${-charaSize * 1}px 0`;
         if (i === 10) charaRef.current.style.backgroundPosition = `${-charaSize * 0}px 0`;
-        if (i === frames - 10) charaRef.current.style.backgroundPosition = `${-charaSize}px 0`;
+        if (i === frames - 10) charaRef.current.style.backgroundPosition = `${-charaSize * 1}px 0`;
         if (i === frames) charaRef.current.style.backgroundPosition = `${-charaSize * 2}px 0`;
       } else {
         if (i === 1) charaRef.current.style.backgroundPosition = `${-charaSize * 4}px 0`;
@@ -157,7 +159,7 @@ export default function NWJNS_Powerpuffgirl() {
   const interactionInitialize = () => {
     const frames = 70;
     const distShort = offsetRef.current.charaSize;
-    const distLong = (distShort / 4) * 5;
+    const distLong = (distShort * 5) / 4;
 
     if (stageRef.current) {
       stageRef.current.style.zIndex = "1";
