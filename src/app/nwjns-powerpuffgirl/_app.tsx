@@ -3,51 +3,52 @@
 import { MouseEventHandler, RefObject, useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
 
-import { BACKGROUND_BLUR, CHARACTER_SIZE, STAGE_HEIGHT, STAGE_WIDTH, STANDARD_HEIGHT } from "./model/constants";
+import {
+  BACKGROUND_BLUR,
+  CHARACTER_SIZE,
+  STAGE_HEIGHT,
+  STAGE_WIDTH,
+  STANDARD_HEIGHT,
+  THRESHOLD_RATIO,
+} from "./model/constants";
 import { NWJNSCharacter, Offsets, defaultCharacters } from "./model/types";
-import { FPS_OFFSET } from "@/utils/constants";
 
+import { ScreenType } from "@/utils/types";
+import { FPS_OFFSET } from "@/utils/constants";
 import { Coordinate } from "@/utils/physicalEngine";
 import { moveSequence } from "./utils/stream";
-import { sleep } from "@/utils/hooks";
+import { getWindowRatio, sleep } from "@/utils/utilFunctions";
 
 import "./nwjns.scss";
 
 export default function NWJNS_Powerpuffgirl() {
-  const offsetRef = useRef<Offsets>({ stageWidth: 0, stageHeight: 0, charaSize: 0 });
+  const offsetRef = useRef<Offsets>({ stageWidth: 0, stageHeight: 0, charaSize: 0, screenType: ScreenType.Normal });
 
   const stageRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const bgTopRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const bgBottomRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const bgLeftRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const bgRightRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+  const pageBlockRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
   const charaList = useRef<Array<NWJNSCharacter>>([...defaultCharacters]);
 
   useEffect(() => {
-    initialize();
-    window.addEventListener("resize", initialize);
+    console.log(window.navigator.userAgent);
+    resizeInitialize();
+    window.addEventListener("resize", resizeInitialize);
 
     const moveInterval = setInterval(charaMove, FPS_OFFSET);
 
-    {
-      const frames = 50;
-      const distShort = offsetRef.current.charaSize;
-      const distLong = (distShort / 4) * 5;
-      singleMove(0, { X: window.innerWidth * 0.15 - distShort, Y: window.innerHeight * 0.5 - distLong }, frames);
-      singleMove(1, { X: window.innerWidth * 0.15, Y: window.innerHeight * 0.5 }, frames);
-      singleMove(2, { X: window.innerWidth * 0.15 - distLong, Y: window.innerHeight * 0.5 + distShort }, frames);
-      singleMove(3, { X: window.innerWidth * 0.15 + distLong, Y: window.innerHeight * 0.5 - distShort }, frames);
-      singleMove(4, { X: window.innerWidth * 0.15 + distShort, Y: window.innerHeight * 0.5 + distLong }, frames);
-    }
+    interactionInitialize(50);
 
     return () => {
-      window.removeEventListener("resize", initialize);
+      window.removeEventListener("resize", resizeInitialize);
       clearInterval(moveInterval);
     };
   }, []);
 
-  const initialize = () => {
+  const resizeInitialize = () => {
     if (
       stageRef.current === null ||
       bgTopRef.current === null ||
@@ -59,34 +60,45 @@ export default function NWJNS_Powerpuffgirl() {
 
     document.documentElement.style.setProperty("--blur", `${BACKGROUND_BLUR}px`);
 
+    // 스크린 초기화
     for (let i = STANDARD_HEIGHT.length - 1; i >= 0; i--) {
-      if (STANDARD_HEIGHT[i] >= window.innerHeight) continue;
+      if (getWindowRatio() > 9 / 16) {
+        if (STANDARD_HEIGHT[i] > window.innerHeight) continue;
+      } else {
+        if (STAGE_WIDTH[i] > window.innerWidth) continue;
+      }
+      if (i == 0 && pageBlockRef.current) {
+        pageBlockRef.current.style.display = "flex";
+      } else if (pageBlockRef.current) {
+        pageBlockRef.current.style.display = "none";
+      }
 
-      const horizonal = (window.innerWidth - STAGE_WIDTH[i]) / 2;
-      const vertical = (window.innerHeight - STAGE_HEIGHT[i]) / 2;
+      const horGap = (window.innerWidth - STAGE_WIDTH[i]) / 2;
+      const verGap = (window.innerHeight - STAGE_HEIGHT[i]) / 2;
 
+      // 오프셋 설정
       offsetRef.current.stageWidth = STAGE_WIDTH[i];
       offsetRef.current.stageHeight = STAGE_HEIGHT[i];
       offsetRef.current.charaSize = CHARACTER_SIZE[i];
-      document.documentElement.style.setProperty("--chara-size", `${CHARACTER_SIZE[i]}px`);
 
+      // 배경 resolution
       stageRef.current.style.width = STAGE_WIDTH[i] + "px";
       stageRef.current.style.height = STAGE_HEIGHT[i] + "px";
 
-      bgTopRef.current.style.height = vertical + "px";
-      bgBottomRef.current.style.height = vertical + "px";
-      bgLeftRef.current.style.width = horizonal + "px";
-      bgRightRef.current.style.width = horizonal + "px";
+      bgTopRef.current.style.height = verGap + "px";
+      bgBottomRef.current.style.height = verGap + "px";
+      bgLeftRef.current.style.width = horGap + "px";
+      bgRightRef.current.style.width = horGap + "px";
 
       bgTopRef.current.style.width = STAGE_WIDTH[i] + 5 + "px";
       bgBottomRef.current.style.width = STAGE_WIDTH[i] + 5 + "px";
 
-      charaList.current.map((v) => {
-        const charaRef = v.ref;
-        if (charaRef.current === null) return;
-
-        charaRef.current.style.width = CHARACTER_SIZE[i] + "px";
-        charaRef.current.style.height = CHARACTER_SIZE[i] + "px";
+      // Character size
+      document.documentElement.style.setProperty("--chara-size", `${CHARACTER_SIZE[i]}px`);
+      charaList.current.forEach((v) => {
+        if (v.ref.current) {
+          v.ref.current.style.backgroundPosition = `${-CHARACTER_SIZE[i] * 2}px, 0`;
+        }
       });
 
       break;
@@ -126,9 +138,9 @@ export default function NWJNS_Powerpuffgirl() {
       seqNow = seq.next();
 
       if (start.X <= end.X) {
-        if (i === 1) charaRef.current.style.backgroundPosition = `${-charaSize}px 0`;
+        if (i === 1) charaRef.current.style.backgroundPosition = `${-charaSize * 1}px 0`;
         if (i === 10) charaRef.current.style.backgroundPosition = `${-charaSize * 0}px 0`;
-        if (i === frames - 10) charaRef.current.style.backgroundPosition = `${-charaSize}px 0`;
+        if (i === frames - 10) charaRef.current.style.backgroundPosition = `${-charaSize * 1}px 0`;
         if (i === frames) charaRef.current.style.backgroundPosition = `${-charaSize * 2}px 0`;
       } else {
         if (i === 1) charaRef.current.style.backgroundPosition = `${-charaSize * 4}px 0`;
@@ -142,20 +154,27 @@ export default function NWJNS_Powerpuffgirl() {
     } while (!seqNow.done);
   };
 
-  const interactionInitialize = () => {
-    const frames = 70;
+  const interactionInitialize = (frames: number = 70) => {
     const distShort = offsetRef.current.charaSize;
-    const distLong = (distShort / 4) * 5;
+    const distLong = (distShort * 5) / 4;
 
     if (stageRef.current) {
       stageRef.current.style.zIndex = "1";
     }
 
-    singleMove(0, { X: window.innerWidth * 0.15 - distShort, Y: window.innerHeight * 0.5 - distLong }, frames);
-    singleMove(1, { X: window.innerWidth * 0.15, Y: window.innerHeight * 0.5 }, frames);
-    singleMove(2, { X: window.innerWidth * 0.15 - distLong, Y: window.innerHeight * 0.5 + distShort }, frames);
-    singleMove(3, { X: window.innerWidth * 0.15 + distLong, Y: window.innerHeight * 0.5 - distShort }, frames);
-    singleMove(4, { X: window.innerWidth * 0.15 + distShort, Y: window.innerHeight * 0.5 + distLong }, frames);
+    if (getWindowRatio() > THRESHOLD_RATIO) {
+      singleMove(0, { X: window.innerWidth * 0.15 - distShort, Y: window.innerHeight * 0.5 - distLong }, frames);
+      singleMove(1, { X: window.innerWidth * 0.15, Y: window.innerHeight * 0.5 }, frames);
+      singleMove(2, { X: window.innerWidth * 0.15 - distLong, Y: window.innerHeight * 0.5 + distShort }, frames);
+      singleMove(3, { X: window.innerWidth * 0.15 + distLong, Y: window.innerHeight * 0.5 - distShort }, frames);
+      singleMove(4, { X: window.innerWidth * 0.15 + distShort, Y: window.innerHeight * 0.5 + distLong }, frames);
+    } else {
+      singleMove(0, { X: -window.innerWidth * 0.3 - distShort, Y: window.innerHeight * 0.5 - distLong }, frames);
+      singleMove(1, { X: -window.innerWidth * 0.3, Y: window.innerHeight * 0.5 }, frames);
+      singleMove(2, { X: -window.innerWidth * 0.3 - distLong, Y: window.innerHeight * 0.5 + distShort }, frames);
+      singleMove(3, { X: -window.innerWidth * 0.3 + distLong, Y: window.innerHeight * 0.5 - distShort }, frames);
+      singleMove(4, { X: -window.innerWidth * 0.3 + distShort, Y: window.innerHeight * 0.5 + distLong }, frames);
+    }
 
     setTimeout(() => {
       if (stageRef.current) {
@@ -167,7 +186,12 @@ export default function NWJNS_Powerpuffgirl() {
   const mouseClickEvent: MouseEventHandler = (e: React.MouseEvent) => {
     charaList.current.map((v, i) => {
       if (v.ref.current === null) return;
-      singleMove(i, { X: v.ref.current.offsetLeft + window.innerWidth * 0.35, Y: v.ref.current.offsetTop });
+
+      if (getWindowRatio() > THRESHOLD_RATIO) {
+        singleMove(i, { X: v.ref.current.offsetLeft + window.innerWidth * 0.35, Y: v.ref.current.offsetTop });
+      } else {
+        singleMove(i, { X: v.ref.current.offsetLeft + window.innerWidth * 0.8, Y: v.ref.current.offsetTop });
+      }
     });
   };
 
@@ -185,9 +209,10 @@ export default function NWJNS_Powerpuffgirl() {
       <Link href={"/sandbox"} className="temp">
         뒤로가기
       </Link>
-      <div className="reset" onClick={interactionInitialize}>
+      <div className="reset" onClick={() => interactionInitialize()}>
         초기화
       </div>
+      <div className="nwjns-not-support" ref={pageBlockRef}>{`Screen size is too small`}</div>
     </main>
   );
 }

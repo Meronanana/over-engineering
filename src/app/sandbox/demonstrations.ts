@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { MutableRefObject, RefObject } from "react";
-import { sleep } from "../../utils/hooks";
+import { sleep } from "../../utils/utilFunctions";
 import { Toy, ToyPhysics } from "./model/types";
 import { Coordinate } from "@/utils/physicalEngine";
 import { SPIN_SPEED_OFFSET, TUTORIAL_INDEX } from "./model/constants";
