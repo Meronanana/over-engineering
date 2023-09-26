@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { MutableRefObject, RefObject } from "react";
-import { useSleep } from "../../utils/utilFunctions";
+import { sleep } from "../../utils/utilFunctions";
 import { Toy, ToyPhysics } from "./model/types";
 import { Coordinate } from "@/utils/physicalEngine";
 import { SPIN_SPEED_OFFSET, TUTORIAL_INDEX } from "./model/constants";
@@ -36,18 +36,18 @@ export const SandboxTutorial = async (
 
   spread(TUTORIAL_INDEX, false);
 
-  await useSleep(1500);
+  await sleep(1500);
 
   tutorialMessageRef.current.innerHTML = "HOLD";
 
-  await useSleep(1500);
+  await sleep(1500);
 
   tutorialMessageRef.current.innerHTML = "THROW";
   toyPhysics.V = { vx: Math.floor(Math.random() * 40) - 20, vy: -30 };
   toyPhysics.dR = toyPhysics.V.vx * SPIN_SPEED_OFFSET;
   toyGravityDrop(TUTORIAL_INDEX);
 
-  await useSleep(2000);
+  await sleep(2000);
 
   tutorialMessageRef.current.innerHTML = "TRY IT";
   toyPhysics.DST = dockerCoor;
@@ -55,11 +55,11 @@ export const SandboxTutorial = async (
 
   dockerRef.current.className = "sandbox-docker tutorial";
 
-  await useSleep(3500);
+  await sleep(3500);
 
   spread(TUTORIAL_INDEX, true);
 
-  await useSleep(200);
+  await sleep(200);
 
   toyMoveRef.current.style.visibility = "hidden";
   bgShadowRef.current.className = "";
