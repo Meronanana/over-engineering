@@ -8,16 +8,6 @@ export interface Coordinate {
   Y: number;
 }
 
-export interface ToyPhysics {
-  X: Array<number>; // X값 변량 추적
-  Y: Array<number>; // Y값 변량 추적
-  DST: Coordinate; // 목적 좌표
-  V: Vector; // 현재 이동 방향
-  R: number; // 현재 회전각
-  dR: number; // 현재 회전각속도
-  FIXED: boolean; // 이동 가능 여부
-}
-
 export interface Circle {
   x: number;
   y: number;
@@ -41,6 +31,7 @@ export const randomCoordinate = (maxWidth: number, maxHeight: number) => {
   };
 };
 
+// 원형 오브젝트간 충돌 감지하여 이동 방향 반환
 export const reactionByCircleCollision = (data: Array<Circle | null>, index: number, vector: Vector): Vector | null => {
   const point = data[index] as Circle;
 
@@ -54,8 +45,8 @@ export const reactionByCircleCollision = (data: Array<Circle | null>, index: num
 
     if (Math.abs(dx) > threshold || Math.abs(dy) > threshold) return;
 
-    const distance = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-    if (distance < threshold) {
+    const distance = Math.pow(dx, 2) + Math.pow(dy, 2);
+    if (distance < Math.pow(threshold, 2)) {
       const normal = getRadius({ vx: dx, vy: dy });
       const incoming = getRadius(vector);
       if (Math.abs(normal - incoming) < Math.PI / 2) return;

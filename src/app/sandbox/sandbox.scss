@@ -1,17 +1,13 @@
-$angle: 0deg;
-
 .sandbox-screen {
-  position: absolute;
+  position: fixed;
   overflow: hidden;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
 }
 
 .sandbox-background {
   position: fixed;
   overflow: hidden;
-
-  // transition: 0.5s;
 }
 
 .sandbox-shadow {
@@ -22,128 +18,18 @@ $angle: 0deg;
   background-color: black;
   opacity: 0;
 
-  animation: shadowOn 0.5s linear forwards;
-}
-
-.sandbox-title {
-  position: absolute;
-  top: 0%;
-  left: 50%;
-  padding: 1vh;
-  color: gray;
-  font-size: 2vmin;
-  transition: 0.5s;
-  transform: translate(-50%, 0%);
-}
-
-.sandbox-title.on-grid {
-  color: white;
-}
-
-.master-docker {
-  position: absolute;
-  top: 50%;
-  left: 0%;
-  padding: 1vmin;
-
-  display: flex;
-  flex-direction: column;
-
-  transform: translate(0%, -50%);
-}
-
-.sandbox-docker {
-  position: absolute;
-  top: 50%;
-  right: 0%;
-  padding: 1vmin;
-
-  display: flex;
-  flex-direction: column;
-
-  transform: translate(0%, -50%);
-}
-
-.sandbox-docker.tutorial {
-  border-color: white;
-  animation: tutorial-highlight 3s linear forwards;
-}
-
-.toy-div {
-  position: absolute;
-  top: -10%;
-  left: 50%;
-  width: 12vmin;
-  height: 12vmin;
-  transform: translate(-50%, -50%);
-
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-
-  color: rgb(99, 62, 191);
-}
-
-.toy-image {
-  pointer-events: none;
-}
-
-.toy-tutorial-message {
-  position: absolute;
-  bottom: 0;
-  width: 12vmin;
-  height: 1vmin;
-
-  text-align: center;
-  color: white;
-  // background-color: yellow;
-}
-
-.toy-div.dummy {
-  position: absolute;
-  top: -10%;
-  left: 50%;
-  width: 12vmin;
-  height: 12vmin;
-  border-radius: 6vmin;
-  border-width: 2px;
-  border-color: rgb(24, 95, 89);
-  transform: translate(-50%, -50%);
-
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-
-  color: rgb(99, 62, 191);
-}
-
-.sidemenu-button {
-  width: 4vmin;
-  height: 4vmin;
-  margin: 1vmin 0vmin;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  opacity: 0.7;
   transition: 0.5s;
 }
 
-@keyframes shadowOn {
-  100% {
-    opacity: 0.3;
-  }
-}
+// .toy-tutorial-message {
+//   position: absolute;
+//   bottom: 0;
+//   width: 12vmin;
+//   height: 1vmin;
 
-@keyframes shadowOff {
-  100% {
-    opacity: 0;
-  }
-}
+//   text-align: center;
+//   color: white;
+// }
 
 @keyframes tutorial-highlight {
   0% {
