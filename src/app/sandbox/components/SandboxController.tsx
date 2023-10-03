@@ -19,7 +19,7 @@ export default function SandboxController({ alignRef, dockerRef, alignModeChange
   const [align, setAlign] = useState(SandboxAlignType.Free);
 
   return (
-    <div>
+    <div className="sandbox-controller">
       <Link href="/" className={align === SandboxAlignType.Grid ? "sandbox-title on-grid" : "sandbox-title"}>
         over-engineering
       </Link>

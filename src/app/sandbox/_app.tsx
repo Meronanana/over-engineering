@@ -49,15 +49,15 @@ export default function Sandbox() {
 
   const screenRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const backgroundRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+  const bgItemsRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const bgShadowRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+  const toyAreaRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
   const dockerRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
-  const mouseDownState: MutableRefObject<boolean> = useRef<boolean>(false);
   const toyFocus: MutableRefObject<number> = useRef<number>(-1);
   const backgroundOffset = useRef({ left: 0, top: 0 });
   const alignRef = useRef(SandboxAlignType.Free);
-  const backgroundShrinkRef = useRef(true);
   const mouseDownTime: MutableRefObject<number> = useRef<number>(0);
 
   const toyList = useRef<Array<Toy>>([
@@ -96,17 +96,6 @@ export default function Sandbox() {
   ]);
 
   useEffect(() => {
-    const toyMoveId = setInterval(toyMove, FPS_OFFSET, 0.2);
-    window.addEventListener("resize", backgroundInitialize);
-    // window.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
-
-    return () => {
-      clearInterval(toyMoveId);
-      window.removeEventListener("resize", backgroundInitialize);
-    };
-  }, []);
-
-  useEffect(() => {
     toyList.current.forEach((v, i) => {
       if (v.physics.DST.X === -1 && v.physics.DST.Y === -1) {
         spread(i, false);
@@ -114,31 +103,23 @@ export default function Sandbox() {
     });
 
     toyList.current[TUTORIAL_INDEX].physics.FIXED = true;
-    if (toyList.current[TUTORIAL_INDEX].moveRef.current)
+    if (toyList.current[TUTORIAL_INDEX].moveRef.current) {
       toyList.current[TUTORIAL_INDEX].moveRef.current.style.visibility = "hidden";
-
-    let bgMoveId: string | number | NodeJS.Timer | undefined;
-
-    if (backgroundRef.current !== null) {
-      if (!backgroundShrinkRef.current) {
-        bgMoveId = setInterval(backgroundMove, FPS_OFFSET);
-      } else {
-        backgroundRef.current.style.left = "0px";
-        backgroundRef.current.style.top = "0px";
-      }
     }
 
     backgroundInitialize();
 
+    const toyMoveId = setInterval(toyMove, FPS_OFFSET, 0.2);
+    window.addEventListener("resize", backgroundInitialize);
+
     return () => {
-      if (bgMoveId !== undefined) {
-        clearInterval(bgMoveId);
-      }
+      clearInterval(toyMoveId);
+      window.removeEventListener("resize", backgroundInitialize);
     };
-  }, [backgroundShrinkRef.current]);
+  }, []);
 
   const alignModeChange = useCallback((mode: SandboxAlignType) => {
-    if (screenRef.current === null || bgShadowRef.current === null) return;
+    if (screenRef.current === null || bgShadowRef.current === null || toyAreaRef.current === null) return;
 
     alignRef.current = mode;
 
@@ -183,6 +164,7 @@ export default function Sandbox() {
       });
 
       bgShadowRef.current.style.opacity = "0.3";
+      toyAreaRef.current.style.zIndex = "101";
     } else if (mode === SandboxAlignType.Free) {
       toyList.current.forEach((v, i) => {
         v.physics.V.vx = Math.round(Math.random() * 6) - 3;
@@ -192,14 +174,16 @@ export default function Sandbox() {
       });
 
       bgShadowRef.current.style.opacity = "0";
+      toyAreaRef.current.style.zIndex = "1";
     } else if (mode === SandboxAlignType.Shake) {
       shake();
       bgShadowRef.current.style.opacity = "0";
+      toyAreaRef.current.style.zIndex = "1";
     }
   }, []);
 
   const backgroundInitialize = useCallback(() => {
-    if (screenRef.current === null || backgroundRef.current === null) return;
+    if (screenRef.current === null || backgroundRef.current === null || bgItemsRef.current === null) return;
 
     const screenWidth = screenRef.current.offsetWidth;
     const screenHeight = screenRef.current.offsetHeight;
@@ -214,47 +198,17 @@ export default function Sandbox() {
       bgWidth = (bgHeight * 16) / 9;
     }
 
-    if (!backgroundShrinkRef.current) {
-      bgWidth += 160;
-      bgHeight += 90;
-    }
-
     if (backgroundSize.width !== bgWidth || backgroundSize.height !== bgHeight) {
       let offsetLeft = -(bgWidth - screenWidth) / 2;
       let offsetTop = -(bgHeight - screenHeight) / 2;
 
       backgroundOffset.current = { left: offsetLeft, top: offsetTop };
       backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
+      bgItemsRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
 
       setBackgroundSize({ width: bgWidth, height: bgHeight });
     }
   }, [backgroundSize]);
-
-  const backgroundMove = useCallback(() => {
-    if (screenRef.current === null || backgroundRef.current === null) return;
-
-    const stdWidth = screenRef.current.offsetWidth / 2;
-    const stdHeight = screenRef.current.offsetHeight / 2;
-    let meanX = 0;
-    let meanY = 0;
-
-    toyList.current.forEach((v) => {
-      const toyRef = v.moveRef;
-      if (toyRef.current === null) return;
-
-      meanX += toyRef.current.offsetLeft;
-      meanY += toyRef.current.offsetTop;
-    });
-
-    meanX /= toyList.current.length;
-    meanY /= toyList.current.length;
-
-    const moveX = Math.round(((meanX - stdWidth) * 90) / stdWidth);
-    const moveY = Math.round(((meanY - stdHeight) * 45) / stdHeight);
-
-    backgroundRef.current.style.left = -moveX + "px";
-    backgroundRef.current.style.top = -moveY + "px";
-  }, []);
 
   const toyMove = useCallback((t?: number) => {
     const data: Array<Circle | null> = toyList.current.map((v, i) => {
@@ -371,7 +325,7 @@ export default function Sandbox() {
     }
   }, []);
 
-  const spread = useCallback((index: number, outer: boolean) => {
+  const spread = (index: number, outer: boolean) => {
     if (screenRef.current === null) return;
 
     const toyPhysics = toyList.current[index].physics;
@@ -386,7 +340,7 @@ export default function Sandbox() {
     toyPhysics.Y = [0];
     toyPhysics.V = { vx: 0, vy: 0 };
     toyPhysics.dR = 0;
-  }, []);
+  };
 
   const shake = useCallback(() => {
     toyList.current.forEach((v, i) => {
@@ -528,12 +482,12 @@ export default function Sandbox() {
   return (
     <>
       {/* <meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1.0, user-scalable=no" /> */}
-      <div className="sandbox-background" ref={backgroundRef}>
-        {/* <div className="sandbox-bg-objects">
+      {/* <div className="sandbox-background" ref={backgroundRef}> */}
+      {/* <div className="sandbox-bg-objects">
           <Objects width={backgroundSize.width} height={backgroundSize.height} />
         </div> */}
-        {/* <Background width={backgroundSize.width} height={backgroundSize.height} /> */}
-      </div>
+      {/* <Background width={backgroundSize.width} height={backgroundSize.height} /> */}
+      {/* </div> */}
       <main
         className="sandbox-screen"
         onMouseLeave={mouseUpEvent}
@@ -543,24 +497,26 @@ export default function Sandbox() {
         onTouchMove={touchMoveEvent}
         ref={screenRef}
       >
-        <div className="sandbox-items">
-          <Objects width={backgroundSize.width} height={backgroundSize.height} />
-        </div>
-        <div className="sandbox-background">
+        <div className="sandbox-background" ref={backgroundRef}>
           <Background width={backgroundSize.width} height={backgroundSize.height} />
         </div>
+        <div className="sandbox-items" ref={bgItemsRef}>
+          <Objects width={backgroundSize.width} height={backgroundSize.height} />
+        </div>
         <div className="sandbox-shadow" ref={bgShadowRef}></div>
-        {toyList.current.map((v, i) => {
-          return (
-            <ToyComponent
-              idx={i}
-              toyData={v}
-              mouseDownEvent={mouseDownEvent}
-              touchStartEvent={touchStartEvent}
-              key={i}
-            />
-          );
-        })}
+        <div style={{ position: "fixed" }} ref={toyAreaRef}>
+          {toyList.current.map((v, i) => {
+            return (
+              <ToyComponent
+                idx={i}
+                toyData={v}
+                mouseDownEvent={mouseDownEvent}
+                touchStartEvent={touchStartEvent}
+                key={i}
+              />
+            );
+          })}
+        </div>
         <SandboxController
           alignRef={alignRef}
           dockerRef={dockerRef}

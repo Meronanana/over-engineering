@@ -17,7 +17,7 @@ h3 {
 }
 
 .toy-div {
-  position: absolute;
+  position: fixed;
   top: -10%;
   left: 50%;
   width: 40px;
@@ -99,8 +99,14 @@ h3 {
   width: 0px;
 }
 
+.sandbox-controller {
+  position: fixed;
+
+  z-index: 101;
+}
+
 .sandbox-text {
-  position: absolute;
+  position: fixed;
   left: 50%;
   padding: 1vh;
 
@@ -130,7 +136,7 @@ h3 {
 }
 
 .sandbox-docker {
-  position: absolute;
+  position: fixed;
   top: 50%;
   right: 0%;
   padding: 1vmin;
@@ -146,7 +152,7 @@ h3 {
 }
 
 .master-docker {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 0%;
   padding: 1vmin;
