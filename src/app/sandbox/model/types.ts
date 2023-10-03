@@ -17,6 +17,9 @@ import {
   Starfish1,
   Starfish2,
   Starfish3,
+  TreeLeaves,
+  TreePole,
+  TreeShadow,
 } from "./sandboxItems";
 
 export enum SandboxAlignType {
@@ -52,7 +55,7 @@ export type SandboxItem = {
   image: any;
 };
 
-export const defaultToyPhysics = {
+export const defaultToyPhysics: ToyPhysics = {
   X: [0],
   Y: [0],
   DST: { X: -1, Y: -1 } as Coordinate,
@@ -170,3 +173,27 @@ export const defaultItemList: Array<SandboxItem> = [
     image: Starfish3,
   },
 ];
+
+export const treePoleItem: SandboxItem = {
+  position: { X: -1, Y: -1 },
+  width: 110,
+  height: 600,
+  ref: createRef(),
+  image: TreePole,
+};
+
+export const treeLeavesItem: SandboxItem = {
+  position: { X: -1, Y: -1 },
+  width: 886,
+  height: 460,
+  ref: createRef(),
+  image: TreeLeaves,
+};
+
+export const treeShadowItem: SandboxItem = {
+  position: { X: -1, Y: -1 },
+  width: 886,
+  height: 620,
+  ref: createRef(),
+  image: TreeShadow,
+};

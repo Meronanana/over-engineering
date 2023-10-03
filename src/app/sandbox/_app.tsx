@@ -8,18 +8,19 @@ import {
   useCallback,
   useEffect,
   useRef,
-  useState,
 } from "react";
 import { useDispatch } from "react-redux";
 
-import { SandboxAlignType, SandboxItem, Toy, defaultItemList, defaultToyList } from "./model/types";
-import Background from "/public/assets/images/sandbox/sandbox-background.svg";
-import Objects from "/public/assets/images/sandbox/sandbox-objects.svg";
-
-import ToyComponent from "./components/ToyComponent";
-
-import "./sandbox.scss";
-import { Circle, Coordinate, lerp, randomCoordinate, reactionByCircleCollision } from "@/utils/physicalEngine";
+import {
+  SandboxAlignType,
+  SandboxItem,
+  Toy,
+  defaultItemList,
+  defaultToyList,
+  treeLeavesItem,
+  treePoleItem,
+  treeShadowItem,
+} from "./model/types";
 import {
   GVT_SPEED_OFFSET,
   SPIN_SPEED_OFFSET,
@@ -30,11 +31,18 @@ import {
   GRID_3_BY_3,
   GRID_2_BY_4,
 } from "./model/constants";
-import SandboxController from "./components/SandboxController";
+import { Circle, Coordinate, lerp, randomCoordinate, reactionByCircleCollision } from "@/utils/physicalEngine";
 import { modalOpen, modalSwitch, setChild } from "@/utils/redux/modalState";
+
+import Background from "/public/assets/images/sandbox/sandbox-background.svg";
+
+import ToyComponent from "./components/ToyComponent";
+import SandboxItemComponent from "./components/SandboxItemComponent";
+import SandboxController from "./components/SandboxController";
 import SandboxDescription from "./components/SandboxDescription";
 import ToyDescription from "./components/ToyDescription";
-import SandboxItemComponent from "./components/SandboxItemComponent";
+
+import "./sandbox.scss";
 
 export default function Sandbox() {
   // console.log("re-render!");
@@ -43,8 +51,11 @@ export default function Sandbox() {
   const screenRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const backgroundRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const bgShadowRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
-
   const dockerRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+
+  // const treePoleRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+  // const treeLeavesRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+  // const treeShadowRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
   const toyFocus: MutableRefObject<number> = useRef<number>(-1);
   const backgroundOffset = useRef({ left: 0, top: 0 });
@@ -173,14 +184,56 @@ export default function Sandbox() {
       const itemRef = v.ref;
       if (itemRef.current === null) return;
 
-      itemRef.current.style.left = offsetLeft + v.position.X * sizeRatio + "px";
-      itemRef.current.style.top = offsetTop + v.position.Y * sizeRatio + "px";
-
       itemRef.current.style.width = sizeRatio * v.width + "px";
       itemRef.current.style.height = sizeRatio * v.height + "px";
 
+      itemRef.current.style.left = offsetLeft + v.position.X * sizeRatio + "px";
+      itemRef.current.style.top = offsetTop + v.position.Y * sizeRatio + "px";
+
       itemRef.current.style.zIndex = `${Math.floor((itemRef.current.offsetTop / bgHeight) * 100)}`;
     });
+
+    // 특수 오브젝트 배치
+    {
+      // 나무 기둥
+      const treePoleRef = treePoleItem.ref;
+      if (treePoleRef.current === null) return;
+
+      treePoleRef.current.style.width = sizeRatio * treePoleItem.width + "px";
+      treePoleRef.current.style.height = sizeRatio * treePoleItem.height + "px";
+
+      treePoleRef.current.style.right = "0px";
+      treePoleRef.current.style.top = Math.floor(window.innerHeight * 0.4) + "px";
+      treePoleRef.current.style.transform = "translateY(-100%)";
+
+      treePoleRef.current.style.zIndex = `${Math.floor((treePoleRef.current.offsetTop / bgHeight) * 100)}`;
+
+      // 나뭇잎
+      const treeLeavesRef = treeLeavesItem.ref;
+      if (treeLeavesRef.current === null) return;
+
+      treeLeavesRef.current.style.width = sizeRatio * treeLeavesItem.width + "px";
+      treeLeavesRef.current.style.height = sizeRatio * treeLeavesItem.height + "px";
+
+      treeLeavesRef.current.style.right = "0px";
+      treeLeavesRef.current.style.top = Math.floor(window.innerHeight * -0.02) + "px";
+      treeLeavesRef.current.style.transform = "translateX(38%)";
+
+      treeLeavesRef.current.style.zIndex = "97";
+
+      // 나무 그림자
+      const treeShadowRef = treeShadowItem.ref;
+      if (treeShadowRef.current === null) return;
+
+      treeShadowRef.current.style.width = sizeRatio * treeShadowItem.width + "px";
+      treeShadowRef.current.style.height = sizeRatio * treeShadowItem.height + "px";
+
+      treeShadowRef.current.style.right = "0px";
+      treeShadowRef.current.style.top = Math.floor(window.innerHeight * 0.372) + "px";
+      treeShadowRef.current.style.transform = "translateX(3%)";
+
+      treeShadowRef.current.style.zIndex = "99";
+    }
   }, []);
 
   const toyMove = useCallback((t?: number) => {
@@ -493,6 +546,15 @@ export default function Sandbox() {
         {sandboxItemList.current.map((v, i) => {
           return <SandboxItemComponent itemData={v} key={i} />;
         })}
+        <div className="sandbox-tree-item" ref={treePoleItem.ref}>
+          <treePoleItem.image />
+        </div>
+        <div className="sandbox-tree-item" ref={treeLeavesItem.ref}>
+          <treeLeavesItem.image />
+        </div>
+        <div className="sandbox-tree-item" ref={treeShadowItem.ref}>
+          <treeShadowItem.image />
+        </div>
         {toyList.current.map((v, i) => {
           return (
             <ToyComponent
