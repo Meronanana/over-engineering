@@ -5,7 +5,6 @@ import {
   MutableRefObject,
   RefObject,
   TouchEventHandler,
-  createRef,
   useCallback,
   useEffect,
   useRef,
@@ -13,13 +12,9 @@ import {
 } from "react";
 import { useDispatch } from "react-redux";
 
-import { SandboxAlignType, Toy, defaultToyPhysics } from "./model/types";
+import { SandboxAlignType, SandboxItem, Toy, defaultItemList, defaultToyList } from "./model/types";
 import Background from "/public/assets/images/sandbox/sandbox-background.svg";
 import Objects from "/public/assets/images/sandbox/sandbox-objects.svg";
-
-import ToyTutoMouse from "/public/assets/icons/toy-tuto-mouse.svg";
-import ToyLinkQR from "/public/assets/icons/toy-link-qr.png";
-import ToyDeadlock from "/public/assets/icons/toy-deadlock.svg";
 
 import ToyComponent from "./components/ToyComponent";
 
@@ -36,22 +31,18 @@ import {
   GRID_2_BY_4,
 } from "./model/constants";
 import SandboxController from "./components/SandboxController";
-import { charaSelector } from "@/utils/nwjnsCharacter";
 import { modalOpen, modalSwitch, setChild } from "@/utils/redux/modalState";
 import SandboxDescription from "./components/SandboxDescription";
 import ToyDescription from "./components/ToyDescription";
+import SandboxItemComponent from "./components/SandboxItemComponent";
 
 export default function Sandbox() {
   // console.log("re-render!");
   const dispatch = useDispatch();
 
-  const [backgroundSize, setBackgroundSize] = useState({ width: 1920, height: 1080 });
-
   const screenRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const backgroundRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
-  const bgItemsRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const bgShadowRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
-  const toyAreaRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
   const dockerRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
@@ -60,40 +51,8 @@ export default function Sandbox() {
   const alignRef = useRef(SandboxAlignType.Free);
   const mouseDownTime: MutableRefObject<number> = useRef<number>(0);
 
-  const toyList = useRef<Array<Toy>>([
-    {
-      name: "qr-code",
-      moveRef: createRef(),
-      rotateRef: createRef(),
-      physics: { ...defaultToyPhysics },
-      link: "",
-      image: ToyLinkQR,
-    },
-    {
-      name: "deadlock",
-      moveRef: createRef(),
-      rotateRef: createRef(),
-      physics: { ...defaultToyPhysics },
-      link: "",
-      image: ToyDeadlock,
-    },
-    {
-      name: "nwjns-powerpuffgirl",
-      moveRef: createRef(),
-      rotateRef: createRef(),
-      physics: { ...defaultToyPhysics },
-      link: "",
-      image: charaSelector(),
-    },
-    {
-      name: "tutorial",
-      moveRef: createRef(),
-      rotateRef: createRef(),
-      physics: { ...defaultToyPhysics },
-      link: "",
-      image: ToyTutoMouse,
-    },
-  ]);
+  const toyList = useRef<Array<Toy>>([...defaultToyList]);
+  const sandboxItemList = useRef<Array<SandboxItem>>([...defaultItemList]);
 
   useEffect(() => {
     toyList.current.forEach((v, i) => {
@@ -119,7 +78,7 @@ export default function Sandbox() {
   }, []);
 
   const alignModeChange = useCallback((mode: SandboxAlignType) => {
-    if (screenRef.current === null || bgShadowRef.current === null || toyAreaRef.current === null) return;
+    if (screenRef.current === null || bgShadowRef.current === null) return;
 
     alignRef.current = mode;
 
@@ -164,7 +123,11 @@ export default function Sandbox() {
       });
 
       bgShadowRef.current.style.opacity = "0.3";
-      toyAreaRef.current.style.zIndex = "101";
+      toyList.current.forEach((v) => {
+        if (v.moveRef.current) {
+          v.moveRef.current.style.zIndex = "101";
+        }
+      });
     } else if (mode === SandboxAlignType.Free) {
       toyList.current.forEach((v, i) => {
         v.physics.V.vx = Math.round(Math.random() * 6) - 3;
@@ -174,41 +137,51 @@ export default function Sandbox() {
       });
 
       bgShadowRef.current.style.opacity = "0";
-      toyAreaRef.current.style.zIndex = "1";
     } else if (mode === SandboxAlignType.Shake) {
       shake();
       bgShadowRef.current.style.opacity = "0";
-      toyAreaRef.current.style.zIndex = "1";
     }
   }, []);
 
   const backgroundInitialize = useCallback(() => {
-    if (screenRef.current === null || backgroundRef.current === null || bgItemsRef.current === null) return;
+    if (screenRef.current === null || backgroundRef.current === null) return;
 
     const screenWidth = screenRef.current.offsetWidth;
     const screenHeight = screenRef.current.offsetHeight;
 
-    let bgWidth, bgHeight;
+    let bgWidth: number, bgHeight: number, sizeRatio: number;
 
     if ((screenHeight * 16) / 9 < screenWidth) {
       bgWidth = screenWidth;
       bgHeight = (bgWidth * 9) / 16;
+      sizeRatio = bgWidth / 3840;
     } else {
       bgHeight = screenHeight;
       bgWidth = (bgHeight * 16) / 9;
+      sizeRatio = bgHeight / 2160;
     }
 
-    if (backgroundSize.width !== bgWidth || backgroundSize.height !== bgHeight) {
-      let offsetLeft = -(bgWidth - screenWidth) / 2;
-      let offsetTop = -(bgHeight - screenHeight) / 2;
+    let offsetLeft = -(bgWidth - screenWidth) / 2;
+    let offsetTop = -(bgHeight - screenHeight) / 2;
 
-      backgroundOffset.current = { left: offsetLeft, top: offsetTop };
-      backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
-      bgItemsRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
+    backgroundOffset.current = { left: offsetLeft, top: offsetTop };
+    backgroundRef.current.style.width = bgWidth + "px";
+    backgroundRef.current.style.height = bgHeight + "px";
+    backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
 
-      setBackgroundSize({ width: bgWidth, height: bgHeight });
-    }
-  }, [backgroundSize]);
+    sandboxItemList.current.forEach((v) => {
+      const itemRef = v.ref;
+      if (itemRef.current === null) return;
+
+      itemRef.current.style.left = offsetLeft + v.position.X * sizeRatio + "px";
+      itemRef.current.style.top = offsetTop + v.position.Y * sizeRatio + "px";
+
+      itemRef.current.style.width = sizeRatio * v.width + "px";
+      itemRef.current.style.height = sizeRatio * v.height + "px";
+
+      itemRef.current.style.zIndex = `${Math.floor((itemRef.current.offsetTop / bgHeight) * 100)}`;
+    });
+  }, []);
 
   const toyMove = useCallback((t?: number) => {
     const data: Array<Circle | null> = toyList.current.map((v, i) => {
@@ -285,9 +258,17 @@ export default function Sandbox() {
         endY = Math.round(screenRef.current.offsetHeight * UNDER_BOUND);
       }
 
+      // DOM 컨트롤
       toyMoveRef.current.style.left = endX + "px";
       toyMoveRef.current.style.top = endY + "px";
       toyRotateRef.current.style.transform = `rotate(${rotate}deg)`;
+
+      if (i !== toyFocus.current && backgroundRef.current) {
+        toyMoveRef.current.style.zIndex = `${Math.floor(
+          ((toyMoveRef.current.offsetTop + toyMoveRef.current.offsetHeight / 2) / backgroundRef.current.offsetHeight) *
+            100
+        )}`;
+      }
     });
   }, []);
 
@@ -369,6 +350,10 @@ export default function Sandbox() {
         toyPhysics.DST.Y = e.clientY;
 
         toyPhysics.R = Number(toyRotateRef.current.style.transform.substring(7).split("d")[0]);
+
+        toyMoveRef.current.style.zIndex = "98";
+        toyRotateRef.current.style.backgroundColor = "rgba(128, 128, 128, 0.25)";
+        toyRotateRef.current.style.boxShadow = "0px 0px 20px 10px rgba(128, 128, 128, 0.3)";
       }
     }
   };
@@ -391,6 +376,10 @@ export default function Sandbox() {
         toyPhysics.DST.Y = e.touches[0].clientY;
 
         toyPhysics.R = Number(toyRotateRef.current.style.transform.substring(7).split("d")[0]);
+
+        toyMoveRef.current.style.zIndex = "98";
+        toyRotateRef.current.style.backgroundColor = "rgba(128, 128, 128, 0.25)";
+        toyRotateRef.current.style.boxShadow = "0px 0px 20px 10px rgba(128, 128, 128, 0.3)";
       }
     }
   };
@@ -401,6 +390,7 @@ export default function Sandbox() {
     toyFocus.current = -1;
 
     const toyData = toyList.current[focus];
+    const toyRotateRef = toyData.rotateRef;
     const toyPhysics = toyData.physics;
 
     const clickEndTime = Date.now();
@@ -421,6 +411,11 @@ export default function Sandbox() {
       toyPhysics.dR = vx * SPIN_SPEED_OFFSET;
 
       toyGravityDrop(focus);
+    }
+
+    if (toyRotateRef.current) {
+      toyRotateRef.current.style.backgroundColor = "";
+      toyRotateRef.current.style.boxShadow = "";
     }
 
     e.preventDefault();
@@ -482,12 +477,6 @@ export default function Sandbox() {
   return (
     <>
       {/* <meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1.0, user-scalable=no" /> */}
-      {/* <div className="sandbox-background" ref={backgroundRef}> */}
-      {/* <div className="sandbox-bg-objects">
-          <Objects width={backgroundSize.width} height={backgroundSize.height} />
-        </div> */}
-      {/* <Background width={backgroundSize.width} height={backgroundSize.height} /> */}
-      {/* </div> */}
       <main
         className="sandbox-screen"
         onMouseLeave={mouseUpEvent}
@@ -497,26 +486,24 @@ export default function Sandbox() {
         onTouchMove={touchMoveEvent}
         ref={screenRef}
       >
-        <div className="sandbox-background" ref={backgroundRef}>
-          <Background width={backgroundSize.width} height={backgroundSize.height} />
-        </div>
-        <div className="sandbox-items" ref={bgItemsRef}>
-          <Objects width={backgroundSize.width} height={backgroundSize.height} />
-        </div>
         <div className="sandbox-shadow" ref={bgShadowRef}></div>
-        <div style={{ position: "fixed" }} ref={toyAreaRef}>
-          {toyList.current.map((v, i) => {
-            return (
-              <ToyComponent
-                idx={i}
-                toyData={v}
-                mouseDownEvent={mouseDownEvent}
-                touchStartEvent={touchStartEvent}
-                key={i}
-              />
-            );
-          })}
+        <div className="sandbox-background" ref={backgroundRef}>
+          <Background />
         </div>
+        {sandboxItemList.current.map((v, i) => {
+          return <SandboxItemComponent itemData={v} key={i} />;
+        })}
+        {toyList.current.map((v, i) => {
+          return (
+            <ToyComponent
+              idx={i}
+              toyData={v}
+              mouseDownEvent={mouseDownEvent}
+              touchStartEvent={touchStartEvent}
+              key={i}
+            />
+          );
+        })}
         <SandboxController
           alignRef={alignRef}
           dockerRef={dockerRef}
