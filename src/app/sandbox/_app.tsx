@@ -12,10 +12,10 @@ import {
   useState,
 } from "react";
 import { useDispatch } from "react-redux";
-import Link from "next/link";
 
 import { SandboxAlignType, Toy, defaultToyPhysics } from "./model/types";
-import Background from "/public/assets/images/sandbox-background.svg";
+import Background from "/public/assets/images/sandbox/sandbox-background.svg";
+import Objects from "/public/assets/images/sandbox/sandbox-objects.svg";
 
 import ToyTutoMouse from "/public/assets/icons/toy-tuto-mouse.svg";
 import ToyLinkQR from "/public/assets/icons/toy-link-qr.png";
@@ -24,8 +24,7 @@ import ToyDeadlock from "/public/assets/icons/toy-deadlock.svg";
 import ToyComponent from "./components/ToyComponent";
 
 import "./sandbox.scss";
-import { Circle, Coordinate, Vector, lerp, randomCoordinate, reactionByCircleCollision } from "@/utils/physicalEngine";
-import { SandboxTutorial } from "./demonstrations";
+import { Circle, Coordinate, lerp, randomCoordinate, reactionByCircleCollision } from "@/utils/physicalEngine";
 import {
   GVT_SPEED_OFFSET,
   SPIN_SPEED_OFFSET,
@@ -530,8 +529,10 @@ export default function Sandbox() {
     <>
       {/* <meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1.0, user-scalable=no" /> */}
       <div className="sandbox-background" ref={backgroundRef}>
-        <div className="sandbox-shadow" ref={bgShadowRef}></div>
-        <Background width={backgroundSize.width} height={backgroundSize.height} />
+        {/* <div className="sandbox-bg-objects">
+          <Objects width={backgroundSize.width} height={backgroundSize.height} />
+        </div> */}
+        {/* <Background width={backgroundSize.width} height={backgroundSize.height} /> */}
       </div>
       <main
         className="sandbox-screen"
@@ -542,6 +543,13 @@ export default function Sandbox() {
         onTouchMove={touchMoveEvent}
         ref={screenRef}
       >
+        <div className="sandbox-items">
+          <Objects width={backgroundSize.width} height={backgroundSize.height} />
+        </div>
+        <div className="sandbox-background">
+          <Background width={backgroundSize.width} height={backgroundSize.height} />
+        </div>
+        <div className="sandbox-shadow" ref={bgShadowRef}></div>
         {toyList.current.map((v, i) => {
           return (
             <ToyComponent
@@ -556,8 +564,6 @@ export default function Sandbox() {
         <SandboxController
           alignRef={alignRef}
           dockerRef={dockerRef}
-          backgroundShrinkRef={backgroundShrinkRef}
-          backgroundInitialize={backgroundInitialize}
           alignModeChange={alignModeChange}
           setDiscriptionModal={setDiscriptionModal}
         />

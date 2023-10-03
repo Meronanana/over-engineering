@@ -2,7 +2,6 @@ import { useState, MouseEventHandler, MutableRefObject, RefObject } from "react"
 import Link from "next/link";
 import { SandboxAlignType, Toy } from "../model/types";
 
-import IconShrink from "/public/assets/icons/Icon-Shrink.svg";
 import IconGrid from "/public/assets/icons/Icon-Grid.svg";
 import IconShake from "/public/assets/icons/Icon-Shake.svg";
 import IconLog from "/public/assets/icons/Icon-Log.svg";
@@ -12,20 +11,11 @@ import "./components.scss";
 interface Props {
   alignRef: MutableRefObject<SandboxAlignType>;
   dockerRef: RefObject<HTMLDivElement>;
-  backgroundShrinkRef: MutableRefObject<boolean>;
-  backgroundInitialize: Function;
   alignModeChange: Function;
   setDiscriptionModal: Function;
 }
 
-export default function SandboxController({
-  alignRef,
-  dockerRef,
-  backgroundShrinkRef,
-  backgroundInitialize,
-  alignModeChange,
-  setDiscriptionModal,
-}: Props) {
+export default function SandboxController({ alignRef, dockerRef, alignModeChange, setDiscriptionModal }: Props) {
   const [align, setAlign] = useState(SandboxAlignType.Free);
 
   return (
@@ -70,16 +60,6 @@ export default function SandboxController({
         />
       </div>
       <div className="sandbox-docker" ref={dockerRef}>
-        <IconShrink
-          className="docker-button"
-          onClick={() => {
-            backgroundShrinkRef.current = !backgroundShrinkRef.current;
-            backgroundInitialize();
-          }}
-          color={
-            backgroundShrinkRef.current === true ? "aquamarine" : align === SandboxAlignType.Grid ? "white" : "gray"
-          }
-        />
         <IconGrid
           className="docker-button"
           onClick={() => {

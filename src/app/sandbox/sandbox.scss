@@ -10,6 +10,16 @@
   overflow: hidden;
 }
 
+.sandbox-items {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+
+  pointer-events: none;
+
+  z-index: 10;
+}
+
 .sandbox-shadow {
   position: fixed;
   width: 100%;
