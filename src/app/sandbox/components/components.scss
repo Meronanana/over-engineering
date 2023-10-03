@@ -21,7 +21,7 @@ h3 {
   display: block;
 
   pointer-events: none;
-  top: 10%;
+  top: -10%;
   left: 50%;
   width: 40px;
   height: 40px;
@@ -36,8 +36,8 @@ h3 {
 .toy-div {
   position: fixed;
 
-  top: -10%;
-  left: 50%;
+  top: 50%;
+  left: -30%;
   width: 40px;
   height: 40px;
   transform: translate(-50%, -50%);

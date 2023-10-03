@@ -43,6 +43,7 @@ import SandboxDescription from "./components/SandboxDescription";
 import ToyDescription from "./components/ToyDescription";
 
 import "./sandbox.scss";
+import { useSleep } from "@/utils/hooks";
 
 export default function Sandbox() {
   // console.log("re-render!");
@@ -53,10 +54,6 @@ export default function Sandbox() {
   const bgShadowRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const dockerRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
-  // const treePoleRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
-  // const treeLeavesRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
-  // const treeShadowRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
-
   const toyFocus: MutableRefObject<number> = useRef<number>(-1);
   const backgroundOffset = useRef({ left: 0, top: 0 });
   const alignRef = useRef(SandboxAlignType.Free);
@@ -66,16 +63,36 @@ export default function Sandbox() {
   const sandboxItemList = useRef<Array<SandboxItem>>([...defaultItemList]);
 
   useEffect(() => {
-    toyList.current.forEach((v, i) => {
-      if (v.physics.DST.X === -1 && v.physics.DST.Y === -1) {
-        spread(i, false);
-      }
-    });
-
     toyList.current[TUTORIAL_INDEX].physics.FIXED = true;
     if (toyList.current[TUTORIAL_INDEX].moveRef.current) {
       toyList.current[TUTORIAL_INDEX].moveRef.current.style.visibility = "hidden";
+      toyList.current[TUTORIAL_INDEX].moveRef.current.style.top = "-100px";
     }
+
+    toyList.current.forEach((v, i) => {
+      setTimeout(async () => {
+        if (v.physics.DST.X === -1) {
+          toyFocus.current = i;
+
+          v.physics.DST = {
+            X: window.innerWidth * -0.1,
+            Y: window.innerHeight * 0.6 - window.innerHeight * 0.3 * Math.random(),
+          };
+
+          const toyMoveRef = v.moveRef;
+          if (toyMoveRef.current === null) return;
+
+          await useSleep(300);
+
+          v.physics.V = {
+            vx: Math.floor(window.innerWidth * 0.03 * (Math.random() + 1)),
+            vy: Math.floor(window.innerHeight * -0.01 * (Math.random() + 2)),
+          };
+          toyFocus.current = -1;
+          toyGravityDrop(i);
+        }
+      }, i * 500);
+    });
 
     backgroundInitialize();
 
@@ -216,8 +233,8 @@ export default function Sandbox() {
       treeLeavesRef.current.style.height = sizeRatio * treeLeavesItem.height + "px";
 
       treeLeavesRef.current.style.right = "0px";
-      treeLeavesRef.current.style.top = Math.floor(window.innerHeight * -0.02) + "px";
-      treeLeavesRef.current.style.transform = "translateX(38%)";
+      treeLeavesRef.current.style.top = Math.floor(window.innerHeight * 0.4) - treePoleRef.current.offsetHeight + "px";
+      treeLeavesRef.current.style.transform = "translate(38%, -50%)";
 
       treeLeavesRef.current.style.zIndex = "97";
 
@@ -229,7 +246,8 @@ export default function Sandbox() {
       treeShadowRef.current.style.height = sizeRatio * treeShadowItem.height + "px";
 
       treeShadowRef.current.style.right = "0px";
-      treeShadowRef.current.style.top = Math.floor(window.innerHeight * 0.372) + "px";
+      treeShadowRef.current.style.top =
+        Math.floor(window.innerHeight * 0.4) - treePoleRef.current.offsetHeight * 0.1 + "px";
       treeShadowRef.current.style.transform = "translateX(3%)";
 
       treeShadowRef.current.style.zIndex = "99";
@@ -246,7 +264,7 @@ export default function Sandbox() {
     });
 
     toyList.current.forEach((v, i) => {
-      if (v.physics.FIXED) return;
+      if (v.physics.FIXED || v.physics.DST.X === -1) return;
 
       const toyMoveRef = v.moveRef;
       const toyRotateRef = v.rotateRef;
@@ -269,6 +287,11 @@ export default function Sandbox() {
         endY = Math.abs(endY - newY) < 1 ? endY : newY;
       }
 
+      if (i === 0) {
+        // console.log(startX, endX, "//", startY, endY);
+        console.log(toyPhysics.V.vx, toyPhysics.V.vy);
+      }
+
       if (startX === endX && startY === endY) return;
 
       let rotate = toyPhysics.R + toyPhysics.dR;
@@ -276,12 +299,16 @@ export default function Sandbox() {
 
       // 벽 충돌 감지
       let hitWall = false;
-      if (screenRef.current.offsetWidth - toyMoveRef.current.offsetWidth / 2 < endX) {
-        endX = screenRef.current.offsetWidth - toyMoveRef.current.offsetWidth / 2;
-        hitWall = true;
-      } else if (endX < toyMoveRef.current.offsetWidth / 2) {
-        endX = toyMoveRef.current.offsetWidth / 2;
-        hitWall = true;
+      if (toyMoveRef.current.offsetLeft > toyMoveRef.current.offsetWidth / 2) {
+        if (screenRef.current.offsetWidth - toyMoveRef.current.offsetWidth / 2 < endX) {
+          endX = screenRef.current.offsetWidth - toyMoveRef.current.offsetWidth / 2;
+          hitWall = true;
+          if (i === 0) console.log("right wall");
+        } else if (endX < toyMoveRef.current.offsetWidth / 2) {
+          endX = toyMoveRef.current.offsetWidth / 2;
+          hitWall = true;
+          if (i === 0) console.log("left wall");
+        }
       }
       if (hitWall) {
         toyPhysics.DST.X = endX;
@@ -297,6 +324,7 @@ export default function Sandbox() {
       ) {
         const vector = reactionByCircleCollision(data, i, toyPhysics.V);
         if (vector !== null) {
+          if (i === 0) console.log("collapse");
           toyPhysics.V = vector;
           endX = startX + vector.vx;
           endY = startY + vector.vy;
@@ -312,8 +340,8 @@ export default function Sandbox() {
       }
 
       // DOM 컨트롤
-      toyMoveRef.current.style.left = endX + "px";
-      toyMoveRef.current.style.top = endY + "px";
+      toyMoveRef.current.style.left = `${endX}px`;
+      toyMoveRef.current.style.top = `${endY}px`;
       toyRotateRef.current.style.transform = `rotate(${rotate}deg)`;
 
       if (i !== toyFocus.current && backgroundRef.current) {
