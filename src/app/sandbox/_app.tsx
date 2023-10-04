@@ -30,6 +30,7 @@ import {
   GRID_4_BY_2,
   GRID_3_BY_3,
   GRID_2_BY_4,
+  zIndexs,
 } from "./model/constants";
 import { Circle, Coordinate, lerp, randomCoordinate, reactionByCircleCollision } from "@/utils/physicalEngine";
 import { modalOpen, modalSwitch, setChild } from "@/utils/redux/modalState";
@@ -153,7 +154,7 @@ export default function Sandbox() {
       bgShadowRef.current.style.opacity = "0.3";
       toyList.current.forEach((v) => {
         if (v.moveRef.current) {
-          v.moveRef.current.style.zIndex = "101";
+          v.moveRef.current.style.zIndex = zIndexs.backgroundShadow;
         }
       });
     } else if (mode === SandboxAlignType.Free) {
@@ -236,7 +237,7 @@ export default function Sandbox() {
       treeLeavesRef.current.style.top = Math.floor(window.innerHeight * 0.4) - treePoleRef.current.offsetHeight + "px";
       treeLeavesRef.current.style.transform = "translate(38%, -50%)";
 
-      treeLeavesRef.current.style.zIndex = "97";
+      treeLeavesRef.current.style.zIndex = zIndexs.treeLeaves;
 
       // 나무 그림자
       const treeShadowRef = treeShadowItem.ref;
@@ -246,11 +247,10 @@ export default function Sandbox() {
       treeShadowRef.current.style.height = sizeRatio * treeShadowItem.height + "px";
 
       treeShadowRef.current.style.right = "0px";
-      treeShadowRef.current.style.top =
-        Math.floor(window.innerHeight * 0.4) - treePoleRef.current.offsetHeight * 0.1 + "px";
-      treeShadowRef.current.style.transform = "translateX(3%)";
+      treeShadowRef.current.style.top = Math.floor(window.innerHeight * 0.4) + "px";
+      treeShadowRef.current.style.transform = "translate(3%, -55%)";
 
-      treeShadowRef.current.style.zIndex = "99";
+      treeShadowRef.current.style.zIndex = zIndexs.treeShadow;
     }
   }, []);
 
@@ -287,11 +287,6 @@ export default function Sandbox() {
         endY = Math.abs(endY - newY) < 1 ? endY : newY;
       }
 
-      if (i === 0) {
-        // console.log(startX, endX, "//", startY, endY);
-        console.log(toyPhysics.V.vx, toyPhysics.V.vy);
-      }
-
       if (startX === endX && startY === endY) return;
 
       let rotate = toyPhysics.R + toyPhysics.dR;
@@ -303,11 +298,9 @@ export default function Sandbox() {
         if (screenRef.current.offsetWidth - toyMoveRef.current.offsetWidth / 2 < endX) {
           endX = screenRef.current.offsetWidth - toyMoveRef.current.offsetWidth / 2;
           hitWall = true;
-          if (i === 0) console.log("right wall");
         } else if (endX < toyMoveRef.current.offsetWidth / 2) {
           endX = toyMoveRef.current.offsetWidth / 2;
           hitWall = true;
-          if (i === 0) console.log("left wall");
         }
       }
       if (hitWall) {
@@ -324,7 +317,6 @@ export default function Sandbox() {
       ) {
         const vector = reactionByCircleCollision(data, i, toyPhysics.V);
         if (vector !== null) {
-          if (i === 0) console.log("collapse");
           toyPhysics.V = vector;
           endX = startX + vector.vx;
           endY = startY + vector.vy;
@@ -432,7 +424,7 @@ export default function Sandbox() {
 
         toyPhysics.R = Number(toyRotateRef.current.style.transform.substring(7).split("d")[0]);
 
-        toyMoveRef.current.style.zIndex = "98";
+        toyMoveRef.current.style.zIndex = zIndexs.pickedToy;
         toyRotateRef.current.style.backgroundColor = "rgba(128, 128, 128, 0.25)";
         toyRotateRef.current.style.boxShadow = "0px 0px 20px 10px rgba(128, 128, 128, 0.3)";
       }
@@ -458,7 +450,7 @@ export default function Sandbox() {
 
         toyPhysics.R = Number(toyRotateRef.current.style.transform.substring(7).split("d")[0]);
 
-        toyMoveRef.current.style.zIndex = "98";
+        toyMoveRef.current.style.zIndex = zIndexs.pickedToy;
         toyRotateRef.current.style.backgroundColor = "rgba(128, 128, 128, 0.25)";
         toyRotateRef.current.style.boxShadow = "0px 0px 20px 10px rgba(128, 128, 128, 0.3)";
       }

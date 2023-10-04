@@ -192,8 +192,8 @@ export const treeLeavesItem: SandboxItem = {
 
 export const treeShadowItem: SandboxItem = {
   position: { X: -1, Y: -1 },
-  width: 886,
-  height: 620,
+  width: 782,
+  height: 1092,
   ref: createRef(),
   image: TreeShadow,
 };
