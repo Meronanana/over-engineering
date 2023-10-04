@@ -65,6 +65,7 @@ export default function ToyComponent({ idx, toyData, mouseDownEvent, touchStartE
       ) : (
         <></>
       )} */}
+      <div className="toy-sand-layer" ref={toyData.sandLayerRef} />
     </div>
   );
 }

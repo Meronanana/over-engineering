@@ -32,6 +32,7 @@ import {
   GRID_2_BY_4,
   zIndexs,
 } from "./model/constants";
+import { useSleep } from "@/utils/hooks";
 import { Circle, Coordinate, lerp, randomCoordinate, reactionByCircleCollision } from "@/utils/physicalEngine";
 import { modalOpen, modalSwitch, setChild } from "@/utils/redux/modalState";
 
@@ -44,7 +45,6 @@ import SandboxDescription from "./components/SandboxDescription";
 import ToyDescription from "./components/ToyDescription";
 
 import "./sandbox.scss";
-import { useSleep } from "@/utils/hooks";
 
 export default function Sandbox() {
   // console.log("re-render!");
@@ -154,7 +154,7 @@ export default function Sandbox() {
       bgShadowRef.current.style.opacity = "0.3";
       toyList.current.forEach((v) => {
         if (v.moveRef.current) {
-          v.moveRef.current.style.zIndex = zIndexs.backgroundShadow;
+          v.moveRef.current.style.zIndex = zIndexs.gridToy;
         }
       });
     } else if (mode === SandboxAlignType.Free) {
@@ -197,6 +197,8 @@ export default function Sandbox() {
     backgroundRef.current.style.width = bgWidth + "px";
     backgroundRef.current.style.height = bgHeight + "px";
     backgroundRef.current.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
+
+    document.documentElement.style.setProperty("--bg-size", `${Math.floor(bgWidth)}px ${Math.floor(bgHeight)}px`);
 
     sandboxItemList.current.forEach((v) => {
       const itemRef = v.ref;
@@ -268,7 +270,14 @@ export default function Sandbox() {
 
       const toyMoveRef = v.moveRef;
       const toyRotateRef = v.rotateRef;
-      if (toyMoveRef.current === null || screenRef.current === null || toyRotateRef.current === null) return;
+      const toyLayerRef = v.sandLayerRef;
+      if (
+        toyMoveRef.current === null ||
+        screenRef.current === null ||
+        toyRotateRef.current === null ||
+        toyLayerRef.current === null
+      )
+        return;
 
       const toyPhysics = v.physics;
 
@@ -292,14 +301,17 @@ export default function Sandbox() {
       let rotate = toyPhysics.R + toyPhysics.dR;
       toyPhysics.R = rotate;
 
+      const toyWidth = toyMoveRef.current.offsetWidth;
+      const toyHeight = toyMoveRef.current.offsetHeight;
+
       // 벽 충돌 감지
       let hitWall = false;
-      if (toyMoveRef.current.offsetLeft > toyMoveRef.current.offsetWidth / 2) {
-        if (screenRef.current.offsetWidth - toyMoveRef.current.offsetWidth / 2 < endX) {
-          endX = screenRef.current.offsetWidth - toyMoveRef.current.offsetWidth / 2;
+      if (toyMoveRef.current.offsetLeft > toyWidth / 2) {
+        if (screenRef.current.offsetWidth - toyWidth / 2 < endX) {
+          endX = screenRef.current.offsetWidth - toyWidth / 2;
           hitWall = true;
-        } else if (endX < toyMoveRef.current.offsetWidth / 2) {
-          endX = toyMoveRef.current.offsetWidth / 2;
+        } else if (endX < toyWidth / 2) {
+          endX = toyWidth / 2;
           hitWall = true;
         }
       }
@@ -336,7 +348,13 @@ export default function Sandbox() {
       toyMoveRef.current.style.top = `${endY}px`;
       toyRotateRef.current.style.transform = `rotate(${rotate}deg)`;
 
-      if (i !== toyFocus.current && backgroundRef.current) {
+      if (!backgroundRef.current) return;
+      let offsetLeft = (backgroundRef.current.offsetWidth - window.innerWidth) / 2 + endX - toyWidth / 2 - 9;
+      let offsetTop = (backgroundRef.current.offsetHeight - window.innerHeight) / 2 + endY + toyHeight / 4 + 4;
+      toyLayerRef.current.style.backgroundPosition = `-${Math.floor(offsetLeft)}px -${Math.floor(offsetTop)}px`;
+      toyLayerRef.current.style.borderRadius = `${Math.floor(Math.random() * 20) + 30}%`;
+
+      if (i !== toyFocus.current && alignRef.current !== SandboxAlignType.Grid && backgroundRef.current) {
         toyMoveRef.current.style.zIndex = `${Math.floor(
           ((toyMoveRef.current.offsetTop + toyMoveRef.current.offsetHeight / 2) / backgroundRef.current.offsetHeight) *
             100
@@ -346,10 +364,11 @@ export default function Sandbox() {
   }, []);
 
   const toyGravityDrop = useCallback((index: number) => {
-    const toyRef = toyList.current[index].moveRef;
+    const toyMoveRef = toyList.current[index].moveRef;
+    const toyLayerRef = toyList.current[index].sandLayerRef;
     const toyPhysics = toyList.current[index].physics;
 
-    if (toyRef.current === null || screenRef.current === null || toyPhysics.FIXED) return;
+    if (!toyMoveRef.current || !screenRef.current || !toyLayerRef.current || toyPhysics.FIXED) return;
 
     let vx = toyPhysics.V.vx;
     let vy = toyPhysics.V.vy;
@@ -361,14 +380,14 @@ export default function Sandbox() {
 
     if (
       toyFocus.current !== index &&
-      (vy < 30 || toyRef.current.offsetTop < toyRef.current.offsetHeight) &&
+      (vy < 30 || toyMoveRef.current.offsetTop < toyMoveRef.current.offsetHeight) &&
       toyPhysics.DST.Y < Math.round(screenRef.current.offsetHeight * UNDER_BOUND)
     ) {
       if (alignRef.current !== SandboxAlignType.Grid) setTimeout(toyGravityDrop, FPS_OFFSET, index);
     } else {
       if (toyFocus.current !== index) {
-        toyPhysics.DST.X = toyRef.current.offsetLeft;
-        toyPhysics.DST.Y = toyRef.current.offsetTop;
+        toyPhysics.DST.X = toyMoveRef.current.offsetLeft;
+        toyPhysics.DST.Y = toyMoveRef.current.offsetTop;
       }
 
       toyPhysics.X = [];
@@ -376,6 +395,7 @@ export default function Sandbox() {
       toyPhysics.V.vx = 0;
       toyPhysics.V.vy = 0;
       toyPhysics.dR = 0;
+      toyLayerRef.current.style.display = "block";
     }
   }, []);
 
@@ -416,9 +436,10 @@ export default function Sandbox() {
       toyFocus.current = focus;
       const toyMoveRef = toyList.current[focus].moveRef;
       const toyRotateRef = toyList.current[focus].rotateRef;
+      const toyLayerRef = toyList.current[focus].sandLayerRef;
       const toyPhysics = toyList.current[focus].physics;
 
-      if (toyMoveRef.current && toyRotateRef.current) {
+      if (toyMoveRef.current && toyRotateRef.current && toyLayerRef.current) {
         toyPhysics.DST.X = e.clientX;
         toyPhysics.DST.Y = e.clientY;
 
@@ -427,6 +448,8 @@ export default function Sandbox() {
         toyMoveRef.current.style.zIndex = zIndexs.pickedToy;
         toyRotateRef.current.style.backgroundColor = "rgba(128, 128, 128, 0.25)";
         toyRotateRef.current.style.boxShadow = "0px 0px 20px 10px rgba(128, 128, 128, 0.3)";
+
+        toyLayerRef.current.style.display = "none";
       }
     }
   };

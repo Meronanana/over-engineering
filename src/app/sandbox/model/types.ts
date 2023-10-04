@@ -32,6 +32,7 @@ export type Toy = {
   name: string;
   moveRef: RefObject<HTMLDivElement>;
   rotateRef: RefObject<HTMLDivElement>;
+  sandLayerRef: RefObject<HTMLDivElement>;
   physics: ToyPhysics;
   link: string;
   image: StaticImageData | any;
@@ -70,6 +71,7 @@ export const defaultToyList: Array<Toy> = [
     name: "qr-code",
     moveRef: createRef(),
     rotateRef: createRef(),
+    sandLayerRef: createRef(),
     physics: { ...defaultToyPhysics },
     link: "",
     image: ToyLinkQR,
@@ -78,6 +80,7 @@ export const defaultToyList: Array<Toy> = [
     name: "deadlock",
     moveRef: createRef(),
     rotateRef: createRef(),
+    sandLayerRef: createRef(),
     physics: { ...defaultToyPhysics },
     link: "",
     image: ToyDeadlock,
@@ -86,6 +89,7 @@ export const defaultToyList: Array<Toy> = [
     name: "nwjns-powerpuffgirl",
     moveRef: createRef(),
     rotateRef: createRef(),
+    sandLayerRef: createRef(),
     physics: { ...defaultToyPhysics },
     link: "",
     image: charaSelector(),
@@ -94,6 +98,7 @@ export const defaultToyList: Array<Toy> = [
     name: "tutorial",
     moveRef: createRef(),
     rotateRef: createRef(),
+    sandLayerRef: createRef(),
     physics: { ...defaultToyPhysics },
     link: "",
     image: ToyTutoMouse,

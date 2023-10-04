@@ -12,7 +12,8 @@ export const TOY_SIZES: Array<number> = [40, 60, 80, 120, 160];
 
 export const zIndexs = {
   pickedToy: "99",
+  gridToy: "101",
   treeLeaves: "98",
   treeShadow: "97",
-  backgroundShadow: "101",
+  backgroundShadow: "100",
 };
