@@ -8,11 +8,11 @@ export type Coordinate = {
   Y: number;
 };
 
-export type Circle = {
+export interface Circle {
   x: number;
   y: number;
   d: number;
-};
+}
 
 export const lerp = (start: number, end: number, t: number): number => {
   return start * (1 - t) + end * t;

@@ -8,3 +8,11 @@ export const TUTORIAL_INDEX: number = 3;
 
 export const WINDOW_SIZE_INDEXS: Array<number> = [0, 1000, 2000, 3000, 4000];
 export const TOY_SIZES: Array<number> = [40, 60, 80, 120, 160];
+
+export const zIndexs = {
+  pickedToy: "99",
+  gridToy: "101",
+  treeLeaves: "98",
+  treeShadow: "97",
+  backgroundShadow: "100",
+};

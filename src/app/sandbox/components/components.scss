@@ -16,10 +16,28 @@ h3 {
   margin-bottom: 5px;
 }
 
-.toy-div {
-  position: absolute;
+.item-div {
+  position: fixed;
+  display: block;
+
+  pointer-events: none;
   top: -10%;
   left: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translateY(-100%);
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.toy-div {
+  position: fixed;
+
+  top: 50%;
+  left: -30%;
   width: 40px;
   height: 40px;
   transform: translate(-50%, -50%);
@@ -35,6 +53,31 @@ h3 {
 .toy-image {
   position: relative;
   display: block;
+
+  border-radius: 45%;
+
+  pointer-events: none;
+
+  // background-color: rgba(128, 128, 128, 0.2);
+  // box-shadow: 0px 0px 20px rgba(128, 128, 128, 0.2);
+}
+
+.toy-sand-layer {
+  position: absolute;
+  display: block;
+
+  width: 130%;
+  height: 40%;
+
+  bottom: -21%;
+
+  // border-width: 1px;
+  border-radius: 30%;
+
+  // background-color: sandybrown;
+  background-image: url("../../../../public/assets/images/sandbox/sandbox-background.svg");
+  background-size: var(--bg-size);
+  transform: translateX(-12%);
 
   pointer-events: none;
 }
@@ -99,8 +142,14 @@ h3 {
   width: 0px;
 }
 
+.sandbox-controller {
+  position: fixed;
+
+  z-index: 101;
+}
+
 .sandbox-text {
-  position: absolute;
+  position: fixed;
   left: 50%;
   padding: 1vh;
 
@@ -132,7 +181,7 @@ h3 {
 }
 
 .sandbox-docker {
-  position: absolute;
+  position: fixed;
   top: 50%;
   right: 0%;
   padding: 1vmin;
@@ -148,7 +197,7 @@ h3 {
 }
 
 .master-docker {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 0%;
   padding: 1vmin;
