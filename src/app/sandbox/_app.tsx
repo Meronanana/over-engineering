@@ -153,8 +153,9 @@ export default function Sandbox() {
 
       bgShadowRef.current.style.opacity = "0.3";
       toyList.current.forEach((v) => {
-        if (v.moveRef.current) {
+        if (v.moveRef.current && v.sandLayerRef.current) {
           v.moveRef.current.style.zIndex = zIndexs.gridToy;
+          v.sandLayerRef.current.style.display = "none";
         }
       });
     } else if (mode === SandboxAlignType.Free) {
