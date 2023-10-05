@@ -181,24 +181,24 @@ export const defaultItemList: Array<SandboxItem> = [
 
 export const treePoleItem: SandboxItem = {
   position: { X: -1, Y: -1 },
-  width: 110,
-  height: 600,
+  width: 148,
+  height: 800,
   ref: createRef(),
   image: TreePole,
 };
 
 export const treeLeavesItem: SandboxItem = {
   position: { X: -1, Y: -1 },
-  width: 886,
-  height: 460,
+  width: 1032,
+  height: 548,
   ref: createRef(),
   image: TreeLeaves,
 };
 
 export const treeShadowItem: SandboxItem = {
   position: { X: -1, Y: -1 },
-  width: 782,
-  height: 1092,
+  width: 1203,
+  height: 1462,
   ref: createRef(),
   image: TreeShadow,
 };

@@ -64,7 +64,7 @@ h3 {
 
 .toy-sand-layer {
   position: absolute;
-  display: block;
+  display: none;
 
   width: 130%;
   height: 40%;
@@ -155,6 +155,7 @@ h3 {
 
   color: gray;
   font-size: 2vh;
+  text-align: center;
 
   transition: 0.5s;
   transform: translate(-50%, 0%);
@@ -172,6 +173,7 @@ h3 {
 .sandbox-tail {
   @extend .sandbox-text;
   bottom: 0%;
+  width: 90vw;
 }
 
 .sandbox-tail.on-grid {

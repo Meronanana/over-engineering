@@ -24,7 +24,6 @@ import {
 import {
   GVT_SPEED_OFFSET,
   SPIN_SPEED_OFFSET,
-  FPS_OFFSET,
   UNDER_BOUND,
   TUTORIAL_INDEX,
   GRID_4_BY_2,
@@ -32,7 +31,7 @@ import {
   GRID_2_BY_4,
   zIndexs,
 } from "./model/constants";
-import { useSleep } from "@/utils/hooks";
+import { sleep } from "@/utils/utilFunctions";
 import { Circle, Coordinate, lerp, randomCoordinate, reactionByCircleCollision } from "@/utils/physicalEngine";
 import { modalOpen, modalSwitch, setChild } from "@/utils/redux/modalState";
 
@@ -43,6 +42,7 @@ import SandboxItemComponent from "./components/SandboxItemComponent";
 import SandboxController from "./components/SandboxController";
 import SandboxDescription from "./components/SandboxDescription";
 import ToyDescription from "./components/ToyDescription";
+import { FPS_OFFSET } from "@/utils/constants";
 
 import "./sandbox.scss";
 
@@ -83,7 +83,7 @@ export default function Sandbox() {
           const toyMoveRef = v.moveRef;
           if (toyMoveRef.current === null) return;
 
-          await useSleep(300);
+          await sleep(300);
 
           v.physics.V = {
             vx: Math.floor(window.innerWidth * 0.03 * (Math.random() + 1)),
@@ -237,7 +237,7 @@ export default function Sandbox() {
 
       treeLeavesRef.current.style.right = "0px";
       treeLeavesRef.current.style.top = Math.floor(window.innerHeight * 0.4) - treePoleRef.current.offsetHeight + "px";
-      treeLeavesRef.current.style.transform = "translate(38%, -50%)";
+      treeLeavesRef.current.style.transform = "translate(35%, -50%)";
 
       treeLeavesRef.current.style.zIndex = zIndexs.treeLeaves;
 
@@ -250,7 +250,7 @@ export default function Sandbox() {
 
       treeShadowRef.current.style.right = "0px";
       treeShadowRef.current.style.top = Math.floor(window.innerHeight * 0.4) + "px";
-      treeShadowRef.current.style.transform = "translate(3%, -55%)";
+      treeShadowRef.current.style.transform = "translate(0%, -55%)";
 
       treeShadowRef.current.style.zIndex = zIndexs.treeShadow;
     }
@@ -348,11 +348,11 @@ export default function Sandbox() {
       toyMoveRef.current.style.top = `${endY}px`;
       toyRotateRef.current.style.transform = `rotate(${rotate}deg)`;
 
-      if (!backgroundRef.current) return;
-      let offsetLeft = (backgroundRef.current.offsetWidth - window.innerWidth) / 2 + endX - toyWidth / 2 - 9;
-      let offsetTop = (backgroundRef.current.offsetHeight - window.innerHeight) / 2 + endY + toyHeight / 4 + 4;
-      toyLayerRef.current.style.backgroundPosition = `-${Math.floor(offsetLeft)}px -${Math.floor(offsetTop)}px`;
-      toyLayerRef.current.style.borderRadius = `${Math.floor(Math.random() * 20) + 30}%`;
+      // if (!backgroundRef.current) return;
+      // let offsetLeft = (backgroundRef.current.offsetWidth - window.innerWidth) / 2 + endX - toyWidth / 2 - 9;
+      // let offsetTop = (backgroundRef.current.offsetHeight - window.innerHeight) / 2 + endY + toyHeight / 4 + 4;
+      // toyLayerRef.current.style.backgroundPosition = `-${Math.floor(offsetLeft)}px -${Math.floor(offsetTop)}px`;
+      // toyLayerRef.current.style.borderRadius = `${Math.floor(Math.random() * 20) + 30}%`;
 
       if (i !== toyFocus.current && alignRef.current !== SandboxAlignType.Grid && backgroundRef.current) {
         toyMoveRef.current.style.zIndex = `${Math.floor(
@@ -395,6 +395,16 @@ export default function Sandbox() {
       toyPhysics.V.vx = 0;
       toyPhysics.V.vy = 0;
       toyPhysics.dR = 0;
+
+      if (!backgroundRef.current) return;
+      const tLeft = toyMoveRef.current.offsetLeft,
+        tTop = toyMoveRef.current.offsetTop;
+      const tWidth = toyMoveRef.current.offsetWidth,
+        tHeight = toyMoveRef.current.offsetHeight;
+      let offsetLeft = (backgroundRef.current.offsetWidth - window.innerWidth) / 2 + tLeft - tWidth / 2 - 9;
+      let offsetTop = (backgroundRef.current.offsetHeight - window.innerHeight) / 2 + tTop + tHeight / 4 + 4;
+      toyLayerRef.current.style.backgroundPosition = `-${Math.floor(offsetLeft)}px -${Math.floor(offsetTop)}px`;
+      toyLayerRef.current.style.borderRadius = `${Math.floor(Math.random() * 20) + 30}%`;
       toyLayerRef.current.style.display = "block";
     }
   }, []);
@@ -465,9 +475,10 @@ export default function Sandbox() {
       toyFocus.current = focus;
       const toyMoveRef = toyList.current[focus].moveRef;
       const toyRotateRef = toyList.current[focus].rotateRef;
+      const toyLayerRef = toyList.current[focus].sandLayerRef;
       const toyPhysics = toyList.current[focus].physics;
 
-      if (toyMoveRef.current && toyRotateRef.current) {
+      if (toyMoveRef.current && toyRotateRef.current && toyLayerRef.current) {
         toyPhysics.DST.X = e.touches[0].clientX;
         toyPhysics.DST.Y = e.touches[0].clientY;
 
@@ -476,6 +487,8 @@ export default function Sandbox() {
         toyMoveRef.current.style.zIndex = zIndexs.pickedToy;
         toyRotateRef.current.style.backgroundColor = "rgba(128, 128, 128, 0.25)";
         toyRotateRef.current.style.boxShadow = "0px 0px 20px 10px rgba(128, 128, 128, 0.3)";
+
+        toyLayerRef.current.style.display = "none";
       }
     }
   };
