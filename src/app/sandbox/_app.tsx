@@ -534,7 +534,7 @@ export default function Sandbox() {
   const touchEndEvent = mouseUpEvent;
 
   const mouseMoveEvent: MouseEventHandler = (e: React.MouseEvent) => {
-    if (toyFocus.current === -1) return;
+    if (toyFocus.current === -1 || alignRef.current === SandboxAlignType.Grid) return;
 
     const moveX = e.movementX;
     const moveY = e.movementY;
@@ -552,7 +552,7 @@ export default function Sandbox() {
   };
 
   const touchMoveEvent: TouchEventHandler = (e: React.TouchEvent) => {
-    if (toyFocus.current === -1) return;
+    if (toyFocus.current === -1 || alignRef.current === SandboxAlignType.Grid) return;
 
     const endX = e.touches[0].clientX;
     const endY = e.touches[0].clientY;
