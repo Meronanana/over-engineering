@@ -91,7 +91,7 @@ export const defaultToyList: Array<Toy> = [
     rotateRef: createRef(),
     sandLayerRef: createRef(),
     physics: { ...defaultToyPhysics },
-    link: "",
+    link: "nwjns-powerpuffgirl",
     image: charaSelector(),
   },
   {
