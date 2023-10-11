@@ -246,8 +246,6 @@ export default function Sandbox() {
       let startX = toyMoveRef.current.offsetLeft;
       let startY = toyMoveRef.current.offsetTop;
 
-      // if (startX > window.innerWidth || startY > window.innerHeight) spread(i, false);
-
       let endX = toyPhysics.DST.X;
       let endY = toyPhysics.DST.Y;
 
@@ -262,26 +260,6 @@ export default function Sandbox() {
 
       let rotate = toyPhysics.R + toyPhysics.dR;
       toyPhysics.R = rotate;
-
-      // const toyWidth = toyMoveRef.current.offsetWidth;
-      // const toyHeight = toyMoveRef.current.offsetHeight;
-
-      // // 벽 충돌 감지
-      // let hitWall = false;
-      // if (toyMoveRef.current.offsetLeft > toyWidth / 2) {
-      //   if (screenRef.current.offsetWidth - toyWidth / 2 < endX) {
-      //     endX = screenRef.current.offsetWidth - toyWidth / 2;
-      //     hitWall = true;
-      //   } else if (endX < toyWidth / 2) {
-      //     endX = toyWidth / 2;
-      //     hitWall = true;
-      //   }
-      // }
-      // if (hitWall) {
-      //   toyPhysics.DST.X = endX;
-      //   toyPhysics.V.vx = -toyPhysics.V.vx / 2;
-      //   toyPhysics.dR = toyPhysics.dR / 2;
-      // }
 
       // 객체 충돌 감지
       if (
@@ -315,19 +293,6 @@ export default function Sandbox() {
       toyMoveRef.current.style.left = `${endX}px`;
       toyMoveRef.current.style.top = `${endY}px`;
       toyRotateRef.current.style.transform = `rotate(${rotate}deg)`;
-
-      // if (!backgroundRef.current) return;
-      // let offsetLeft = (backgroundRef.current.offsetWidth - window.innerWidth) / 2 + endX - toyWidth / 2 - 9;
-      // let offsetTop = (backgroundRef.current.offsetHeight - window.innerHeight) / 2 + endY + toyHeight / 4 + 4;
-      // toyLayerRef.current.style.backgroundPosition = `-${Math.floor(offsetLeft)}px -${Math.floor(offsetTop)}px`;
-      // toyLayerRef.current.style.borderRadius = `${Math.floor(Math.random() * 20) + 30}%`;
-
-      // if (i !== toyFocus.current && alignRef.current !== SandboxAlignType.Grid && backgroundRef.current) {
-      //   toyMoveRef.current.style.zIndex = `${Math.floor(
-      //     ((toyMoveRef.current.offsetTop + toyMoveRef.current.offsetHeight / 2) / backgroundRef.current.offsetHeight) *
-      //       100
-      //   )}`;
-      // }
     });
   }, []);
 
@@ -344,6 +309,15 @@ export default function Sandbox() {
     toyPhysics.DST.Y += vy;
 
     toyPhysics.V.vy += 2;
+
+    if (toyMoveRef.current.offsetTop > window.innerHeight) {
+      const cor = randomCoordinate(window.innerWidth, -200);
+      toyPhysics.DST = cor;
+      toyMoveRef.current.style.left = `${cor.X}px`;
+      toyMoveRef.current.style.top = `${cor.Y}px`;
+      toyPhysics.V.vx = 0;
+      toyPhysics.V.vy = 0;
+    }
 
     if (
       toyFocus.current !== index &&
