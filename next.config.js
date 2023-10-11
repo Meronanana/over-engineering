@@ -5,7 +5,7 @@ module.exports = {
     return [
       {
         source: "/",
-        destination: "/sandbox",
+        destination: "/sandbox-alt",
         permanent: true,
       },
     ];
