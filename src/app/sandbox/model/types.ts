@@ -6,27 +6,7 @@ import ToyTutoMouse from "/public/assets/icons/toy-tuto-mouse.svg";
 import ToyLinkQR from "/public/assets/icons/toy-link-qr.png";
 import ToyDeadlock from "/public/assets/icons/toy-deadlock.svg";
 import { charaSelector } from "@/utils/nwjnsCharacter";
-import {
-  SandArticle1,
-  SandArticle2,
-  SandArticle3,
-  SandArticle4,
-  SandArticle5,
-  SandBack,
-  SandFront,
-  Shell1,
-  Shell2,
-  Starfish1,
-  Starfish2,
-  Starfish3,
-  TrayLeft,
-  TrayRight,
-  TraySmallLeft,
-  TraySmallRight,
-  TreeLeaves,
-  TreePole,
-  TreeShadow,
-} from "./sandboxItems";
+import { SandBack, SandFront, TrayLeft, TrayRight, TraySmallLeft, TraySmallRight } from "./sandboxItems";
 
 export enum SandboxAlignType {
   Grid = 0,
@@ -103,80 +83,6 @@ export const defaultToyList: Array<Toy> = [
     physics: { ...defaultToyPhysics },
     link: "",
     image: ToyTutoMouse,
-  },
-];
-
-export const defaultItemList: Array<SandboxItem> = [
-  {
-    position: { X: 2288, Y: 1342 },
-    width: 115,
-    height: 125,
-    ref: createRef(),
-    image: SandArticle1,
-  },
-  {
-    position: { X: 3658, Y: 384 },
-    width: 115,
-    height: 125,
-    ref: createRef(),
-    image: SandArticle2,
-  },
-  {
-    position: { X: 3546, Y: 1689 },
-    width: 115,
-    height: 125,
-    ref: createRef(),
-    image: SandArticle3,
-  },
-  {
-    position: { X: 1500, Y: 967 },
-    width: 115,
-    height: 125,
-    ref: createRef(),
-    image: SandArticle4,
-  },
-  {
-    position: { X: 428, Y: 1630 },
-    width: 115,
-    height: 125,
-    ref: createRef(),
-    image: SandArticle5,
-  },
-  {
-    position: { X: 500, Y: 1780 },
-    width: 184,
-    height: 169,
-    ref: createRef(),
-    image: Shell1,
-  },
-  {
-    position: { X: 2634, Y: 900 },
-    width: 184,
-    height: 169,
-    ref: createRef(),
-    image: Shell2,
-  },
-
-  {
-    position: { X: 3320, Y: 1638 },
-    width: 180,
-    height: 184,
-    ref: createRef(),
-    image: Starfish1,
-  },
-  {
-    position: { X: 1436, Y: 1524 },
-    width: 180,
-    height: 184,
-    ref: createRef(),
-    image: Starfish2,
-  },
-  {
-    position: { X: 460, Y: 723 },
-    width: 180,
-    height: 184,
-    ref: createRef(),
-    image: Starfish3,
   },
 ];
 

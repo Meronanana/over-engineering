@@ -58,13 +58,6 @@ export default function ToyComponent({ idx, toyData, mouseDownEvent, touchStartE
           <div>A</div>
         )}
       </div>
-      {/* {idx === TUTORIAL_INDEX ? (
-        <div className="toy-tutorial-message" ref={tutorialMessageRef}>
-          AAAA
-        </div>
-      ) : (
-        <></>
-      )} */}
     </div>
   );
 }

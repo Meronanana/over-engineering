@@ -34,10 +34,7 @@ import { sleep } from "@/utils/utilFunctions";
 import { Circle, Coordinate, lerp, randomCoordinate, reactionByCircleCollision } from "@/utils/physicalEngine";
 import { modalOpen, modalSwitch, setChild } from "@/utils/redux/modalState";
 
-import Background from "/public/assets/images/sandbox/sandbox-background.svg";
-
 import ToyComponent from "./components/ToyComponent";
-import SandboxItemComponent from "./components/SandboxItemComponent";
 import SandboxController from "./components/SandboxController";
 import SandboxDescription from "./components/SandboxDescription";
 import ToyDescription from "./components/ToyDescription";
