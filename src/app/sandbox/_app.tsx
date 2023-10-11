@@ -19,6 +19,7 @@ import {
   trayRightItem,
   sandFrontItem,
   sandBackItem,
+  cloudItemList,
 } from "./model/types";
 import {
   GVT_SPEED_OFFSET,
@@ -534,12 +535,11 @@ export default function Sandbox() {
         <div className="sandbox-sand-front" ref={sandFrontItem.ref}>
           <sandFrontItem.image />
         </div>
-        <div className="sandbox-tray-left" ref={trayLeftItem.ref}>
-          {/* <trayLeftItem.image /> */}
-        </div>
-        <div className="sandbox-tray-right" ref={trayRightItem.ref}>
-          {/* <trayRightItem.image /> */}
-        </div>
+        <div className="sandbox-tray-left" ref={trayLeftItem.ref} />
+        <div className="sandbox-tray-right" ref={trayRightItem.ref} />
+        {cloudItemList.map((v, i) => {
+          return <div className={`sandbox-cloud c${i}`} ref={v.ref} key={i} />;
+        })}
         {toyList.current.map((v, i) => {
           return (
             <ToyComponent

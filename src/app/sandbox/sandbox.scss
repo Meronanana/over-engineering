@@ -53,8 +53,6 @@
   height: 100%;
   left: 100%;
 
-  transform: translateY(-39%);
-
   pointer-events: none;
   z-index: 10;
 }
@@ -65,10 +63,45 @@
   height: 100%;
   left: 100%;
 
-  // transform: translateY(-39%);
-
   pointer-events: none;
   z-index: 0;
+}
+
+.sandbox-cloud {
+  position: fixed;
+  width: 100vw;
+  height: 15.6vw;
+  left: 100%;
+
+  pointer-events: none;
+  z-index: 30;
+
+  opacity: 0.7;
+
+  animation-name: cloud-move;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.sandbox-cloud.c0 {
+  top: 15%;
+  background: url("../../../public/assets/images/sandbox/sandbox-cloud-1.svg");
+
+  animation-duration: 50s;
+  animation-delay: 20s;
+}
+.sandbox-cloud.c1 {
+  top: 10%;
+  background: url("../../../public/assets/images/sandbox/sandbox-cloud-2.svg");
+
+  animation-duration: 70s;
+  animation-delay: 0s;
+}
+.sandbox-cloud.c2 {
+  top: 20%;
+  background: url("../../../public/assets/images/sandbox/sandbox-cloud-3.svg");
+
+  animation-duration: 90s;
+  animation-delay: 30s;
 }
 
 // .toy-tutorial-message {
@@ -98,6 +131,12 @@
 
   .sandbox-tray-right {
     background: url("../../../public/assets/images/sandbox/sandbox-tray-exsmall-right.svg");
+  }
+}
+
+@keyframes cloud-move {
+  100% {
+    left: -100%;
   }
 }
 

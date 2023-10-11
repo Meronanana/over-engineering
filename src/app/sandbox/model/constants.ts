@@ -10,7 +10,7 @@ export const WINDOW_SIZE_INDEXS: Array<number> = [0, 1000, 2000, 3000, 4000];
 export const TOY_SIZES: Array<number> = [40, 60, 80, 120, 160];
 
 export const zIndexs = {
-  pickedToy: "99",
+  pickedToy: "21",
   gridToy: "101",
   normalToy: "1",
   treeLeaves: "98",

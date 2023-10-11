@@ -6,7 +6,17 @@ import ToyTutoMouse from "/public/assets/icons/toy-tuto-mouse.svg";
 import ToyLinkQR from "/public/assets/icons/toy-link-qr.png";
 import ToyDeadlock from "/public/assets/icons/toy-deadlock.svg";
 import { charaSelector } from "@/utils/nwjnsCharacter";
-import { SandBack, SandFront, TrayLeft, TrayRight, TraySmallLeft, TraySmallRight } from "./sandboxItems";
+import {
+  Cloud1,
+  Cloud2,
+  Cloud3,
+  SandBack,
+  SandFront,
+  TrayLeft,
+  TrayRight,
+  TraySmallLeft,
+  TraySmallRight,
+} from "./sandboxItems";
 
 export enum SandboxAlignType {
   Grid = 0,
@@ -86,6 +96,30 @@ export const defaultToyList: Array<Toy> = [
   },
 ];
 
+export const cloudItemList: Array<SandboxItem> = [
+  {
+    position: { X: -1, Y: -1 },
+    width: 3840,
+    height: 600,
+    ref: createRef(),
+    image: Cloud1,
+  },
+  {
+    position: { X: -1, Y: -1 },
+    width: 3840,
+    height: 600,
+    ref: createRef(),
+    image: Cloud2,
+  },
+  {
+    position: { X: -1, Y: -1 },
+    width: 3840,
+    height: 600,
+    ref: createRef(),
+    image: Cloud3,
+  },
+];
+
 export const trayLeftItem: SandboxItem = {
   position: { X: -1, Y: -1 },
   width: [1500, 1000, 700],
@@ -100,22 +134,6 @@ export const trayRightItem: SandboxItem = {
   height: 300,
   ref: createRef(),
   image: TrayRight,
-};
-
-export const traySmallLeftItem: SandboxItem = {
-  position: { X: -1, Y: -1 },
-  width: 700,
-  height: 300,
-  ref: createRef(),
-  image: TraySmallLeft,
-};
-
-export const traySmallRightItem: SandboxItem = {
-  position: { X: -1, Y: -1 },
-  width: 700,
-  height: 300,
-  ref: createRef(),
-  image: TraySmallRight,
 };
 
 export const sandFrontItem: SandboxItem = {
