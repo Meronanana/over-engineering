@@ -177,21 +177,27 @@ export default function Sandbox() {
     const sizeRatio = screenHeight / 2160;
     const screenRatio = screenWidth / screenHeight;
 
-    let trayWidth = sizeRatio * trayLeftItem.width;
+    let trayWidth =
+      screenRatio > 0.85
+        ? sizeRatio * (trayLeftItem.width as Array<number>)[0]
+        : screenRatio > 0.55
+        ? sizeRatio * (trayLeftItem.width as Array<number>)[1]
+        : sizeRatio * (trayLeftItem.width as Array<number>)[2];
+    // let trayWidth = sizeRatio * (trayLeftItem.width as Array<number>)[0];
     let trayHeight = sizeRatio * trayLeftItem.height;
     let trayGap: number;
 
     if (screenRatio < 16 / 9) {
       trayGap = Math.floor(screenWidth * 0.11 * (screenRatio / (16 / 9)));
     } else {
-      trayGap = screenWidth / 2 - trayWidth;
+      trayGap = Math.ceil(screenWidth / 2) - trayWidth + 1;
     }
     trayGapRef.current = trayGap;
 
     const trayLeftRef = trayLeftItem.ref;
     if (trayLeftRef.current === null) return;
 
-    trayLeftRef.current.style.width = sizeRatio * trayLeftItem.width + "px";
+    trayLeftRef.current.style.width = trayWidth + "px";
     trayLeftRef.current.style.height = trayHeight + "px";
 
     trayLeftRef.current.style.left = trayGap + "px";
@@ -200,7 +206,7 @@ export default function Sandbox() {
     const trayRightRef = trayRightItem.ref;
     if (trayRightRef.current === null) return;
 
-    trayRightRef.current.style.width = sizeRatio * trayRightItem.width + "px";
+    trayRightRef.current.style.width = trayWidth + "px";
     trayRightRef.current.style.height = trayHeight + "px";
 
     trayRightRef.current.style.right = trayGap + "px";
@@ -214,6 +220,7 @@ export default function Sandbox() {
 
     sandFrontRef.current.style.left = trayGap + "px";
     sandFrontRef.current.style.top = Math.floor(window.innerHeight * 0.6) + "px";
+    sandFrontRef.current.style.transform = `translateY(-${sandFrontRef.current.offsetWidth * 0.045}px)`;
 
     const sandBackRef = sandBackItem.ref;
     if (sandBackRef.current === null) return;
@@ -223,6 +230,9 @@ export default function Sandbox() {
 
     sandBackRef.current.style.left = trayGap + "px";
     sandBackRef.current.style.top = Math.floor(window.innerHeight * 0.6) + "px";
+    sandBackRef.current.style.transform = `translateY(-${sandBackRef.current.offsetWidth * 0.045}px)`;
+
+    toyList.current.forEach((v, i) => toyGravityDrop(i));
   }, []);
 
   const toyMove = useCallback((t?: number) => {
@@ -282,7 +292,7 @@ export default function Sandbox() {
       if (
         i !== toyFocus.current &&
         Math.floor(screenRef.current.offsetHeight * UNDER_BOUND) < endY &&
-        Math.floor(screenRef.current.offsetHeight * (UNDER_BOUND + 0.1)) > endY &&
+        Math.floor(screenRef.current.offsetHeight * (UNDER_BOUND + 0.15)) > endY &&
         trayGapRef.current < endX &&
         endX < screenRef.current.offsetWidth - trayGapRef.current
       ) {
@@ -322,14 +332,13 @@ export default function Sandbox() {
     if (
       toyFocus.current !== index &&
       (Math.floor(screenRef.current.offsetHeight * UNDER_BOUND) > toyMoveRef.current.offsetTop ||
-        Math.floor(screenRef.current.offsetHeight * (UNDER_BOUND + 0.1)) < toyMoveRef.current.offsetTop ||
+        Math.floor(screenRef.current.offsetHeight * (UNDER_BOUND + 0.15)) < toyMoveRef.current.offsetTop ||
         trayGapRef.current > toyMoveRef.current.offsetLeft ||
         toyMoveRef.current.offsetLeft > screenRef.current.offsetWidth - trayGapRef.current) &&
       screenRef.current.offsetHeight + toyMoveRef.current.offsetHeight > toyMoveRef.current.offsetTop
     ) {
       if (alignRef.current !== SandboxAlignType.Grid) setTimeout(toyGravityDrop, FPS_OFFSET, index);
     } else {
-      console.log("stop");
       toyMoveRef.current.style.zIndex = zIndexs.normalToy;
       toyPhysics.DST.X = toyMoveRef.current.offsetLeft;
       toyPhysics.DST.Y = toyMoveRef.current.offsetTop;
@@ -445,8 +454,6 @@ export default function Sandbox() {
       toyPhysics.V.vy = vy;
 
       toyPhysics.dR = vx * SPIN_SPEED_OFFSET;
-
-      toyGravityDrop(focus);
     }
 
     if (toyRotateRef.current) {
@@ -454,6 +461,7 @@ export default function Sandbox() {
       toyRotateRef.current.style.boxShadow = "";
     }
 
+    toyGravityDrop(focus);
     e.preventDefault();
   };
 
@@ -530,10 +538,10 @@ export default function Sandbox() {
           <sandFrontItem.image />
         </div>
         <div className="sandbox-tray-left" ref={trayLeftItem.ref}>
-          <trayLeftItem.image />
+          {/* <trayLeftItem.image /> */}
         </div>
         <div className="sandbox-tray-right" ref={trayRightItem.ref}>
-          <trayRightItem.image />
+          {/* <trayRightItem.image /> */}
         </div>
         {toyList.current.map((v, i) => {
           return (

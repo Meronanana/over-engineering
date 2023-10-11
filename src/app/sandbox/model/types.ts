@@ -21,6 +21,8 @@ import {
   Starfish3,
   TrayLeft,
   TrayRight,
+  TraySmallLeft,
+  TraySmallRight,
   TreeLeaves,
   TreePole,
   TreeShadow,
@@ -53,7 +55,7 @@ export type ToyPhysics = {
 
 export type SandboxItem = {
   position: Coordinate;
-  width: number;
+  width: number | Array<number>;
   height: number;
   ref: RefObject<HTMLDivElement>;
   image: any;
@@ -180,7 +182,7 @@ export const defaultItemList: Array<SandboxItem> = [
 
 export const trayLeftItem: SandboxItem = {
   position: { X: -1, Y: -1 },
-  width: 1500,
+  width: [1500, 1000, 700],
   height: 300,
   ref: createRef(),
   image: TrayLeft,
@@ -188,10 +190,26 @@ export const trayLeftItem: SandboxItem = {
 
 export const trayRightItem: SandboxItem = {
   position: { X: -1, Y: -1 },
-  width: 1500,
+  width: [1500, 1000, 700],
   height: 300,
   ref: createRef(),
   image: TrayRight,
+};
+
+export const traySmallLeftItem: SandboxItem = {
+  position: { X: -1, Y: -1 },
+  width: 700,
+  height: 300,
+  ref: createRef(),
+  image: TraySmallLeft,
+};
+
+export const traySmallRightItem: SandboxItem = {
+  position: { X: -1, Y: -1 },
+  width: 700,
+  height: 300,
+  ref: createRef(),
+  image: TraySmallRight,
 };
 
 export const sandFrontItem: SandboxItem = {

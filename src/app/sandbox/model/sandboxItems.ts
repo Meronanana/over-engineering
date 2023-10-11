@@ -17,6 +17,8 @@ import TreeShadow from "/public/assets/images/sandbox/sandbox-tree-shadow.svg";
 
 import TrayLeft from "/public/assets/images/sandbox/sandbox-tray-left.svg";
 import TrayRight from "/public/assets/images/sandbox/sandbox-tray-right.svg";
+import TraySmallLeft from "/public/assets/images/sandbox/sandbox-tray-small-left.svg";
+import TraySmallRight from "/public/assets/images/sandbox/sandbox-tray-small-right.svg";
 import SandFront from "/public/assets/images/sandbox/sandbox-sand-front.svg";
 import SandBack from "/public/assets/images/sandbox/sandbox-sand-back.svg";
 
@@ -40,6 +42,8 @@ export {
   Starfish3,
   TrayLeft,
   TrayRight,
+  TraySmallLeft,
+  TraySmallRight,
   SandFront,
   SandBack,
   Cloud1,
