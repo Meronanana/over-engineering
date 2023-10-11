@@ -12,11 +12,15 @@ import {
   SandArticle3,
   SandArticle4,
   SandArticle5,
+  SandBack,
+  SandFront,
   Shell1,
   Shell2,
   Starfish1,
   Starfish2,
   Starfish3,
+  TrayLeft,
+  TrayRight,
   TreeLeaves,
   TreePole,
   TreeShadow,
@@ -32,7 +36,6 @@ export type Toy = {
   name: string;
   moveRef: RefObject<HTMLDivElement>;
   rotateRef: RefObject<HTMLDivElement>;
-  sandLayerRef: RefObject<HTMLDivElement>;
   physics: ToyPhysics;
   link: string;
   image: StaticImageData | any;
@@ -71,7 +74,6 @@ export const defaultToyList: Array<Toy> = [
     name: "qr-code",
     moveRef: createRef(),
     rotateRef: createRef(),
-    sandLayerRef: createRef(),
     physics: { ...defaultToyPhysics },
     link: "",
     image: ToyLinkQR,
@@ -80,7 +82,6 @@ export const defaultToyList: Array<Toy> = [
     name: "deadlock",
     moveRef: createRef(),
     rotateRef: createRef(),
-    sandLayerRef: createRef(),
     physics: { ...defaultToyPhysics },
     link: "",
     image: ToyDeadlock,
@@ -89,7 +90,6 @@ export const defaultToyList: Array<Toy> = [
     name: "nwjns-powerpuffgirl",
     moveRef: createRef(),
     rotateRef: createRef(),
-    sandLayerRef: createRef(),
     physics: { ...defaultToyPhysics },
     link: "nwjns-powerpuffgirl",
     image: charaSelector(),
@@ -98,7 +98,6 @@ export const defaultToyList: Array<Toy> = [
     name: "tutorial",
     moveRef: createRef(),
     rotateRef: createRef(),
-    sandLayerRef: createRef(),
     physics: { ...defaultToyPhysics },
     link: "",
     image: ToyTutoMouse,
@@ -179,26 +178,34 @@ export const defaultItemList: Array<SandboxItem> = [
   },
 ];
 
-export const treePoleItem: SandboxItem = {
+export const trayLeftItem: SandboxItem = {
   position: { X: -1, Y: -1 },
-  width: 148,
-  height: 800,
+  width: 1500,
+  height: 300,
   ref: createRef(),
-  image: TreePole,
+  image: TrayLeft,
 };
 
-export const treeLeavesItem: SandboxItem = {
+export const trayRightItem: SandboxItem = {
   position: { X: -1, Y: -1 },
-  width: 1032,
-  height: 548,
+  width: 1500,
+  height: 300,
   ref: createRef(),
-  image: TreeLeaves,
+  image: TrayRight,
 };
 
-export const treeShadowItem: SandboxItem = {
+export const sandFrontItem: SandboxItem = {
   position: { X: -1, Y: -1 },
-  width: 1203,
-  height: 1462,
+  width: 3000,
+  height: 367,
   ref: createRef(),
-  image: TreeShadow,
+  image: SandFront,
+};
+
+export const sandBackItem: SandboxItem = {
+  position: { X: -1, Y: -1 },
+  width: 3000,
+  height: 390,
+  ref: createRef(),
+  image: SandBack,
 };

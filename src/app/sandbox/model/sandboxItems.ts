@@ -15,6 +15,15 @@ import TreePole from "/public/assets/images/sandbox/sandbox-tree-pole.svg";
 import TreeLeaves from "/public/assets/images/sandbox/sandbox-tree-leaves.svg";
 import TreeShadow from "/public/assets/images/sandbox/sandbox-tree-shadow.svg";
 
+import TrayLeft from "/public/assets/images/sandbox/sandbox-tray-left.svg";
+import TrayRight from "/public/assets/images/sandbox/sandbox-tray-right.svg";
+import SandFront from "/public/assets/images/sandbox/sandbox-sand-front.svg";
+import SandBack from "/public/assets/images/sandbox/sandbox-sand-back.svg";
+
+import Cloud1 from "/public/assets/images/sandbox/sandbox-cloud-1.svg";
+import Cloud2 from "/public/assets/images/sandbox/sandbox-cloud-2.svg";
+import Cloud3 from "/public/assets/images/sandbox/sandbox-cloud-3.svg";
+
 export {
   TreePole,
   TreeLeaves,
@@ -29,4 +38,11 @@ export {
   Starfish1,
   Starfish2,
   Starfish3,
+  TrayLeft,
+  TrayRight,
+  SandFront,
+  SandBack,
+  Cloud1,
+  Cloud2,
+  Cloud3,
 };
