@@ -229,7 +229,7 @@ export default function Sandbox() {
 
     sandBackRef.current.style.left = trayGap + "px";
     sandBackRef.current.style.top = Math.floor(window.innerHeight * 0.6) + "px";
-    sandBackRef.current.style.transform = `translateY(-${sandBackRef.current.offsetWidth * 0.045}px)`;
+    sandBackRef.current.style.transform = `translateY(-${sandBackRef.current.offsetWidth * 0.05}px)`;
 
     toyList.current.forEach((v, i) => toyGravityDrop(i));
   }, []);
