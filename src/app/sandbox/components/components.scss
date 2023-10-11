@@ -1,0 +1,269 @@
+h1 {
+  font-size: large;
+  text-align: justify;
+}
+
+h2 {
+  font-size: medium;
+}
+
+h3 {
+  text-align: justify;
+  font-size: small;
+  letter-spacing: -0.5px;
+  word-spacing: -1px;
+
+  margin-bottom: 5px;
+}
+
+.item-div {
+  position: fixed;
+  display: block;
+
+  pointer-events: none;
+  top: -10%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translateY(-100%);
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.toy-div {
+  position: fixed;
+
+  top: 50%;
+  left: -30%;
+  width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  color: rgb(99, 62, 191);
+}
+
+.toy-image {
+  position: relative;
+  display: block;
+
+  border-radius: 45%;
+
+  pointer-events: none;
+
+  // background-color: rgba(128, 128, 128, 0.2);
+  // box-shadow: 0px 0px 20px rgba(128, 128, 128, 0.2);
+}
+
+.toy-sand-layer {
+  position: absolute;
+  display: none;
+
+  width: 130%;
+  height: 40%;
+
+  bottom: -21%;
+
+  // border-width: 1px;
+  border-radius: 30%;
+
+  // background-color: sandybrown;
+  background-image: url("../../../../public/assets/images/sandbox/sandbox-background.svg");
+  background-size: var(--bg-size);
+  transform: translateX(-12%);
+
+  pointer-events: none;
+}
+
+.toy-description {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  top: 50%;
+  left: 50%;
+  width: 80vw;
+  height: 40vw;
+
+  border-radius: 1vw;
+  padding: 5vw;
+
+  background-color: rgba(255, 255, 255, 0.95);
+
+  color: white;
+  font-size: auto;
+
+  transform: translate(-50%, -50%);
+}
+
+.toy-description .toy-image {
+  width: 30vw;
+  height: 30vw;
+}
+
+.toy-description .description-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  color: black;
+  font-size: auto;
+}
+
+.sandbox-description {
+  position: absolute;
+  overflow-y: scroll;
+
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 80%;
+
+  border-radius: 1vh;
+  padding: 2vh;
+
+  background-color: rgba(0, 0, 0, 0.7);
+
+  color: white;
+  font-size: auto;
+
+  transform: translate(-50%, -50%);
+}
+.sandbox-description::-webkit-scrollbar {
+  width: 0px;
+}
+
+.sandbox-controller {
+  position: fixed;
+
+  z-index: 101;
+}
+
+.sandbox-text {
+  position: fixed;
+  left: 50%;
+  padding: 1vh;
+
+  color: gray;
+  font-size: 2vh;
+  text-align: center;
+
+  transition: 0.5s;
+  transform: translate(-50%, 0%);
+}
+
+.sandbox-title {
+  @extend .sandbox-text;
+  top: 0%;
+}
+
+.sandbox-title.on-grid {
+  color: white;
+}
+
+.sandbox-tail {
+  @extend .sandbox-text;
+  bottom: 0%;
+  width: 90vw;
+}
+
+.sandbox-tail.on-grid {
+  color: white;
+}
+
+.sandbox-docker {
+  position: fixed;
+  top: 50%;
+  right: 0%;
+  padding: 1vmin;
+
+  display: flex;
+  flex-direction: column;
+
+  transform: translate(0%, -50%);
+}
+
+.sandbox-docker.tutorial {
+  border-color: white;
+}
+
+.master-docker {
+  position: fixed;
+  top: 50%;
+  left: 0%;
+  padding: 1vmin;
+
+  display: flex;
+  flex-direction: column;
+
+  transform: translate(0%, -50%);
+}
+
+.docker-button {
+  width: 4vh;
+  height: 4vh;
+  margin: 1vh 0vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0.7;
+  transition: 0.5s;
+}
+
+@media (max-width: 600px) {
+  .sandbox-description {
+    width: 360px;
+  }
+}
+
+@media (max-width: 450px) {
+  .toy-description {
+    flex-direction: column;
+
+    width: 40vh;
+    height: 60%;
+
+    border-radius: 1vh;
+    padding: 5vh;
+  }
+
+  .toy-description .toy-image {
+    width: 30vh;
+    height: 30vh;
+  }
+}
+
+@media (max-height: 600px) {
+  .sandbox-text {
+    font-size: 12px;
+  }
+  .docker-button {
+    width: 24px;
+    height: 24px;
+    margin: 6px 0px;
+  }
+}
+
+@media (orientation: landscape) and (pointer: coarse) {
+  .sandbox-docker {
+    right: 44px;
+  }
+  .master-docker {
+    left: 44px;
+  }
+  .sandbox-tail {
+    bottom: 10px;
+  }
+}
