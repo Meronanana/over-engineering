@@ -55,6 +55,7 @@ export default function Sandbox() {
 
   const toyFocus: MutableRefObject<number> = useRef<number>(-1);
   const alignRef = useRef(SandboxAlignType.Free);
+  const trayGapRef = useRef(0);
   const mouseDownTime: MutableRefObject<number> = useRef<number>(0);
 
   const toyList = useRef<Array<Toy>>([...defaultToyList]);
@@ -185,6 +186,7 @@ export default function Sandbox() {
     } else {
       trayGap = screenWidth / 2 - trayWidth;
     }
+    trayGapRef.current = trayGap;
 
     const trayLeftRef = trayLeftItem.ref;
     if (trayLeftRef.current === null) return;
@@ -298,8 +300,14 @@ export default function Sandbox() {
         }
       }
 
-      // 바닥 하한선 감지
-      if (screenRef.current.offsetHeight * UNDER_BOUND < endY) {
+      // Tray 부딛히면 멈춤
+      if (
+        i !== toyFocus.current &&
+        Math.floor(screenRef.current.offsetHeight * UNDER_BOUND) < endY &&
+        Math.floor(screenRef.current.offsetHeight * (UNDER_BOUND + 0.1)) > endY &&
+        trayGapRef.current < endX &&
+        endX < screenRef.current.offsetWidth - trayGapRef.current
+      ) {
         endY = Math.floor(screenRef.current.offsetHeight * UNDER_BOUND);
       }
 
@@ -339,10 +347,15 @@ export default function Sandbox() {
 
     if (
       toyFocus.current !== index &&
-      toyMoveRef.current.offsetTop < Math.floor(screenRef.current.offsetHeight * UNDER_BOUND)
+      (Math.floor(screenRef.current.offsetHeight * UNDER_BOUND) > toyMoveRef.current.offsetTop ||
+        Math.floor(screenRef.current.offsetHeight * (UNDER_BOUND + 0.1)) < toyMoveRef.current.offsetTop ||
+        trayGapRef.current > toyMoveRef.current.offsetLeft ||
+        toyMoveRef.current.offsetLeft > screenRef.current.offsetWidth - trayGapRef.current) &&
+      screenRef.current.offsetHeight + toyMoveRef.current.offsetHeight > toyMoveRef.current.offsetTop
     ) {
       if (alignRef.current !== SandboxAlignType.Grid) setTimeout(toyGravityDrop, FPS_OFFSET, index);
     } else {
+      console.log("stop");
       toyMoveRef.current.style.zIndex = zIndexs.normalToy;
       toyPhysics.DST.X = toyMoveRef.current.offsetLeft;
       toyPhysics.DST.Y = toyMoveRef.current.offsetTop;
