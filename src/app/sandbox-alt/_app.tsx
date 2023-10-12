@@ -42,6 +42,7 @@ import ToyDescription from "./components/ToyDescription";
 import { FPS_OFFSET } from "@/utils/constants";
 
 import "./sandbox.scss";
+import Link from "next/link";
 
 export default function Sandbox() {
   // console.log("re-render!");
@@ -228,7 +229,7 @@ export default function Sandbox() {
 
     sandBackRef.current.style.left = trayGap + "px";
     sandBackRef.current.style.top = Math.floor(window.innerHeight * 0.6) + "px";
-    sandBackRef.current.style.transform = `translateY(-${sandBackRef.current.offsetWidth * 0.045}px)`;
+    sandBackRef.current.style.transform = `translateY(-${sandBackRef.current.offsetWidth * 0.05}px)`;
 
     toyList.current.forEach((v, i) => toyGravityDrop(i));
   }, []);
@@ -247,7 +248,8 @@ export default function Sandbox() {
 
       const toyMoveRef = v.moveRef;
       const toyRotateRef = v.rotateRef;
-      if (toyMoveRef.current === null || screenRef.current === null || toyRotateRef.current === null) return;
+      const sandFrontRef = sandFrontItem.ref;
+      if (!toyMoveRef.current || !screenRef.current || !toyRotateRef.current || !sandFrontRef.current) return;
 
       const toyPhysics = v.physics;
 
@@ -289,12 +291,12 @@ export default function Sandbox() {
       // Tray 부딛히면 멈춤
       if (
         i !== toyFocus.current &&
-        Math.floor(screenRef.current.offsetHeight * UNDER_BOUND) < endY &&
+        Math.floor(screenRef.current.offsetHeight * UNDER_BOUND - toyMoveRef.current.offsetHeight / 2) < endY &&
         Math.floor(screenRef.current.offsetHeight * (UNDER_BOUND + 0.15)) > endY &&
         trayGapRef.current < endX &&
         endX < screenRef.current.offsetWidth - trayGapRef.current
       ) {
-        endY = Math.floor(screenRef.current.offsetHeight * UNDER_BOUND);
+        endY = Math.floor(screenRef.current.offsetHeight * UNDER_BOUND - toyMoveRef.current.offsetHeight / 2);
       }
 
       // DOM 컨트롤
@@ -307,8 +309,9 @@ export default function Sandbox() {
   const toyGravityDrop = useCallback((index: number) => {
     const toyMoveRef = toyList.current[index].moveRef;
     const toyPhysics = toyList.current[index].physics;
+    const sandFrontRef = sandFrontItem.ref;
 
-    if (!toyMoveRef.current || !screenRef.current || toyPhysics.FIXED) return;
+    if (!toyMoveRef.current || !screenRef.current || !sandFrontRef.current || toyPhysics.FIXED) return;
 
     let vx = toyPhysics.V.vx;
     let vy = toyPhysics.V.vy;
@@ -329,7 +332,8 @@ export default function Sandbox() {
 
     if (
       toyFocus.current !== index &&
-      (Math.floor(screenRef.current.offsetHeight * UNDER_BOUND) > toyMoveRef.current.offsetTop ||
+      (Math.floor(screenRef.current.offsetHeight * UNDER_BOUND - toyMoveRef.current.offsetHeight / 2) >
+        toyMoveRef.current.offsetTop ||
         Math.floor(screenRef.current.offsetHeight * (UNDER_BOUND + 0.15)) < toyMoveRef.current.offsetTop ||
         trayGapRef.current > toyMoveRef.current.offsetLeft ||
         toyMoveRef.current.offsetLeft > screenRef.current.offsetWidth - trayGapRef.current) &&
@@ -346,6 +350,8 @@ export default function Sandbox() {
       toyPhysics.V.vx = 0;
       toyPhysics.V.vy = 0;
       toyPhysics.dR = 0;
+
+      console.log(toyMoveRef.current.offsetTop / screenRef.current.offsetHeight);
     }
   }, []);
 
@@ -528,6 +534,9 @@ export default function Sandbox() {
         onTouchMove={touchMoveEvent}
         ref={screenRef}
       >
+        <Link href={"/sandbox"} style={{ position: "fixed", zIndex: "200" }}>
+          옛-버젼
+        </Link>
         <div className="sandbox-shadow" ref={bgShadowRef}></div>
         <div className="sandbox-sand-back" ref={sandBackItem.ref}>
           <sandBackItem.image />
