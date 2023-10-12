@@ -350,8 +350,6 @@ export default function Sandbox() {
       toyPhysics.V.vx = 0;
       toyPhysics.V.vy = 0;
       toyPhysics.dR = 0;
-
-      console.log(toyMoveRef.current.offsetTop / screenRef.current.offsetHeight);
     }
   }, []);
 

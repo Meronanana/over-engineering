@@ -26,6 +26,12 @@ export default function Modal() {
       modalRef.current.style.opacity = "0";
       bgRef.current.style.opacity = "0";
     }
+
+    window.addEventListener("keydown", keyDownEvent);
+
+    return () => {
+      window.removeEventListener("keydown", keyDownEvent);
+    };
   }, [visiable]);
 
   const mouseUpEvent = (e: any) => {
@@ -33,6 +39,12 @@ export default function Modal() {
     e.preventDefault();
   };
   const touchEndEvent = mouseUpEvent;
+
+  const keyDownEvent = (e: any) => {
+    if (e.key === "Escape") {
+      dispatch(modalClose());
+    }
+  };
 
   return (
     <div className="global-modal" ref={modalRef}>
