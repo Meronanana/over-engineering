@@ -138,7 +138,7 @@ export const trayRightItem: SandboxItem = {
 
 export const sandFrontItem: SandboxItem = {
   position: { X: -1, Y: -1 },
-  width: 3000,
+  width: 2800,
   height: 367,
   ref: createRef(),
   image: SandFront,
@@ -146,7 +146,7 @@ export const sandFrontItem: SandboxItem = {
 
 export const sandBackItem: SandboxItem = {
   position: { X: -1, Y: -1 },
-  width: 3000,
+  width: 2800,
   height: 390,
   ref: createRef(),
   image: SandBack,
