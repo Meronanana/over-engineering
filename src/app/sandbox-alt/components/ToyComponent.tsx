@@ -3,7 +3,7 @@
 import { MouseEventHandler, TouchEventHandler, useEffect } from "react";
 import Image from "next/image";
 import { Toy } from "../model/types";
-import { TOY_SIZES, WINDOW_SIZE_INDEXS } from "../model/constants";
+import { TOY_SIZES, WINDOW_WIDTH_INDEXS } from "../model/constants";
 
 import "./components.scss";
 
@@ -29,10 +29,10 @@ export default function ToyComponent({ idx, toyData, mouseDownEvent, touchStartE
 
     if (toyMoveRef.current === null) return;
 
-    const sizeIndex: number = window.innerWidth + window.innerHeight;
+    const sizeIndex: number = window.innerWidth;
 
-    for (let i = WINDOW_SIZE_INDEXS.length - 1; i >= 0; i--) {
-      if (WINDOW_SIZE_INDEXS[i] <= sizeIndex) {
+    for (let i = WINDOW_WIDTH_INDEXS.length - 1; i >= 0; i--) {
+      if (WINDOW_WIDTH_INDEXS[i] <= sizeIndex) {
         toyMoveRef.current.style.width = TOY_SIZES[i] + "px";
         toyMoveRef.current.style.height = TOY_SIZES[i] + "px";
 
@@ -58,13 +58,6 @@ export default function ToyComponent({ idx, toyData, mouseDownEvent, touchStartE
           <div>A</div>
         )}
       </div>
-      {/* {idx === TUTORIAL_INDEX ? (
-        <div className="toy-tutorial-message" ref={tutorialMessageRef}>
-          AAAA
-        </div>
-      ) : (
-        <></>
-      )} */}
     </div>
   );
 }

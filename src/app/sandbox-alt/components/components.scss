@@ -17,9 +17,10 @@ h3 {
 }
 
 .toy-div {
-  position: absolute;
-  top: -10%;
-  left: 50%;
+  position: fixed;
+
+  top: 50%;
+  left: -30%;
   width: 40px;
   height: 40px;
   transform: translate(-50%, -50%);
@@ -30,13 +31,20 @@ h3 {
   user-select: none;
 
   color: rgb(99, 62, 191);
+
+  z-index: 1;
 }
 
 .toy-image {
   position: relative;
   display: block;
 
+  border-radius: 45%;
+
   pointer-events: none;
+
+  // background-color: rgba(128, 128, 128, 0.2);
+  // box-shadow: 0px 0px 20px rgba(128, 128, 128, 0.2);
 }
 
 .toy-description {
@@ -99,13 +107,20 @@ h3 {
   width: 0px;
 }
 
+.sandbox-controller {
+  position: fixed;
+
+  z-index: 101;
+}
+
 .sandbox-text {
-  position: absolute;
+  position: fixed;
   left: 50%;
   padding: 1vh;
 
   color: gray;
   font-size: 2vh;
+  text-align: center;
 
   transition: 0.5s;
   transform: translate(-50%, 0%);
@@ -123,6 +138,7 @@ h3 {
 .sandbox-tail {
   @extend .sandbox-text;
   bottom: 0%;
+  width: 90vw;
 }
 
 .sandbox-tail.on-grid {
@@ -130,7 +146,7 @@ h3 {
 }
 
 .sandbox-docker {
-  position: absolute;
+  position: fixed;
   top: 50%;
   right: 0%;
   padding: 1vmin;
@@ -146,7 +162,7 @@ h3 {
 }
 
 .master-docker {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 0%;
   padding: 1vmin;

@@ -5,12 +5,12 @@ module.exports = {
     return [
       {
         source: "/",
-        destination: "/sandbox",
+        destination: "/sandbox-alt",
         permanent: true,
       },
     ];
   },
-  reactStrictMode: true,
+  reactStrictMode: false,
   webpack: (config) => {
     config.module.rules.push({
       test: /\.svg$/i,

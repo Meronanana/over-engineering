@@ -5,6 +5,8 @@ import Image, { StaticImageData } from "next/image";
 
 import "./components.scss";
 import Link from "next/link";
+import { useDispatch } from "react-redux";
+import { modalClose } from "@/utils/redux/modalState";
 
 interface Props {
   name: string;
@@ -28,6 +30,8 @@ const descriptions: ObjType = {
 };
 
 export default function ToyDescription({ name, link, Img }: Props) {
+  const dispatch = useDispatch();
+
   const DescriptionImage = () => {
     return (
       <div className="toy-image">
@@ -62,7 +66,15 @@ export default function ToyDescription({ name, link, Img }: Props) {
         <h1>{name}</h1>
         <h3>{descriptions[`${name}`]}</h3>
         <Spliter />
-        <h2>{name === "qr-code" ? `Take QR!` : <Link href={link}>{link !== "" ? "Visit" : "Preparing"}</Link>}</h2>
+        <h2>
+          {name === "qr-code" ? (
+            `Take QR!`
+          ) : (
+            <Link href={link} onClick={() => dispatch(modalClose())}>
+              {link !== "" ? "Visit" : "Preparing"}
+            </Link>
+          )}
+        </h2>
       </div>
     </div>
   );
