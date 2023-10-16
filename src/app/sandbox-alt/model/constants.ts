@@ -6,7 +6,7 @@ export const GRID_3_BY_3 = { cols: 3, rows: 3 };
 export const GRID_4_BY_2 = { cols: 4, rows: 2 };
 export const TUTORIAL_INDEX: number = 3;
 
-export const WINDOW_WIDTH_INDEXS: Array<number> = [0, 600, 1000, 1500, 2000];
+export const WINDOW_WIDTH_INDEXS: Array<number> = [0, 600, 1200, 1800, 2000];
 export const TOY_SIZES: Array<number> = [40, 60, 80, 120, 160];
 
 export const zIndexs = {
