@@ -75,7 +75,7 @@ export const defaultToyList: Array<Toy> = [
     moveRef: createRef(),
     rotateRef: createRef(),
     physics: { ...defaultToyPhysics },
-    link: "",
+    link: "deadlock",
     image: ToyDeadlock,
   },
   {
