@@ -9,8 +9,8 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 1920px;
-  height: 1080px;
+  width: var(--bg-width);
+  height: var(--bg-height);
 
   // background-color: yellow;
   background-image: url("../../../public/assets/images/deadlock/deadlock-background.png");
@@ -25,6 +25,8 @@
   height: 13%;
 
   background-image: linear-gradient(white 0%, #ffffffe0 80%, #ffffff00 100%);
+
+  z-index: 1;
 }
 
 .deadlock-top-menu .score {
@@ -32,9 +34,9 @@
   top: 40%;
   left: 8%;
 
-  width: 30px;
-  height: 30px;
-  border-width: 2px;
+  text-align: center;
+  font-size: x-large;
+  color: #5e5e5e;
 
   transform: translate(-50%, -50%);
 }
@@ -53,5 +55,6 @@
 
 .temp {
   position: absolute;
+  bottom: 0%;
   // z-index: 1;
 }

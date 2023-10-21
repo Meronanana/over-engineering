@@ -9,5 +9,8 @@ export enum CarType {
 
 export type CarItem = {
   type: CarType;
-  ref: RefObject<HTMLDivElement>;
+  carRef: RefObject<HTMLDivElement>;
+  imgRef: RefObject<HTMLDivElement>;
+  shadowRef: RefObject<HTMLDivElement>;
+  key: number;
 };
