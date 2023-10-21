@@ -6,6 +6,7 @@ import { FPS_OFFSET } from "@/utils/constants";
 
 import "./components.scss";
 import { BACKGROUND_HEIGHT } from "../utils/constants";
+import { CarBox, isObjectInFront } from "@/utils/physicalEngine";
 
 interface Props {
   sizeIndexRef: MutableRefObject<number>;
@@ -17,7 +18,7 @@ export default function CarControl({ sizeIndexRef, scoreRef }: Props) {
 
   const carsRef = useRef<Array<CarItem>>([]);
 
-  const addCarInterval = useRef(1000);
+  const addCarInterval = useRef(300);
   const addCarId = useRef<NodeJS.Timeout>();
   const nextKeyRef = useRef(0);
   const passedCarRef = useRef(0);
@@ -52,7 +53,7 @@ export default function CarControl({ sizeIndexRef, scoreRef }: Props) {
     nextKeyRef.current += 1;
     carsRef.current = [...carsRef.current, newCar];
 
-    console.log("CAR", carType);
+    // console.log("CAR", carType);
     freeCar();
 
     if (scoreRef.current) scoreRef.current.textContent = `${passedCarRef.current}`;
@@ -62,6 +63,20 @@ export default function CarControl({ sizeIndexRef, scoreRef }: Props) {
   };
 
   const moveCar = () => {
+    const data: Array<CarBox | null> = carsRef.current.map((v, i) => {
+      if (v.carRef.current) {
+        return {
+          x: v.carRef.current.offsetLeft,
+          y: v.carRef.current.offsetTop,
+          w: v.carRef.current.offsetWidth,
+          h: v.carRef.current.offsetHeight,
+          type: v.type,
+        };
+      } else {
+        return null;
+      }
+    });
+
     carsRef.current.forEach((v, i) => {
       const carRef = v.carRef;
       const imgRef = v.imgRef;
@@ -80,7 +95,7 @@ export default function CarControl({ sizeIndexRef, scoreRef }: Props) {
           carRef.current.className = "deadlock-car from-left";
           imgRef.current.className = "deadlock-car-image red";
         } else {
-          carRef.current.style.left = carRef.current.offsetLeft + 1 + "px";
+          if (!isObjectInFront(data, i)) carRef.current.style.left = carRef.current.offsetLeft + 1 + "px";
         }
       } else if (v.type === CarType.FromBottom) {
         if (carRef.current.offsetLeft === -100) {
@@ -93,7 +108,7 @@ export default function CarControl({ sizeIndexRef, scoreRef }: Props) {
           shadowRef.current.style.top = "2px";
           shadowRef.current.style.left = "-2px";
         } else {
-          carRef.current.style.top = carRef.current.offsetTop - 1 + "px";
+          if (!isObjectInFront(data, i)) carRef.current.style.top = carRef.current.offsetTop - 1 + "px";
         }
       } else if (v.type === CarType.FromRight) {
         if (carRef.current.offsetLeft === -100) {
@@ -107,12 +122,12 @@ export default function CarControl({ sizeIndexRef, scoreRef }: Props) {
           shadowRef.current.style.top = "-2px";
           shadowRef.current.style.left = "-2px";
         } else {
-          carRef.current.style.left = carRef.current.offsetLeft - 1 + "px";
+          if (!isObjectInFront(data, i)) carRef.current.style.left = carRef.current.offsetLeft - 1 + "px";
         }
       } else if (v.type === CarType.FromTop) {
         if (carRef.current.offsetLeft === -100) {
           carRef.current.style.top = "-50px";
-          carRef.current.style.left = window.innerWidth * 0.5 - carRef.current.offsetHeight / 2 - 2 + "px";
+          carRef.current.style.left = window.innerWidth * 0.5 - carRef.current.offsetHeight / 2 - 3 + "px";
 
           carRef.current.className = "deadlock-car from-top";
           imgRef.current.className = "deadlock-car-image green";
@@ -120,14 +135,14 @@ export default function CarControl({ sizeIndexRef, scoreRef }: Props) {
           shadowRef.current.style.top = "-2px";
           shadowRef.current.style.left = "2px";
         } else {
-          carRef.current.style.top = carRef.current.offsetTop + 1 + "px";
+          if (!isObjectInFront(data, i)) carRef.current.style.top = carRef.current.offsetTop + 1 + "px";
         }
       }
     });
   };
 
   const freeCar = () => {
-    console.log(carsRef.current.map((v) => v.key));
+    // console.log(carsRef.current.map((v) => v.key));
     const newArray: CarItem[] = [];
     carsRef.current.forEach((v, i) => {
       const carRef = v.carRef;
