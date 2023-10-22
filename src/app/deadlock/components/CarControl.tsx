@@ -10,7 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { CarItem, CarType } from "../model/types";
+import { CarItem, CarType, Lanes } from "../model/types";
 import { FPS_OFFSET } from "@/utils/constants";
 
 import "./components.scss";
@@ -19,8 +19,10 @@ import { CarBox, isObjectInFront } from "@/utils/physicalEngine";
 
 interface Props {
   carsRef: MutableRefObject<Array<CarItem>>;
+  lanesRef: MutableRefObject<Lanes>;
   carFocus: MutableRefObject<number>;
   sizeIndexRef: MutableRefObject<number>;
+  trafficLightEnalbe: MutableRefObject<boolean>;
   scoreRef: RefObject<HTMLDivElement>;
   mouseDownEvent: MouseEventHandler;
   touchStartEvent: TouchEventHandler;
@@ -28,8 +30,10 @@ interface Props {
 
 export default function CarControl({
   carsRef,
+  lanesRef,
   carFocus,
   sizeIndexRef,
+  trafficLightEnalbe,
   scoreRef,
   mouseDownEvent,
   touchStartEvent,
@@ -153,7 +157,8 @@ export default function CarControl({
           carRef.current.className = "deadlock-car from-left";
           imgRef.current.className = "deadlock-car-image red";
         } else {
-          if (!isObjectInFront(data, i)) carRef.current.style.left = carRef.current.offsetLeft + 1 + "px";
+          if (isObjectInFront(data, i) || (lanesRef.current.fromLeft.TL && isOnTLArea(v))) return;
+          else carRef.current.style.left = carRef.current.offsetLeft + 1 + "px";
         }
       } else if (v.type === CarType.FromBottom) {
         if (carRef.current.offsetLeft === -100) {
@@ -166,7 +171,8 @@ export default function CarControl({
           shadowRef.current.style.top = "2px";
           shadowRef.current.style.left = "-2px";
         } else {
-          if (!isObjectInFront(data, i)) carRef.current.style.top = carRef.current.offsetTop - 1 + "px";
+          if (isObjectInFront(data, i) || (lanesRef.current.fromBottom.TL && isOnTLArea(v))) return;
+          else carRef.current.style.top = carRef.current.offsetTop - 1 + "px";
         }
       } else if (v.type === CarType.FromRight) {
         if (carRef.current.offsetLeft === -100) {
@@ -180,7 +186,8 @@ export default function CarControl({
           shadowRef.current.style.top = "-2px";
           shadowRef.current.style.left = "-2px";
         } else {
-          if (!isObjectInFront(data, i)) carRef.current.style.left = carRef.current.offsetLeft - 1 + "px";
+          if (isObjectInFront(data, i) || (lanesRef.current.fromRight.TL && isOnTLArea(v))) return;
+          else carRef.current.style.left = carRef.current.offsetLeft - 1 + "px";
         }
       } else if (v.type === CarType.FromTop) {
         if (carRef.current.offsetLeft === -100) {
@@ -193,7 +200,8 @@ export default function CarControl({
           shadowRef.current.style.top = "-2px";
           shadowRef.current.style.left = "2px";
         } else {
-          if (!isObjectInFront(data, i)) carRef.current.style.top = carRef.current.offsetTop + 1 + "px";
+          if (isObjectInFront(data, i) || (lanesRef.current.fromTop.TL && isOnTLArea(v))) return;
+          else carRef.current.style.top = carRef.current.offsetTop + 1 + "px";
         }
       }
     });
@@ -232,13 +240,52 @@ export default function CarControl({
 
       if (!flag) newArray.push(v);
       else if (scoreRef.current) {
-        passedCarRef.current += 1;
+        if (!trafficLightEnalbe.current) passedCarRef.current += 1;
         addCarInterval.current = 3000 / (Math.log10(passedCarRef.current) + 1);
         Math.log;
       }
     });
 
     carsRef.current = newArray;
+  };
+
+  const isOnTLArea = (carItem: CarItem): boolean => {
+    const carRef = carItem.carRef;
+    if (!carRef.current) return false;
+
+    if (carItem.type === CarType.FromLeft) {
+      if (
+        carRef.current.offsetLeft < window.innerWidth / 2 - (carRef.current.offsetWidth * 7) / 5 + 5 &&
+        carRef.current.offsetLeft > window.innerWidth / 2 - (carRef.current.offsetWidth * 7) / 5 - 5
+      ) {
+        return true;
+      }
+    } else if (carItem.type === CarType.FromBottom) {
+      let top = BACKGROUND_HEIGHT[sizeIndexRef.current] / 18 + window.innerHeight / 2;
+      if (
+        carRef.current.offsetTop < top + (carRef.current.offsetWidth * 7) / 5 + 5 &&
+        carRef.current.offsetTop > top + (carRef.current.offsetWidth * 7) / 5 - 5
+      ) {
+        return true;
+      }
+    } else if (carItem.type === CarType.FromRight) {
+      if (
+        carRef.current.offsetLeft < window.innerWidth / 2 + (carRef.current.offsetWidth * 7) / 5 + 5 &&
+        carRef.current.offsetLeft > window.innerWidth / 2 + (carRef.current.offsetWidth * 7) / 5 - 5
+      ) {
+        return true;
+      }
+    } else if (carItem.type === CarType.FromTop) {
+      let top = BACKGROUND_HEIGHT[sizeIndexRef.current] / 18 + window.innerHeight / 2;
+      if (
+        carRef.current.offsetTop < top - (carRef.current.offsetWidth * 7) / 5 + 5 &&
+        carRef.current.offsetTop > top - (carRef.current.offsetWidth * 7) / 5 - 5
+      ) {
+        return true;
+      }
+    }
+
+    return false;
   };
 
   return (

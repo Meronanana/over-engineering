@@ -28,7 +28,6 @@
   background-image: linear-gradient(white 0%, #ffffffe0 80%, #ffffff00 100%);
 
   z-index: 1;
-  pointer-events: none;
 }
 
 .deadlock-top-menu .score {
@@ -37,11 +36,13 @@
   left: 8%;
 
   text-align: center;
-  font-size: x-large;
+  font-size: 4svh;
   color: #5e5e5e;
   user-select: none;
 
   transform: translate(-50%, -50%);
+
+  // animation: score-blink 2s linear 0s infinite;
 }
 
 .deadlock-top-menu .traffic-light {
@@ -49,11 +50,20 @@
   top: 40%;
   right: 5%;
 
-  width: 30px;
-  height: 30px;
-  border-width: 2px;
+  width: 5svh;
+  height: 5svh;
+  // border-width: 2px;
 
+  background-position: center;
   transform: translate(-50%, -50%);
+
+  transition: 0.2s;
+}
+.deadlock-top-menu .traffic-light.on {
+  background-image: url("../../../public/assets/images/deadlock/deadlock-traffic-light-on.svg");
+}
+.deadlock-top-menu .traffic-light.off {
+  background-image: url("../../../public/assets/images/deadlock/deadlock-traffic-light-off.svg");
 }
 
 .deadlock-lane {
@@ -65,7 +75,7 @@
   pointer-events: none;
 }
 .deadlock-lane.from-left {
-  top: calc(calc(var(--bg-height) / 18) + 50svh);
+  top: calc(var(--bg-height) / 18 + 50svh + 1px);
   right: 0px;
 
   width: 100%;
@@ -83,7 +93,7 @@
   background-image: linear-gradient(to bottom, rgba(128, 128, 128, 0.3), gray, rgba(128, 128, 128, 0.3));
 }
 .deadlock-lane.from-right {
-  top: calc(calc(var(--bg-height) / 36) + 50svh);
+  top: calc(var(--bg-height) / 36 + 50svh + 1px);
   right: 0px;
 
   width: 100%;
@@ -101,9 +111,57 @@
   background-image: linear-gradient(to top, rgba(128, 128, 128, 0.3), gray, rgba(128, 128, 128, 0.3));
 }
 
+.deadlock-sign {
+  position: fixed;
+
+  width: calc(var(--bg-height) / 72);
+  height: calc(var(--bg-height) / 72);
+
+  border-radius: 50%;
+
+  // background-color: rgba(226, 92, 87, 1);
+  // background-color: rgba(93, 132, 58, 1);
+
+  opacity: 0.7;
+
+  transform: translate(-50%, -50%);
+  transition: 0.5s;
+}
+.deadlock-sign.from-left {
+  top: calc(50svh + var(--bg-height) * 5 / 72);
+  left: calc(50svw - var(--car-height));
+}
+.deadlock-sign.from-bottom {
+  top: calc(50svh + var(--bg-height) / 18 + var(--car-height));
+  left: calc(50svw + var(--bg-height) / 72);
+}
+.deadlock-sign.from-right {
+  top: calc(50svh + var(--bg-height) * 3 / 72);
+  left: calc(50svw + var(--car-height));
+}
+.deadlock-sign.from-top {
+  top: calc(50svh + var(--bg-height) / 18 - var(--car-height));
+  left: calc(50svw - var(--bg-height) / 72);
+}
+
 .temp {
   position: absolute;
   bottom: 0%;
   // z-index: 1;
   pointer-events: none;
+}
+
+@keyframes score-blink {
+  49% {
+    color: #777777;
+  }
+  50% {
+    color: #bbbbbb;
+  }
+  99% {
+    color: #bbbbbb;
+  }
+  100% {
+    color: #777777;
+  }
 }
