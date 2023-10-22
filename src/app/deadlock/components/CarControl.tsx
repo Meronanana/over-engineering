@@ -14,7 +14,7 @@ import { CarItem, CarType, Lanes } from "../model/types";
 import { FPS_OFFSET } from "@/utils/constants";
 
 import "./components.scss";
-import { BACKGROUND_HEIGHT } from "../utils/constants";
+import { BACKGROUND_HEIGHT, CAR_SPEED } from "../utils/constants";
 import { CarBox, isObjectInFront } from "@/utils/physicalEngine";
 
 interface Props {
@@ -158,7 +158,7 @@ export default function CarControl({
           imgRef.current.className = "deadlock-car-image red";
         } else {
           if (isObjectInFront(data, i) || (lanesRef.current.fromLeft.TL && isOnTLArea(v))) return;
-          else carRef.current.style.left = carRef.current.offsetLeft + 1 + "px";
+          else carRef.current.style.left = carRef.current.offsetLeft + CAR_SPEED[sizeIndexRef.current] + "px";
         }
       } else if (v.type === CarType.FromBottom) {
         if (carRef.current.offsetLeft === -100) {
@@ -172,7 +172,7 @@ export default function CarControl({
           shadowRef.current.style.left = "-2px";
         } else {
           if (isObjectInFront(data, i) || (lanesRef.current.fromBottom.TL && isOnTLArea(v))) return;
-          else carRef.current.style.top = carRef.current.offsetTop - 1 + "px";
+          else carRef.current.style.top = carRef.current.offsetTop - CAR_SPEED[sizeIndexRef.current] + "px";
         }
       } else if (v.type === CarType.FromRight) {
         if (carRef.current.offsetLeft === -100) {
@@ -187,7 +187,7 @@ export default function CarControl({
           shadowRef.current.style.left = "-2px";
         } else {
           if (isObjectInFront(data, i) || (lanesRef.current.fromRight.TL && isOnTLArea(v))) return;
-          else carRef.current.style.left = carRef.current.offsetLeft - 1 + "px";
+          else carRef.current.style.left = carRef.current.offsetLeft - CAR_SPEED[sizeIndexRef.current] + "px";
         }
       } else if (v.type === CarType.FromTop) {
         if (carRef.current.offsetLeft === -100) {
@@ -201,7 +201,7 @@ export default function CarControl({
           shadowRef.current.style.left = "2px";
         } else {
           if (isObjectInFront(data, i) || (lanesRef.current.fromTop.TL && isOnTLArea(v))) return;
-          else carRef.current.style.top = carRef.current.offsetTop + 1 + "px";
+          else carRef.current.style.top = carRef.current.offsetTop + CAR_SPEED[sizeIndexRef.current] + "px";
         }
       }
     });
