@@ -214,22 +214,22 @@ export default function Sandbox() {
     const sandFrontRef = sandFrontItem.ref;
     if (sandFrontRef.current === null) return;
 
-    sandFrontRef.current.style.width = screenWidth - trayGap * 2 + "px";
+    sandFrontRef.current.style.width = screenWidth - trayGap * 2.2 + "px";
     sandFrontRef.current.style.height = trayHeight + "px";
 
-    sandFrontRef.current.style.left = trayGap + "px";
+    sandFrontRef.current.style.left = window.innerWidth * 0.5 + "px";
     sandFrontRef.current.style.top = Math.floor(window.innerHeight * 0.6) + "px";
-    sandFrontRef.current.style.transform = `translateY(-${sandFrontRef.current.offsetWidth * 0.045}px)`;
+    sandFrontRef.current.style.transform = `translate(-50%, -${sandFrontRef.current.offsetWidth * 0.045}px)`;
 
     const sandBackRef = sandBackItem.ref;
     if (sandBackRef.current === null) return;
 
-    sandBackRef.current.style.width = screenWidth - trayGap * 2 + "px";
+    sandBackRef.current.style.width = screenWidth - trayGap * 2.2 + "px";
     sandBackRef.current.style.height = trayHeight + "px";
 
-    sandBackRef.current.style.left = trayGap + "px";
+    sandBackRef.current.style.left = window.innerWidth * 0.5 + "px";
     sandBackRef.current.style.top = Math.floor(window.innerHeight * 0.6) + "px";
-    sandBackRef.current.style.transform = `translateY(-${sandBackRef.current.offsetWidth * 0.05}px)`;
+    sandBackRef.current.style.transform = `translate(-50%, -${sandBackRef.current.offsetWidth * 0.05}px)`;
 
     toyList.current.forEach((v, i) => toyGravityDrop(i));
   }, []);
@@ -350,8 +350,6 @@ export default function Sandbox() {
       toyPhysics.V.vx = 0;
       toyPhysics.V.vy = 0;
       toyPhysics.dR = 0;
-
-      console.log(toyMoveRef.current.offsetTop / screenRef.current.offsetHeight);
     }
   }, []);
 

@@ -1,3 +1,5 @@
+import { CarType } from "@/app/deadlock/model/types";
+
 export type Vector = {
   vx: number;
   vy: number;
@@ -8,11 +10,20 @@ export type Coordinate = {
   Y: number;
 };
 
-export interface Circle {
+export type Circle = {
   x: number;
   y: number;
   d: number;
-}
+};
+
+export type CarBox = {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  type: CarType;
+  index: number;
+};
 
 export const lerp = (start: number, end: number, t: number): number => {
   return start * (1 - t) + end * t;
@@ -61,6 +72,63 @@ export const reactionByCircleCollision = (data: Array<Circle | null>, index: num
   return result;
 };
 
+// Deadlock에서 바로 앞의 물체 여부 감지
+export const isObjectInFront = (data: Array<CarBox | null>, index: number): boolean => {
+  const thisBox = data[index];
+  if (thisBox === null) return false;
+
+  let coords: Coordinate[] = [];
+  let gapRatio = 4 / 5;
+  if (thisBox.type === CarType.FromLeft) {
+    coords.push({ X: thisBox.x + thisBox.w / 4, Y: thisBox.y }); // 겹침 판정
+    coords.push({ X: thisBox.x + thisBox.w * gapRatio, Y: thisBox.y }); // 바로 앞
+
+    coords.push({ X: thisBox.x + thisBox.w * gapRatio, Y: thisBox.y - thisBox.h / 2 }); // 왼쪽 판정
+    coords.push({ X: thisBox.x + thisBox.w * gapRatio, Y: thisBox.y + thisBox.h / 2 }); // 오른쪽 판정
+  } else if (thisBox.type === CarType.FromBottom) {
+    coords.push({ X: thisBox.x, Y: thisBox.y - thisBox.h / 4 });
+    coords.push({ X: thisBox.x, Y: thisBox.y - thisBox.h * gapRatio });
+
+    coords.push({ X: thisBox.x - thisBox.w / 2, Y: thisBox.y - thisBox.h * gapRatio });
+    coords.push({ X: thisBox.x + thisBox.w / 2, Y: thisBox.y - thisBox.h * gapRatio });
+  } else if (thisBox.type === CarType.FromRight) {
+    coords.push({ X: thisBox.x - thisBox.w / 4, Y: thisBox.y });
+    coords.push({ X: thisBox.x - thisBox.w * gapRatio, Y: thisBox.y });
+
+    coords.push({ X: thisBox.x - thisBox.w * gapRatio, Y: thisBox.y + thisBox.h / 2 });
+    coords.push({ X: thisBox.x - thisBox.w * gapRatio, Y: thisBox.y - thisBox.h / 2 });
+  } else if (thisBox.type === CarType.FromTop) {
+    coords.push({ X: thisBox.x, Y: thisBox.y + thisBox.h / 4 });
+    coords.push({ X: thisBox.x, Y: thisBox.y + thisBox.h * gapRatio });
+
+    coords.push({ X: thisBox.x + thisBox.w / 2, Y: thisBox.y + thisBox.h * gapRatio });
+    coords.push({ X: thisBox.x - thisBox.w / 2, Y: thisBox.y + thisBox.h * gapRatio });
+  }
+
+  for (let i = 0; i < data.length; i++) {
+    const tmp = data[i];
+    if (tmp !== null && index !== i) {
+      for (let j = 0; j < coords.length; j++) {
+        let stdTop = coords[j].Y;
+        let stdLeft = coords[j].X;
+
+        if (
+          stdTop >= tmp.y - tmp.h / 2 &&
+          stdTop <= tmp.y + tmp.h / 2 &&
+          stdLeft >= tmp.x - tmp.w / 2 &&
+          stdLeft <= tmp.x + tmp.w / 2
+        ) {
+          if (j === 0 && i > index) continue;
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+};
+
+// 2차원 정사각형에서 생성한 베지어 곡선의 y좌표값으로 1차원 수열 생성
 export const getBezierArray = (n: number): Array<number> => {
   const result: Array<number> = [];
 

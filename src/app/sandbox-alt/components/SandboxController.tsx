@@ -25,7 +25,7 @@ export default function SandboxController({ alignRef, dockerRef, alignModeChange
       </Link>
       <Link href="https://github.com/Meronanana/over-engineering" legacyBehavior>
         <a className={align === SandboxAlignType.Grid ? "sandbox-tail on-grid" : "sandbox-tail"} target="_blank">
-          Portfolio by JaeSeong Jeong, 2023
+          Workout by _ , 2023
         </a>
       </Link>
       <div className="master-docker">
