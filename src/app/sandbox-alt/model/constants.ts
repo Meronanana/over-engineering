@@ -10,9 +10,9 @@ export const WINDOW_WIDTH_INDEXS: Array<number> = [0, 600, 1200, 1800, 2000];
 export const TOY_SIZES: Array<number> = [40, 60, 80, 120, 160];
 
 export const zIndexs = {
-  pickedToy: "99",
+  pickedToy: "21",
   gridToy: "101",
-  normalToy: "21",
+  normalToy: "1",
   treeLeaves: "98",
   treeShadow: "97",
   backgroundShadow: "100",
