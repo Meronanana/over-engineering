@@ -7,6 +7,13 @@ export enum CarType {
   FromTop = 3,
 }
 
+export type Lanes = {
+  fromLeft: RefObject<HTMLDivElement>;
+  fromBottom: RefObject<HTMLDivElement>;
+  fromRight: RefObject<HTMLDivElement>;
+  fromTop: RefObject<HTMLDivElement>;
+};
+
 export type CarItem = {
   type: CarType;
   carRef: RefObject<HTMLDivElement>;

@@ -1,6 +1,15 @@
 "use client";
 
-import { MutableRefObject, RefObject, createRef, useEffect, useRef, useState } from "react";
+import {
+  MouseEventHandler,
+  MutableRefObject,
+  RefObject,
+  TouchEventHandler,
+  createRef,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { CarItem, CarType } from "../model/types";
 import { FPS_OFFSET } from "@/utils/constants";
 
@@ -9,14 +18,23 @@ import { BACKGROUND_HEIGHT } from "../utils/constants";
 import { CarBox, isObjectInFront } from "@/utils/physicalEngine";
 
 interface Props {
+  carsRef: MutableRefObject<Array<CarItem>>;
+  carFocus: MutableRefObject<number>;
   sizeIndexRef: MutableRefObject<number>;
   scoreRef: RefObject<HTMLDivElement>;
+  mouseDownEvent: MouseEventHandler;
+  touchStartEvent: TouchEventHandler;
 }
 
-export default function CarControl({ sizeIndexRef, scoreRef }: Props) {
+export default function CarControl({
+  carsRef,
+  carFocus,
+  sizeIndexRef,
+  scoreRef,
+  mouseDownEvent,
+  touchStartEvent,
+}: Props) {
   const [cars, setCars] = useState<Array<CarItem>>([]);
-
-  const carsRef = useRef<Array<CarItem>>([]);
 
   const addCarInterval = useRef(3000);
   const addCarId = useRef<NodeJS.Timeout>();
@@ -95,13 +113,13 @@ export default function CarControl({ sizeIndexRef, scoreRef }: Props) {
       const shadowRef = v.shadowRef;
       // console.log(i);
 
-      if (!carRef.current || !imgRef.current || !shadowRef.current) return;
+      if (!carRef.current || !imgRef.current || !shadowRef.current || v.key === carFocus.current) return;
 
       // 자동차 위치 초기화/움직임
       if (v.type === CarType.FromLeft) {
         if (carRef.current.offsetLeft === -100) {
           let top = BACKGROUND_HEIGHT[sizeIndexRef.current] / 18 + window.innerHeight / 2; // BG_HEIGHT * 5/9 - (BG_HEIGHT - window.innerheight) / 2
-          carRef.current.style.top = top + carRef.current.offsetHeight / 2 + 2 + "px";
+          carRef.current.style.top = top + BACKGROUND_HEIGHT[sizeIndexRef.current] / 72 + "px";
           carRef.current.style.left = "-50px";
 
           carRef.current.className = "deadlock-car from-left";
@@ -112,7 +130,7 @@ export default function CarControl({ sizeIndexRef, scoreRef }: Props) {
       } else if (v.type === CarType.FromBottom) {
         if (carRef.current.offsetLeft === -100) {
           carRef.current.style.bottom = "-50px";
-          carRef.current.style.left = window.innerWidth * 0.5 + carRef.current.offsetHeight / 2 + 2 + "px";
+          carRef.current.style.left = window.innerWidth * 0.5 + BACKGROUND_HEIGHT[sizeIndexRef.current] / 72 + "px";
 
           carRef.current.className = "deadlock-car from-bottom";
           imgRef.current.className = "deadlock-car-image blue";
@@ -125,7 +143,7 @@ export default function CarControl({ sizeIndexRef, scoreRef }: Props) {
       } else if (v.type === CarType.FromRight) {
         if (carRef.current.offsetLeft === -100) {
           let top = BACKGROUND_HEIGHT[sizeIndexRef.current] / 18 + window.innerHeight / 2; // BG_HEIGHT * 5/9 - (BG_HEIGHT - window.innerheight) / 2
-          carRef.current.style.top = top - carRef.current.offsetHeight / 2 - 2 + "px";
+          carRef.current.style.top = top - BACKGROUND_HEIGHT[sizeIndexRef.current] / 72 + "px";
           carRef.current.style.left = window.innerWidth + 50 + "px";
 
           carRef.current.className = "deadlock-car from-right";
@@ -139,7 +157,7 @@ export default function CarControl({ sizeIndexRef, scoreRef }: Props) {
       } else if (v.type === CarType.FromTop) {
         if (carRef.current.offsetLeft === -100) {
           carRef.current.style.top = "-50px";
-          carRef.current.style.left = window.innerWidth * 0.5 - carRef.current.offsetHeight / 2 - 3 + "px";
+          carRef.current.style.left = window.innerWidth * 0.5 - BACKGROUND_HEIGHT[sizeIndexRef.current] / 72 + "px";
 
           carRef.current.className = "deadlock-car from-top";
           imgRef.current.className = "deadlock-car-image green";
@@ -200,7 +218,14 @@ export default function CarControl({ sizeIndexRef, scoreRef }: Props) {
       {cars.map((v, i) => {
         // console.log(i);
         return (
-          <div className="deadlock-car" ref={v.carRef} key={`${v.key}car`}>
+          <div
+            className="deadlock-car"
+            ref={v.carRef}
+            key={`${v.key}car`}
+            id={`${v.key}car`}
+            onMouseDown={mouseDownEvent}
+            onTouchStart={touchStartEvent}
+          >
             <div className="deadlock-car-image" ref={v.imgRef} />
             <div className="deadlock-car-shadow" ref={v.shadowRef} />
           </div>
