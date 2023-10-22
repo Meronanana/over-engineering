@@ -241,8 +241,7 @@ export default function CarControl({
       if (!flag) newArray.push(v);
       else if (scoreRef.current) {
         if (!trafficLightEnalbe.current) passedCarRef.current += 1;
-        addCarInterval.current = 3000 / (Math.log10(passedCarRef.current) + 1);
-        Math.log;
+        addCarInterval.current = 3000 / (Math.log10(passedCarRef.current + 1) + 1);
       }
     });
 
