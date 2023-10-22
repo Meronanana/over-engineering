@@ -3,7 +3,7 @@
 import { MouseEventHandler, TouchEventHandler, useEffect } from "react";
 import Image from "next/image";
 import { SandboxItem, Toy } from "../model/types";
-import { TOY_SIZES, WINDOW_SIZE_INDEXS } from "../model/constants";
+import { TOY_SIZES, WINDOW_WIDTH_INDEXS } from "../model/constants";
 
 import "./components.scss";
 
