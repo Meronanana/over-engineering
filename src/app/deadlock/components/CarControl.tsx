@@ -36,6 +36,7 @@ export default function CarControl({
 }: Props) {
   const [cars, setCars] = useState<Array<CarItem>>([]);
 
+  const windowSizeRef = useRef({ width: 0, height: 0 });
   const addCarInterval = useRef(3000);
   const addCarId = useRef<NodeJS.Timeout>();
   const nextKeyRef = useRef(0);
@@ -44,14 +45,41 @@ export default function CarControl({
   useEffect(() => {
     addCar();
     const moveId = setInterval(moveCar, FPS_OFFSET);
+
+    resize();
+    window.addEventListener("resize", resize);
+    // window.addEventListener("", resize);
     // const freeId = setInterval(freeCar, 1000);
 
     return () => {
       clearInterval(moveId);
       // clearInterval(freeId);
       clearTimeout(addCarId.current);
+      window.removeEventListener("resize", resize);
     };
   }, []);
+
+  const resize = () => {
+    console.log("resize");
+    carsRef.current.forEach((v, i) => {
+      const carRef = v.carRef;
+      if (!carRef.current) return;
+
+      if (v.type === CarType.FromLeft) {
+        let top = BACKGROUND_HEIGHT[sizeIndexRef.current] / 18 + window.innerHeight / 2; // BG_HEIGHT * 5/9 - (BG_HEIGHT - window.innerheight) / 2
+        carRef.current.style.top = top + BACKGROUND_HEIGHT[sizeIndexRef.current] / 72 + "px";
+      } else if (v.type === CarType.FromBottom) {
+        carRef.current.style.left = window.innerWidth * 0.5 + BACKGROUND_HEIGHT[sizeIndexRef.current] / 72 + "px";
+      } else if (v.type === CarType.FromRight) {
+        let top = BACKGROUND_HEIGHT[sizeIndexRef.current] / 18 + window.innerHeight / 2; // BG_HEIGHT * 5/9 - (BG_HEIGHT - window.innerheight) / 2
+        carRef.current.style.top = top - BACKGROUND_HEIGHT[sizeIndexRef.current] / 72 + "px";
+      } else if (v.type === CarType.FromTop) {
+        carRef.current.style.left = window.innerWidth * 0.5 - BACKGROUND_HEIGHT[sizeIndexRef.current] / 72 + "px";
+      }
+    });
+
+    windowSizeRef.current = { width: window.innerWidth, height: window.innerHeight };
+  };
 
   const addCar = () => {
     if (document.hidden) {
