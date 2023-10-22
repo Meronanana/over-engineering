@@ -18,7 +18,7 @@ export default function CarControl({ sizeIndexRef, scoreRef }: Props) {
 
   const carsRef = useRef<Array<CarItem>>([]);
 
-  const addCarInterval = useRef(300);
+  const addCarInterval = useRef(3000);
   const addCarId = useRef<NodeJS.Timeout>();
   const nextKeyRef = useRef(0);
   const passedCarRef = useRef(0);
@@ -65,13 +65,25 @@ export default function CarControl({ sizeIndexRef, scoreRef }: Props) {
   const moveCar = () => {
     const data: Array<CarBox | null> = carsRef.current.map((v, i) => {
       if (v.carRef.current) {
-        return {
-          x: v.carRef.current.offsetLeft,
-          y: v.carRef.current.offsetTop,
-          w: v.carRef.current.offsetWidth,
-          h: v.carRef.current.offsetHeight,
-          type: v.type,
-        };
+        if (v.type % 2 === 0) {
+          return {
+            x: v.carRef.current.offsetLeft,
+            y: v.carRef.current.offsetTop,
+            w: v.carRef.current.offsetWidth,
+            h: v.carRef.current.offsetHeight,
+            type: v.type,
+            index: v.key,
+          };
+        } else {
+          return {
+            x: v.carRef.current.offsetLeft,
+            y: v.carRef.current.offsetTop,
+            w: v.carRef.current.offsetHeight,
+            h: v.carRef.current.offsetWidth,
+            type: v.type,
+            index: v.key,
+          };
+        }
       } else {
         return null;
       }
@@ -173,7 +185,11 @@ export default function CarControl({ sizeIndexRef, scoreRef }: Props) {
       }
 
       if (!flag) newArray.push(v);
-      else if (scoreRef.current) passedCarRef.current += 1;
+      else if (scoreRef.current) {
+        passedCarRef.current += 1;
+        addCarInterval.current = 3000 / (Math.log10(passedCarRef.current) + 1);
+        Math.log;
+      }
     });
 
     carsRef.current = newArray;
