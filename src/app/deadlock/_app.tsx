@@ -25,6 +25,7 @@ import CarControl from "./components/CarControl";
 import "./deadlock.scss";
 import "./components/components.scss";
 import { CarItem, CarType, FourDirectionRefs, Lanes } from "./model/types";
+import DeadlockController from "./components/DeadlockController";
 
 export default function Deadlock() {
   const bgRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
@@ -306,15 +307,13 @@ export default function Deadlock() {
         mouseDownEvent={mouseDownEvent}
         touchStartEvent={touchStartEvent}
       />
-      <Link href={"/sandbox-alt"} className="temp">
-        뒤로가기
-      </Link>
       <>
         <div className="deadlock-sign from-left" ref={tlSignsRef.current.fromLeft} />
         <div className="deadlock-sign from-bottom" ref={tlSignsRef.current.fromBottom} />
         <div className="deadlock-sign from-right" ref={tlSignsRef.current.fromRight} />
         <div className="deadlock-sign from-top" ref={tlSignsRef.current.fromTop} />
       </>
+      <DeadlockController />
     </main>
   );
 }

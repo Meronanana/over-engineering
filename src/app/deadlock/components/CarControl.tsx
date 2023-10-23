@@ -15,7 +15,7 @@ import { FPS_OFFSET } from "@/utils/constants";
 
 import "./components.scss";
 import { BACKGROUND_HEIGHT, CAR_SPEED } from "../utils/constants";
-import { CarBox, isObjectInFront } from "@/utils/physicalEngine";
+import { CarBox, isObjectInFront, lerp } from "@/utils/physicalEngine";
 
 interface Props {
   carsRef: MutableRefObject<Array<CarItem>>;
@@ -64,7 +64,6 @@ export default function CarControl({
   }, []);
 
   const resize = () => {
-    console.log("resize");
     carsRef.current.forEach((v, i) => {
       const carRef = v.carRef;
       if (!carRef.current) return;
@@ -241,7 +240,13 @@ export default function CarControl({
       if (!flag) newArray.push(v);
       else if (scoreRef.current) {
         if (!trafficLightEnalbe.current) passedCarRef.current += 1;
-        addCarInterval.current = 3000 / (Math.log10(passedCarRef.current + 1) + 1);
+
+        const numOfCars = passedCarRef.current;
+        // addCarInterval.current = 3000 / (Math.pow(numOfCars / 10, 0.5) + 1);  // 꽤 주기 증가 속도 빠름
+        // addCarInterval.current = 3000 / (Math.log10(numOfCars + 1) + 1);
+        // addCarInterval.current = 3000 / (Math.log1p(numOfCars) + 1);
+        addCarInterval.current = 3000 / lerp(Math.log10(numOfCars + 1) + 1, Math.log1p(numOfCars) + 1, 0.115);
+        console.log(addCarInterval.current);
       }
     });
 
