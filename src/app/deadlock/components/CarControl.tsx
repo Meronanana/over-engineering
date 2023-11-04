@@ -91,6 +91,31 @@ export default function CarControl({
     }
 
     const carType: CarType = Math.floor(Math.random() * 4);
+
+    // 꽉찬 라인에 CarItem 추가하지 않기
+    let laneFullFlag = false;
+    carsRef.current.forEach((v) => {
+      const carRef = v.carRef;
+
+      if (!carRef.current) return;
+
+      if (v.type === carType) {
+        if (carType === CarType.FromLeft) {
+          laneFullFlag = carRef.current.offsetLeft < 0;
+        } else if (carType === CarType.FromBottom) {
+          laneFullFlag = carRef.current.offsetTop > window.innerHeight;
+        } else if (carType === CarType.FromRight) {
+          laneFullFlag = carRef.current.offsetLeft > window.innerWidth;
+        } else if (carType === CarType.FromTop) {
+          laneFullFlag = carRef.current.offsetTop < 0;
+        }
+      }
+    });
+    if (laneFullFlag) {
+      addCarId.current = setTimeout(addCar, addCarInterval.current);
+      return;
+    }
+
     const newCar: CarItem = {
       type: carType,
       carRef: createRef(),
@@ -161,7 +186,7 @@ export default function CarControl({
         }
       } else if (v.type === CarType.FromBottom) {
         if (carRef.current.offsetLeft === -100) {
-          carRef.current.style.bottom = "-50px";
+          carRef.current.style.top = window.innerHeight + 50 + "px";
           carRef.current.style.left = window.innerWidth * 0.5 + BACKGROUND_HEIGHT[sizeIndexRef.current] / 72 + "px";
 
           carRef.current.className = "deadlock-car from-bottom";

@@ -296,6 +296,7 @@ export default function Deadlock() {
     mainRef.current.style.transition = "0.5s";
     mainRef.current.style.opacity = "0";
     await sleep(500);
+
     carsRef.current = [];
     scoreRef.current.textContent = "-";
     trafficLightEnalbe.current = false;
@@ -315,8 +316,10 @@ export default function Deadlock() {
     );
 
     await sleep(1000);
+
     mainRef.current.style.opacity = "1";
     await sleep(500);
+
     mainRef.current.style.transition = "0s";
   };
 
