@@ -1,5 +1,5 @@
 .deadlock-car {
-  position: fixed;
+  position: absolute;
 
   left: -100px;
 
@@ -88,7 +88,7 @@
 }
 
 .deadlock-controller {
-  position: fixed;
+  position: absolute;
 
   z-index: 101;
 }

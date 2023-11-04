@@ -6,7 +6,7 @@
 }
 
 .deadlock-background {
-  position: fixed;
+  position: absolute;
   top: 50%;
   left: 50%;
   width: var(--bg-width);
@@ -21,7 +21,7 @@
 }
 
 .deadlock-top-menu {
-  position: fixed;
+  position: absolute;
   width: 100%;
   height: 13%;
 
@@ -48,7 +48,7 @@
 .deadlock-top-menu .traffic-light {
   position: absolute;
   top: 40%;
-  left: 90%;
+  left: calc(90% + 4svh);
 
   width: 5svh;
   height: 5svh;
@@ -66,8 +66,29 @@
   background-image: url("../../../public/assets/images/deadlock/deadlock-traffic-light-off.svg");
 }
 
+.deadlock-top-menu .refresh {
+  position: absolute;
+  top: 40%;
+  left: calc(90% - 4svh);
+
+  width: 5svh;
+  height: 5svh;
+  // border-width: 5px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0.7;
+
+  // background-position: center;
+  background-image: url("../../../public/assets/icons/Icon-Refresh.svg");
+  transform: translate(-50%, -50%);
+}
+
 .deadlock-lane {
-  position: fixed;
+  position: absolute;
 
   opacity: 0;
   transition: 0.5s;
@@ -112,7 +133,7 @@
 }
 
 .deadlock-sign {
-  position: fixed;
+  position: absolute;
 
   width: calc(var(--bg-height) / 72);
   height: calc(var(--bg-height) / 72);
@@ -149,6 +170,20 @@
   bottom: 0%;
   // z-index: 1;
   pointer-events: none;
+}
+
+.temptemp {
+  position: absolute;
+  display: none;
+
+  width: 1000px;
+  height: 500px;
+
+  background-color: #5e5e5e43;
+
+  pointer-events: none;
+
+  z-index: 200;
 }
 
 @keyframes score-blink {
