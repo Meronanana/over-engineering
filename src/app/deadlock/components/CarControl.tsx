@@ -271,7 +271,6 @@ export default function CarControl({
         // addCarInterval.current = 3000 / (Math.log10(numOfCars + 1) + 1);
         // addCarInterval.current = 3000 / (Math.log1p(numOfCars) + 1);
         addCarInterval.current = 3000 / lerp(Math.log10(numOfCars + 1) + 1, Math.log1p(numOfCars) + 1, 0.115);
-        console.log(addCarInterval.current);
       }
     });
 

@@ -202,16 +202,16 @@ export default function Deadlock() {
     carItem = carItem as CarItem;
     if (!carItem.carRef.current) return;
 
-    const moveX = e.movementX;
-    const moveY = e.movementY;
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
     if (carItem.type === CarType.FromLeft) {
-      if (moveX < 0) carItem.carRef.current.style.left = carItem.carRef.current.offsetLeft + moveX + "px";
+      if (mouseX < carItem.carRef.current.offsetLeft) carItem.carRef.current.style.left = mouseX + "px";
     } else if (carItem.type === CarType.FromBottom) {
-      if (moveY > 0) carItem.carRef.current.style.top = carItem.carRef.current.offsetTop + moveY + "px";
+      if (mouseY > carItem.carRef.current.offsetTop) carItem.carRef.current.style.top = mouseY + "px";
     } else if (carItem.type === CarType.FromRight) {
-      if (moveX > 0) carItem.carRef.current.style.left = carItem.carRef.current.offsetLeft + moveX + "px";
+      if (mouseX > carItem.carRef.current.offsetLeft) carItem.carRef.current.style.left = mouseX + "px";
     } else if (carItem.type === CarType.FromTop) {
-      if (moveY < 0) carItem.carRef.current.style.top = carItem.carRef.current.offsetTop + moveY + "px";
+      if (mouseY < carItem.carRef.current.offsetTop) carItem.carRef.current.style.top = mouseY + "px";
     }
   };
 
