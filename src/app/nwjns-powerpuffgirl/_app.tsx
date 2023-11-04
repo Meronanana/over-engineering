@@ -206,7 +206,7 @@ export default function NWJNS_Powerpuffgirl() {
       <div className="nwjns-background-blur left" ref={bgLeftRef}></div>
       <div className="nwjns-background-blur right" ref={bgRightRef}></div>
 
-      <Link href={"/sandbox"} className="temp">
+      <Link href={"/sandbox-alt"} className="temp">
         뒤로가기
       </Link>
       <div className="reset" onClick={() => interactionInitialize()}>
