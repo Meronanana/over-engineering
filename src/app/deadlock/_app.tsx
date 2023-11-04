@@ -9,6 +9,7 @@ import {
   useCallback,
   useEffect,
   useRef,
+  useState,
 } from "react";
 import Link from "next/link";
 
@@ -22,11 +23,16 @@ import {
 } from "./utils/constants";
 import CarControl from "./components/CarControl";
 
+import { CarItem, CarType, FourDirectionRefs, Lanes } from "./model/types";
+import DeadlockController from "./components/DeadlockController";
 import "./deadlock.scss";
 import "./components/components.scss";
-import { CarItem, CarType, FourDirectionRefs, Lanes } from "./model/types";
+import { getBezierArray } from "@/utils/physicalEngine";
+import { FPS_OFFSET } from "@/utils/constants";
+import { sleep } from "@/utils/utilFunctions";
 
 export default function Deadlock() {
+  const mainRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const bgRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const scoreRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
   const trafficLightRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
@@ -196,16 +202,16 @@ export default function Deadlock() {
     carItem = carItem as CarItem;
     if (!carItem.carRef.current) return;
 
-    const moveX = e.movementX;
-    const moveY = e.movementY;
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
     if (carItem.type === CarType.FromLeft) {
-      if (moveX < 0) carItem.carRef.current.style.left = carItem.carRef.current.offsetLeft + moveX + "px";
+      if (mouseX < carItem.carRef.current.offsetLeft) carItem.carRef.current.style.left = mouseX + "px";
     } else if (carItem.type === CarType.FromBottom) {
-      if (moveY > 0) carItem.carRef.current.style.top = carItem.carRef.current.offsetTop + moveY + "px";
+      if (mouseY > carItem.carRef.current.offsetTop) carItem.carRef.current.style.top = mouseY + "px";
     } else if (carItem.type === CarType.FromRight) {
-      if (moveX > 0) carItem.carRef.current.style.left = carItem.carRef.current.offsetLeft + moveX + "px";
+      if (mouseX > carItem.carRef.current.offsetLeft) carItem.carRef.current.style.left = mouseX + "px";
     } else if (carItem.type === CarType.FromTop) {
-      if (moveY < 0) carItem.carRef.current.style.top = carItem.carRef.current.offsetTop + moveY + "px";
+      if (mouseY < carItem.carRef.current.offsetTop) carItem.carRef.current.style.top = mouseY + "px";
     }
   };
 
@@ -275,27 +281,27 @@ export default function Deadlock() {
     e.preventDefault();
   };
 
-  return (
-    <main
-      className="deadlock-screen"
-      onMouseMove={mouseMoveEvent}
-      onMouseUp={mouseUpEvent}
-      onTouchMove={touchMoveEvent}
-      onTouchEnd={touchEndEvent}
-    >
-      <div className="deadlock-background" ref={bgRef} />
-      <div className="deadlock-top-menu">
-        <div className="score" ref={scoreRef}>
-          -
-        </div>
-        <div className="traffic-light off" ref={trafficLightRef} onMouseUp={tlMouseEvent} onTouchEnd={tlTouchEvent} />
-      </div>
-      <>
-        <div className="deadlock-lane from-left" ref={lanesRef.current?.fromLeft.ref} />
-        <div className="deadlock-lane from-bottom" ref={lanesRef.current?.fromBottom.ref} />
-        <div className="deadlock-lane from-right" ref={lanesRef.current?.fromRight.ref} />
-        <div className="deadlock-lane from-top" ref={lanesRef.current?.fromTop.ref} />
-      </>
+  const rstMouseEvent = async (e: React.MouseEvent) => {
+    if (!mainRef.current || !scoreRef.current) return;
+
+    // mainRef.current.style.left = "100px";
+    // const bezierArray = getBezierArray(60);
+    // const windowWidth = window.innerWidth;
+    // for (let i = 0; i < bezierArray.length; i++) {
+    //   mainRef.current.style.left = `-${bezierArray[i] * windowWidth}px`;
+    //   await sleep(FPS_OFFSET);
+    // }
+    // console.log(bezierArray);
+
+    mainRef.current.style.transition = "0.5s";
+    mainRef.current.style.opacity = "0";
+    await sleep(500);
+
+    carsRef.current = [];
+    scoreRef.current.textContent = "-";
+    trafficLightEnalbe.current = false;
+
+    setCarControl(
       <CarControl
         carsRef={carsRef}
         lanesRef={lanesRef}
@@ -305,16 +311,75 @@ export default function Deadlock() {
         scoreRef={scoreRef}
         mouseDownEvent={mouseDownEvent}
         touchStartEvent={touchStartEvent}
+        key={Math.floor(Math.random() * 100000)}
       />
-      <Link href={"/sandbox-alt"} className="temp">
-        뒤로가기
-      </Link>
-      <>
-        <div className="deadlock-sign from-left" ref={tlSignsRef.current.fromLeft} />
-        <div className="deadlock-sign from-bottom" ref={tlSignsRef.current.fromBottom} />
-        <div className="deadlock-sign from-right" ref={tlSignsRef.current.fromRight} />
-        <div className="deadlock-sign from-top" ref={tlSignsRef.current.fromTop} />
-      </>
+    );
+
+    await sleep(1000);
+
+    mainRef.current.style.opacity = "1";
+    await sleep(500);
+
+    mainRef.current.style.transition = "0s";
+  };
+
+  const [carControl, setCarControl] = useState(
+    <CarControl
+      carsRef={carsRef}
+      lanesRef={lanesRef}
+      carFocus={carFocus}
+      sizeIndexRef={sizeIndexRef}
+      trafficLightEnalbe={trafficLightEnalbe}
+      scoreRef={scoreRef}
+      mouseDownEvent={mouseDownEvent}
+      touchStartEvent={touchStartEvent}
+      key={0}
+    />
+  );
+
+  return (
+    <main>
+      <div
+        className="deadlock-screen"
+        onMouseMove={mouseMoveEvent}
+        onMouseUp={mouseUpEvent}
+        onTouchMove={touchMoveEvent}
+        onTouchEnd={touchEndEvent}
+        ref={mainRef}
+      >
+        <div className="deadlock-background" ref={bgRef} />
+        <div className="deadlock-top-menu">
+          <div className="score" ref={scoreRef}>
+            -
+          </div>
+          <div className="refresh" onMouseUp={rstMouseEvent} />
+          <div className="traffic-light off" ref={trafficLightRef} onMouseUp={tlMouseEvent} onTouchEnd={tlTouchEvent} />
+        </div>
+        <>
+          <div className="deadlock-lane from-left" ref={lanesRef.current?.fromLeft.ref} />
+          <div className="deadlock-lane from-bottom" ref={lanesRef.current?.fromBottom.ref} />
+          <div className="deadlock-lane from-right" ref={lanesRef.current?.fromRight.ref} />
+          <div className="deadlock-lane from-top" ref={lanesRef.current?.fromTop.ref} />
+        </>
+        {carControl}
+        {/* <CarControl
+          carsRef={carsRef}
+          lanesRef={lanesRef}
+          carFocus={carFocus}
+          sizeIndexRef={sizeIndexRef}
+          trafficLightEnalbe={trafficLightEnalbe}
+          scoreRef={scoreRef}
+          mouseDownEvent={mouseDownEvent}
+          touchStartEvent={touchStartEvent}
+        /> */}
+        <>
+          <div className="deadlock-sign from-left" ref={tlSignsRef.current.fromLeft} />
+          <div className="deadlock-sign from-bottom" ref={tlSignsRef.current.fromBottom} />
+          <div className="deadlock-sign from-right" ref={tlSignsRef.current.fromRight} />
+          <div className="deadlock-sign from-top" ref={tlSignsRef.current.fromTop} />
+        </>
+      </div>
+      <DeadlockController />
     </main>
   );
 }

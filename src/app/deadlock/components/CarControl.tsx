@@ -14,8 +14,8 @@ import { CarItem, CarType, Lanes } from "../model/types";
 import { FPS_OFFSET } from "@/utils/constants";
 
 import "./components.scss";
-import { BACKGROUND_HEIGHT } from "../utils/constants";
-import { CarBox, isObjectInFront } from "@/utils/physicalEngine";
+import { BACKGROUND_HEIGHT, CAR_SPEED } from "../utils/constants";
+import { CarBox, isObjectInFront, lerp } from "@/utils/physicalEngine";
 
 interface Props {
   carsRef: MutableRefObject<Array<CarItem>>;
@@ -64,7 +64,6 @@ export default function CarControl({
   }, []);
 
   const resize = () => {
-    console.log("resize");
     carsRef.current.forEach((v, i) => {
       const carRef = v.carRef;
       if (!carRef.current) return;
@@ -92,6 +91,31 @@ export default function CarControl({
     }
 
     const carType: CarType = Math.floor(Math.random() * 4);
+
+    // 꽉찬 라인에 CarItem 추가하지 않기
+    let laneFullFlag = false;
+    carsRef.current.forEach((v) => {
+      const carRef = v.carRef;
+
+      if (!carRef.current) return;
+
+      if (v.type === carType) {
+        if (carType === CarType.FromLeft) {
+          laneFullFlag = carRef.current.offsetLeft < 0;
+        } else if (carType === CarType.FromBottom) {
+          laneFullFlag = carRef.current.offsetTop > window.innerHeight;
+        } else if (carType === CarType.FromRight) {
+          laneFullFlag = carRef.current.offsetLeft > window.innerWidth;
+        } else if (carType === CarType.FromTop) {
+          laneFullFlag = carRef.current.offsetTop < 0;
+        }
+      }
+    });
+    if (laneFullFlag) {
+      addCarId.current = setTimeout(addCar, addCarInterval.current);
+      return;
+    }
+
     const newCar: CarItem = {
       type: carType,
       carRef: createRef(),
@@ -158,11 +182,11 @@ export default function CarControl({
           imgRef.current.className = "deadlock-car-image red";
         } else {
           if (isObjectInFront(data, i) || (lanesRef.current.fromLeft.TL && isOnTLArea(v))) return;
-          else carRef.current.style.left = carRef.current.offsetLeft + 1 + "px";
+          else carRef.current.style.left = carRef.current.offsetLeft + CAR_SPEED[sizeIndexRef.current] + "px";
         }
       } else if (v.type === CarType.FromBottom) {
         if (carRef.current.offsetLeft === -100) {
-          carRef.current.style.bottom = "-50px";
+          carRef.current.style.top = window.innerHeight + 50 + "px";
           carRef.current.style.left = window.innerWidth * 0.5 + BACKGROUND_HEIGHT[sizeIndexRef.current] / 72 + "px";
 
           carRef.current.className = "deadlock-car from-bottom";
@@ -172,7 +196,7 @@ export default function CarControl({
           shadowRef.current.style.left = "-2px";
         } else {
           if (isObjectInFront(data, i) || (lanesRef.current.fromBottom.TL && isOnTLArea(v))) return;
-          else carRef.current.style.top = carRef.current.offsetTop - 1 + "px";
+          else carRef.current.style.top = carRef.current.offsetTop - CAR_SPEED[sizeIndexRef.current] + "px";
         }
       } else if (v.type === CarType.FromRight) {
         if (carRef.current.offsetLeft === -100) {
@@ -187,7 +211,7 @@ export default function CarControl({
           shadowRef.current.style.left = "-2px";
         } else {
           if (isObjectInFront(data, i) || (lanesRef.current.fromRight.TL && isOnTLArea(v))) return;
-          else carRef.current.style.left = carRef.current.offsetLeft - 1 + "px";
+          else carRef.current.style.left = carRef.current.offsetLeft - CAR_SPEED[sizeIndexRef.current] + "px";
         }
       } else if (v.type === CarType.FromTop) {
         if (carRef.current.offsetLeft === -100) {
@@ -201,7 +225,7 @@ export default function CarControl({
           shadowRef.current.style.left = "2px";
         } else {
           if (isObjectInFront(data, i) || (lanesRef.current.fromTop.TL && isOnTLArea(v))) return;
-          else carRef.current.style.top = carRef.current.offsetTop + 1 + "px";
+          else carRef.current.style.top = carRef.current.offsetTop + CAR_SPEED[sizeIndexRef.current] + "px";
         }
       }
     });
@@ -241,7 +265,12 @@ export default function CarControl({
       if (!flag) newArray.push(v);
       else if (scoreRef.current) {
         if (!trafficLightEnalbe.current) passedCarRef.current += 1;
-        addCarInterval.current = 3000 / (Math.log10(passedCarRef.current + 1) + 1);
+
+        const numOfCars = passedCarRef.current;
+        // addCarInterval.current = 3000 / (Math.pow(numOfCars / 10, 0.5) + 1);  // 꽤 주기 증가 속도 빠름
+        // addCarInterval.current = 3000 / (Math.log10(numOfCars + 1) + 1);
+        // addCarInterval.current = 3000 / (Math.log1p(numOfCars) + 1);
+        addCarInterval.current = 3000 / lerp(Math.log10(numOfCars + 1) + 1, Math.log1p(numOfCars) + 1, 0.115);
       }
     });
 
