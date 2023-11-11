@@ -1,0 +1,28 @@
+.creature-div {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+  width: 900px;
+  height: 600px;
+
+  // border-width: 2px;
+  // border-color: black;
+
+  transform: translate(-50%, -50%);
+}
+
+.creature-pikachu {
+  position: absolute;
+
+  top: 0px;
+  left: 0px;
+  width: calc(var(--tile-size) - 4px);
+  height: calc(var(--tile-size) - 4px);
+
+  margin: 2px;
+
+  border-width: 3px;
+  border-radius: 5px;
+  border-color: magenta;
+}

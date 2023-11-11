@@ -1,7 +1,41 @@
 "use client";
 
-// import "./natsel.scss";
+import { RefObject, useEffect, useState } from "react";
+import { FoodRef } from "../model/render";
+import { TILE_SIZE } from "../model/constants";
 
-export default function FoodView() {
-  return <></>;
+import "./foodView.scss";
+
+interface Props {
+  foodRefs: RefObject<FoodRef[]>;
+}
+
+export default function FoodView({ foodRefs }: Props) {
+  const [foods, setFoods] = useState<FoodRef[]>();
+
+  useEffect(() => {
+    if (!foodRefs.current) return;
+    setFoods(foodRefs.current);
+  }, []);
+
+  console.log(foods);
+
+  return (
+    <div className="food-div">
+      {foods !== undefined ? (
+        foods.map((v, i) => {
+          return (
+            <div
+              className={`food-${v.data.foodType}`}
+              ref={v.mainRef}
+              key={`${0}${i}`}
+              style={{ top: `${v.data.position.Y * TILE_SIZE}px`, left: `${v.data.position.X * TILE_SIZE}px` }}
+            ></div>
+          );
+        })
+      ) : (
+        <></>
+      )}
+    </div>
+  );
 }

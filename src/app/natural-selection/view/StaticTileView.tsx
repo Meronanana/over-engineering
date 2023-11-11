@@ -17,7 +17,7 @@ export default function StaticTileView({ tileRefs }: Props) {
   useEffect(() => {
     if (!tileRefs.current) return;
     setTiles(tileRefs.current);
-  });
+  }, []);
 
   return (
     <div className="static-tile-div">

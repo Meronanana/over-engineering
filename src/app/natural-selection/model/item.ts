@@ -1,6 +1,18 @@
 import { Animate, Move } from "./animation";
 import { Frame, MapPosition, Status, Turn } from "./types";
 
+export enum CreatureType {
+  PIKACHU = "pikachu",
+  PAIRI = "pairi",
+  ISANGHAESSI = "isanghaessi",
+  GGOBUGI = "ggobugi",
+}
+
+export enum FoodType {
+  APPLE = "apple",
+  PEACH = "peach",
+  FISH = "fish",
+}
 abstract class Edible {
   position: MapPosition;
   supply: number;
@@ -12,6 +24,7 @@ abstract class Edible {
 }
 
 export class Food extends Edible implements Animate {
+  foodType: FoodType;
   turnForDecay: Turn;
 
   numOfState: number;
@@ -20,6 +33,7 @@ export class Food extends Edible implements Animate {
   spriteIndexGenerator: Generator<number, never, number>;
 
   constructor(
+    foodType: FoodType,
     turnForDecay: Turn,
     position: MapPosition,
     supply: number,
@@ -28,6 +42,7 @@ export class Food extends Edible implements Animate {
     generator: Generator<number, never, number>
   ) {
     super(position, supply);
+    this.foodType = foodType;
     this.turnForDecay = turnForDecay;
 
     this.numOfState = numOfState;
@@ -37,6 +52,7 @@ export class Food extends Edible implements Animate {
 }
 
 export class Creature extends Edible implements Move {
+  creatureType: CreatureType;
   gain: number = 0;
   status: Status;
   turnForLife: Turn;
@@ -48,6 +64,7 @@ export class Creature extends Edible implements Move {
   screenPosGenerator: Generator<MapPosition, never, MapPosition>;
 
   constructor(
+    creatureType: CreatureType,
     status: Status,
     turnForLife: Turn,
     position: MapPosition,
@@ -57,6 +74,7 @@ export class Creature extends Edible implements Move {
     screenPosGenerator: Generator<MapPosition, never, MapPosition>
   ) {
     super(position, supply);
+    this.creatureType = creatureType;
     this.status = status;
     this.turnForLife = turnForLife;
 

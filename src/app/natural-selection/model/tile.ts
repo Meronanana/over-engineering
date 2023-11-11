@@ -7,6 +7,7 @@ export enum StaticTileType {
 }
 
 export enum FloatingTileType {
+  BLANK = "NNNN",
   TreeLeaves_BASE = "1100",
 }
 

@@ -16,6 +16,21 @@
   transform: translate(-50%, -50%);
 }
 
+.floating-tile-div {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+  width: 900px;
+  height: 600px;
+
+  // border-width: 2px;
+  // border-color: black;
+
+  transform: translate(-50%, -50%);
+}
+
+// StaticTileType -> Plain
 .static-tile-0000 {
   position: absolute;
 
@@ -26,6 +41,36 @@
 
   border-width: 1px;
   border-color: pink;
+
+  // transform: translate(-50%, -50%);
+}
+
+// StaticTileType -> TreeRoot
+.static-tile-1010 {
+  position: absolute;
+
+  top: 0px;
+  left: 0px;
+  width: var(--tile-size);
+  height: var(--tile-size);
+
+  border-width: 1px;
+  border-color: aqua;
+
+  // transform: translate(-50%, -50%);
+}
+
+// FloatingTileType -> TreeLeaves
+.floating-tile-1100 {
+  position: absolute;
+
+  top: 0px;
+  left: 0px;
+  width: var(--tile-size);
+  height: var(--tile-size);
+
+  border-width: 1px;
+  border-color: lightgreen;
 
   // transform: translate(-50%, -50%);
 }

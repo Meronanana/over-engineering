@@ -1,0 +1,30 @@
+.food-div {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+  width: 900px;
+  height: 600px;
+
+  // border-width: 2px;
+  // border-color: black;
+
+  transform: translate(-50%, -50%);
+}
+
+.food-apple {
+  position: absolute;
+
+  top: 0px;
+  left: 0px;
+  width: calc(var(--tile-size) - 12px);
+  height: calc(var(--tile-size) - 12px);
+
+  margin: 6px;
+
+  // border-width: 3px;
+  border-radius: 15px;
+  // border-color: red;
+
+  background-color: red;
+}
