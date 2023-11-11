@@ -43,7 +43,7 @@ export class Creature extends Edible implements Move {
 
   numOfState: number;
   currentState: number = 0;
-  interval: number;
+  interval: 1 = 1;
   spriteIndexGenerator: Generator<number, never, number>;
   screenPosGenerator: Generator<MapPosition, never, MapPosition>;
 
@@ -53,7 +53,6 @@ export class Creature extends Edible implements Move {
     position: MapPosition,
     supply: number,
     numOfState: number,
-    interval: number,
     spriteIndexGenerator: Generator<number, never, number>,
     screenPosGenerator: Generator<MapPosition, never, MapPosition>
   ) {
@@ -62,7 +61,6 @@ export class Creature extends Edible implements Move {
     this.turnForLife = turnForLife;
 
     this.numOfState = numOfState;
-    this.interval = interval;
     this.spriteIndexGenerator = spriteIndexGenerator;
     this.screenPosGenerator = screenPosGenerator;
   }

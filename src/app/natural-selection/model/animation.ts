@@ -9,4 +9,5 @@ export interface Animate {
 
 export interface Move extends Animate {
   readonly screenPosGenerator: Generator<MapPosition, never, MapPosition>;
+  readonly interval: 1;
 }

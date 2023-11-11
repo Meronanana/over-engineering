@@ -1,0 +1,31 @@
+:root {
+  --tile-size: 30px;
+}
+
+.static-tile-div {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+  width: 900px;
+  height: 600px;
+
+  // border-width: 2px;
+  // border-color: black;
+
+  transform: translate(-50%, -50%);
+}
+
+.static-tile-0000 {
+  position: absolute;
+
+  top: 0px;
+  left: 0px;
+  width: var(--tile-size);
+  height: var(--tile-size);
+
+  border-width: 1px;
+  border-color: pink;
+
+  // transform: translate(-50%, -50%);
+}
