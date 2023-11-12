@@ -21,7 +21,7 @@ export default function FoodView({ foodRefs }: Props) {
   console.log(foods);
 
   return (
-    <div className="food-div">
+    <div className="food-area">
       {foods !== undefined ? (
         foods.map((v, i) => {
           return (

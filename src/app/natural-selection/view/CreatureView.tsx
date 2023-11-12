@@ -31,16 +31,33 @@ export default function CreatureView({ creatureRefs }: Props) {
     };
   }, []);
 
+  const mouseDownEvent = (e: React.MouseEvent) => {
+    const str = (e.target as HTMLDivElement).id;
+    if (!creatureRefs.current || str === "") return;
+
+    const focus = Number(str.substring(0, str.length - 8));
+    const data = creatureRefs.current[focus].data;
+
+    console.log("------------------------------");
+    console.log("Type: " + data.creatureType);
+    console.log("Gain: " + data.gain);
+    console.log("Position: ");
+    console.log(data.position);
+    console.log("Status: ");
+    console.log(data.status);
+    console.log("------------------------------");
+  };
+
   return (
-    <div className="creature-div">
+    <div className="creature-area" onMouseDown={mouseDownEvent}>
       {creatures !== undefined ? (
         creatures.map((v, i) => {
           return (
             <div
               className={`creature-${v.data.creatureType}`}
               ref={v.mainRef}
-              key={`${0}${i}`}
-              style={{ top: `${v.data.position.Y * TILE_SIZE}px`, left: `${v.data.position.X * TILE_SIZE}px` }}
+              key={`${i}creature`}
+              id={`${i}creature`}
             ></div>
           );
         })

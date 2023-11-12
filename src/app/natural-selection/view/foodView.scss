@@ -1,4 +1,4 @@
-.food-div {
+.food-area {
   position: absolute;
 
   top: 50%;
@@ -10,6 +10,8 @@
   // border-color: black;
 
   transform: translate(-50%, -50%);
+
+  pointer-events: none;
 }
 
 .food-apple {
