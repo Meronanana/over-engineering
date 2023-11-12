@@ -1,3 +1,17 @@
+export enum CreatureType {
+  NONE = "",
+  PIKACHU = "pikachu",
+  PAIRI = "pairi",
+  ISANGHAESSI = "isanghaessi",
+  GGOBUGI = "ggobugi",
+}
+
+export enum FoodType {
+  APPLE = "apple",
+  PEACH = "peach",
+  FISH = "fish",
+}
+
 export type Status = {
   speed: number;
   size: number;
@@ -7,6 +21,10 @@ export type Status = {
 export type MapPosition = {
   X: number;
   Y: number;
+};
+
+export const getDistance = (from: MapPosition, to: MapPosition): number => {
+  return Math.sqrt(Math.pow(from.X - to.X, 2) + Math.pow(from.Y - to.Y, 2));
 };
 
 // Frame은 양의 정수

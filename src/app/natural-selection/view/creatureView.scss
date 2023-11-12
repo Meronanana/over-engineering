@@ -10,6 +10,8 @@
   // border-color: black;
 
   transform: translate(-50%, -50%);
+
+  pointer-events: none;
 }
 
 .creature-pikachu {
@@ -24,5 +26,7 @@
 
   border-width: 3px;
   border-radius: 5px;
-  border-color: magenta;
+  border-color: rgb(188, 188, 0);
+
+  background-color: rgba(188, 188, 0, 0.3);
 }

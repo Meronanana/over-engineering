@@ -14,6 +14,7 @@ import {
   createInitialCreatureRefs,
   createInitialFoodRefs,
 } from "./model/constants";
+import CreatureDataInspector from "./controller/CreatureDataInspector";
 
 export default function NaturalSelection() {
   const staticTileRefs = useRef<TileRef<StaticTileType>[][]>(createInitalStaticTileRefs());
@@ -27,6 +28,7 @@ export default function NaturalSelection() {
         <MapController staticTileRefs={staticTileRefs} floatingTileRefs={floatingTileRefs} />
         <CreatureController creatureRefs={creatureRefs} />
         <FoodController foodRefs={foodRefs} />
+        <CreatureDataInspector creatureRefs={creatureRefs} />
       </div>
     </main>
   );
