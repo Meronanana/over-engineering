@@ -156,8 +156,8 @@ export abstract class Creature extends Edible implements Move {
         let interupt: SensingInterupt = { type: CreatureState.EAT_FOOD, pos: this.position };
         this.screenPosGenerator.next(interupt);
         setTimeout(() => {
+          this.gain += target.getSupply();
           target.eaten = true;
-          console.log(foods);
         }, aFRAME * 24);
 
         this.creatureState = CreatureState.EAT_FOOD;

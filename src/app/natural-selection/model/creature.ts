@@ -25,7 +25,7 @@ export class Pikachu extends Creature {
         let distance = getDistance(from, to);
 
         if (vector.length === 0) {
-          console.log("create?  " + distance);
+          // console.log("create?  " + distance);
           let dx = to.X - from.X;
           let dy = to.Y - from.Y;
           let count = Math.floor((Frame(24) * distance) / status.speed);
@@ -33,7 +33,7 @@ export class Pikachu extends Creature {
             vector.push({ X: from.X + (dx * i) / count, Y: from.Y + (dy * i) / count });
           }
         }
-        console.log(vector);
+        // console.log(vector);
 
         let interupt = false;
         while (vector.length !== 0) {
@@ -62,7 +62,7 @@ export class Pikachu extends Creature {
             }
           }
         }
-        console.log(from, to);
+        // console.log(from, to);
         if (interupt) continue;
         my.creatureState = CreatureState.IDLE;
 
