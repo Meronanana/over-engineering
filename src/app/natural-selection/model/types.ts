@@ -12,13 +12,15 @@ export enum FoodType {
   FISH = "fish",
 }
 
-export enum SensingType {
-  PREDATOR = "predator",
-  FOOD = "food",
+export enum CreatureState {
+  IDLE = 0,
+  AVIOD_FROM_PREDATOR = 1,
+  FIND_FOOD = 2,
+  EAT_FOOD = 3,
 }
 
 export type SensingInterupt = {
-  type: SensingType;
+  type: CreatureState;
   pos: MapPosition;
 };
 

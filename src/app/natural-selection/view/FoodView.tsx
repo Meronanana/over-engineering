@@ -2,9 +2,10 @@
 
 import { RefObject, useEffect, useState } from "react";
 import { FoodRef } from "../model/render";
-import { TILE_SIZE } from "../model/constants";
+import { TILE_SIZE, aFRAME as FRAME_TIME } from "../model/constants";
 
 import "./foodView.scss";
+import { Frame } from "../model/types";
 
 interface Props {
   foodRefs: RefObject<FoodRef[]>;
@@ -14,11 +15,17 @@ export default function FoodView({ foodRefs }: Props) {
   const [foods, setFoods] = useState<FoodRef[]>();
 
   useEffect(() => {
-    if (!foodRefs.current) return;
-    setFoods(foodRefs.current);
-  }, []);
+    const renderInterval = setInterval(() => {
+      if (!foodRefs.current) return;
+      setFoods(foodRefs.current);
 
-  console.log(foods);
+      // console.log(foodRefs.current);
+    }, FRAME_TIME * Frame(24));
+
+    return () => {
+      clearInterval(renderInterval);
+    };
+  }, []);
 
   return (
     <div className="food-area">

@@ -20,14 +20,14 @@ export class MapTile<T extends StaticTileType | FloatingTileType> {
 }
 
 export class AnimateMapTile<T extends StaticTileType | FloatingTileType> extends MapTile<T> implements Animate {
-  numOfState: number;
-  currentState: number = 0;
+  numOfSprite: number;
+  spriteState: number = 0;
   interval: number;
   spriteIndexGenerator: Generator<number, never, number>;
 
   constructor(tileType: T, numOfState: number, interval: Frame, generator: Generator<number, never, number>) {
     super(tileType);
-    this.numOfState = numOfState;
+    this.numOfSprite = numOfState;
     this.interval = interval;
     this.spriteIndexGenerator = generator;
   }

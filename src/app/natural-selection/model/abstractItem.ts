@@ -7,7 +7,7 @@ import {
   Frame,
   MapPosition,
   SensingInterupt,
-  SensingType,
+  CreatureState,
   Status,
   Turn,
   getDistance,
@@ -16,6 +16,7 @@ import { aFRAME } from "./constants";
 
 export abstract class Edible {
   position: MapPosition;
+  eaten: boolean = false;
 
   constructor(position: MapPosition) {
     this.position = position;
@@ -30,8 +31,8 @@ export class Food extends Edible implements Animate {
   foodType: FoodType;
   turnForDecay: Turn;
 
-  numOfState: number;
-  currentState: number = 0;
+  numOfSprite: number;
+  spriteState: number = 0;
   interval: number;
   spriteIndexGenerator: Generator<number, never, number>;
 
@@ -47,7 +48,7 @@ export class Food extends Edible implements Animate {
     this.foodType = foodType;
     this.turnForDecay = turnForDecay;
 
-    this.numOfState = numOfState;
+    this.numOfSprite = numOfState;
     this.spriteIndexGenerator = generator;
     this.interval = interval;
   }
@@ -60,11 +61,12 @@ export class Food extends Edible implements Animate {
 
 export abstract class Creature extends Edible implements Move {
   creatureType: CreatureType = CreatureType.NONE;
+  creatureState: CreatureState = CreatureState.IDLE;
   gain: number = 0;
   status: Status;
   turnForLife: Turn;
-  numOfState: number = 0;
-  currentState: number = 0;
+  numOfSprite: number = 0;
+  spriteState: number = 0;
   interval: 1 = 1;
 
   constructor(status: Status, turnForLife: Turn, position: MapPosition) {
@@ -99,6 +101,7 @@ export abstract class Creature extends Edible implements Move {
         isEdibleCreature(creatureData, this)
       ) {
         predetorIndex = i;
+        break;
       }
     }
 
@@ -110,47 +113,100 @@ export abstract class Creature extends Edible implements Move {
       const direction = getRadian({ vx: dx, vy: dy }) + Math.PI;
       const pos = { X: this.status.sense * Math.cos(direction), Y: this.status.sense * Math.sin(direction) };
 
-      let interupt: SensingInterupt = { type: SensingType.PREDATOR, pos: pos };
+      let interupt: SensingInterupt = { type: CreatureState.AVIOD_FROM_PREDATOR, pos: pos };
       this.screenPosGenerator.next(interupt);
+
+      this.creatureState = CreatureState.AVIOD_FROM_PREDATOR;
       return;
     }
 
-    // 2. 가장 가치가 높은 식량 추적
-    let bestFood = [-1, -1, -1]; // [type(creature, food), index, supply]
-    for (let i = 0; i < creatures.length; i++) {
-      const creatureData = creatures[i].data;
-      if (
-        getDistance(creatureData.position, this.position) <= this.status.sense &&
-        isEdibleCreature(this, creatureData)
-      ) {
-        let supply = creatureData.getSupply();
-        if (bestFood[0] === -1) bestFood = [0, i, supply];
-        else if (bestFood[2] < supply) bestFood = [0, i, supply];
+    // 2. 인접한 식량 섭취
+    if (this.creatureState === CreatureState.FIND_FOOD) {
+      // console.log("chkchk");
+      let nearFood = [-1, -1]; // [type(creature, food), index]
+      for (let i = 0; i < foods.length; i++) {
+        const foodData = foods[i].data;
+        const distance = getDistance(foodData.position, this.position);
+        if (nearFood[0] === -1 && distance <= 0.6) {
+          console.log(distance);
+          nearFood = [1, i];
+        }
       }
-    }
-    for (let i = 0; i < foods.length; i++) {
-      const foodData = foods[i].data;
-      if (getDistance(foodData.position, this.position) <= this.status.sense) {
-        let supply = foodData.getSupply();
-        if (bestFood[0] === -1) bestFood = [1, i, supply];
-        else if (bestFood[2] < supply) bestFood = [1, i, supply];
+      for (let i = 0; i < creatures.length; i++) {
+        const creatureData = creatures[i].data;
+        const distance = getDistance(creatureData.position, this.position);
+        if (creatureData === this) continue;
+        if (nearFood[0] === -1 && distance <= 0.6) {
+          // console.log(distance);
+          nearFood = [0, i];
+        }
+      }
+
+      if (nearFood[0] !== -1) {
+        console.log("EEEEEEEEAT");
+        let target: Edible;
+        if (nearFood[0] === 0) {
+          target = creatures[nearFood[1]].data;
+        } else if (nearFood[0] === 1) {
+          target = foods[nearFood[1]].data;
+        } else {
+          throw Error("Target이 Edible이 아닙니다.");
+        }
+
+        let interupt: SensingInterupt = { type: CreatureState.EAT_FOOD, pos: this.position };
+        this.screenPosGenerator.next(interupt);
+        setTimeout(() => {
+          target.eaten = true;
+          console.log(foods);
+        }, aFRAME * 24);
+
+        this.creatureState = CreatureState.EAT_FOOD;
+        return;
       }
     }
 
-    if (bestFood[0] !== -1) {
-      console.log("FOOOOOOOOOOOD");
-      let target: Edible;
-      if (bestFood[0] === 0) {
-        target = creatures[bestFood[1]].data;
-      } else if (bestFood[0] === 1) {
-        target = foods[bestFood[1]].data;
-      } else {
-        throw Error("Target이 Edible이 아닙니다.");
+    // 3. 식량 추적
+    if (this.creatureState !== CreatureState.FIND_FOOD && this.creatureState !== CreatureState.EAT_FOOD) {
+      let bestFood = [-1, -1, -1]; // [type(creature, food), index, supply]
+
+      for (let i = 0; i < foods.length; i++) {
+        const foodData = foods[i].data;
+        if (getDistance(foodData.position, this.position) <= this.status.sense) {
+          if (bestFood[0] !== -1) break;
+          let supply = foodData.getSupply();
+          bestFood = [1, i, supply];
+        }
+      }
+      for (let i = 0; i < creatures.length; i++) {
+        const creatureData = creatures[i].data;
+        if (creatureData === this) continue;
+        if (
+          getDistance(creatureData.position, this.position) <= this.status.sense &&
+          isEdibleCreature(this, creatureData)
+        ) {
+          if (bestFood[0] !== -1) break;
+          let supply = creatureData.getSupply();
+          bestFood = [0, i, supply];
+        }
       }
 
-      let interupt: SensingInterupt = { type: SensingType.FOOD, pos: target.position };
-      this.screenPosGenerator.next(interupt);
-      return;
+      if (bestFood[0] !== -1) {
+        console.log("FOOOOOOOOOOOD");
+        let target: Edible;
+        if (bestFood[0] === 0) {
+          target = creatures[bestFood[1]].data;
+        } else if (bestFood[0] === 1) {
+          target = foods[bestFood[1]].data;
+        } else {
+          throw Error("Target이 Edible이 아닙니다.");
+        }
+
+        let interupt: SensingInterupt = { type: CreatureState.FIND_FOOD, pos: target.position };
+        this.screenPosGenerator.next(interupt);
+
+        this.creatureState = CreatureState.FIND_FOOD;
+        return;
+      }
     }
   }
 }

@@ -1,8 +1,8 @@
-import { Frame, MapPosition, SensingType } from "./types";
+import { Frame, MapPosition, SensingInterupt } from "./types";
 
 export interface Animate {
-  readonly numOfState: number;
-  currentState: number;
+  readonly numOfSprite: number;
+  spriteState: number; // 0 is Idle, 1 is sensingInterupt
   readonly interval: Frame;
   readonly spriteIndexGenerator: Generator<number, never, number>;
 }
