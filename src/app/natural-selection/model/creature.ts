@@ -1,5 +1,5 @@
-import { Creature } from "./item";
-import { CreatureType, Frame, Status, Turn, getDistance } from "./types";
+import { Creature } from "./abstractItem";
+import { CreatureType, Frame, SensingType, Status, Turn, getDistance } from "./types";
 import { MapPosition } from "./types";
 
 export class Pikachu extends Creature {
@@ -11,11 +11,11 @@ export class Pikachu extends Creature {
     this.status = status;
     this.turnForLife = turnForLife;
 
-    this.spriteIndexGenerator = (function* () {
+    this.spriteIndexGenerator = (function* (my: Pikachu) {
       while (true) {
         yield 1;
       }
-    })();
+    })(this);
 
     this.screenPosGenerator = (function* (my: Pikachu) {
       let from: MapPosition = my.position;
@@ -24,7 +24,7 @@ export class Pikachu extends Creature {
       while (true) {
         let vector: MapPosition[] = [];
         let distance = getDistance(from, to);
-        // console.log("두번도냐?  " + distance);
+        console.log("오잉?  " + distance);
 
         let dx = to.X - from.X;
         let dy = to.Y - from.Y;
@@ -32,17 +32,32 @@ export class Pikachu extends Creature {
         for (let i = 1; i <= count; i++) {
           vector.push({ X: from.X + (dx * i) / count, Y: from.Y + (dy * i) / count });
         }
+        console.log(vector);
 
+        let interupt = false;
         while (vector.length !== 0) {
-          let nextValue = vector.shift();
+          const nextValue = vector.shift();
           if (nextValue) {
             // console.log(from, to, nextValue);
-            my.position = nextValue;
-            yield nextValue;
+            const sign = yield nextValue;
+            if (sign !== undefined) {
+              vector.unshift(nextValue);
+              if (sign.type === SensingType.PREDATOR) {
+              } else if (sign.type === SensingType.FOOD) {
+              }
+              from = my.position;
+              to = sign.pos;
+              interupt = true;
+              break;
+            } else {
+              my.position = nextValue;
+            }
           }
         }
+        console.log(from, to);
+        if (interupt) continue;
 
-        from = to;
+        from = my.position;
         if (to.X === 20 && to.Y === 15) {
           to = { X: 20, Y: 5 };
         } else if (to.X === 20 && to.Y === 5) {
@@ -55,8 +70,4 @@ export class Pikachu extends Creature {
       }
     })(this);
   }
-
-  asdfsdf = () => {
-    this.position;
-  };
 }

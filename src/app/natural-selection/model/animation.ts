@@ -1,4 +1,4 @@
-import { Frame, MapPosition } from "./types";
+import { Frame, MapPosition, SensingType } from "./types";
 
 export interface Animate {
   readonly numOfState: number;
@@ -8,6 +8,6 @@ export interface Animate {
 }
 
 export interface Move extends Animate {
-  readonly screenPosGenerator: Generator<MapPosition, never, MapPosition>;
+  readonly screenPosGenerator: Generator<MapPosition, never, SensingInterupt>;
   readonly interval: 1;
 }

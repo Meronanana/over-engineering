@@ -1,6 +1,6 @@
 import { RefObject, createRef } from "react";
 import { FloatingTileType, MapTile, StaticTileType } from "./tile";
-import { Creature, Food } from "./item";
+import { Creature, Food } from "./abstractItem";
 
 export type TileRef<T extends StaticTileType | FloatingTileType> = {
   data: MapTile<T>;

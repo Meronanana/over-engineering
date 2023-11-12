@@ -12,6 +12,16 @@ export enum FoodType {
   FISH = "fish",
 }
 
+export enum SensingType {
+  PREDATOR = "predator",
+  FOOD = "food",
+}
+
+export type SensingInterupt = {
+  type: SensingType;
+  pos: MapPosition;
+};
+
 export type Status = {
   speed: number;
   size: number;

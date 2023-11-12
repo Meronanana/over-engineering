@@ -1,5 +1,5 @@
 import { Pikachu } from "./creature";
-import { Creature, Food } from "./item";
+import { Creature, Food } from "./abstractItem";
 import {
   CreatureRef,
   FoodRef,
