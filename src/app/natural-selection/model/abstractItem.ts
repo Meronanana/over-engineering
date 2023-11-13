@@ -27,35 +27,26 @@ export abstract class Edible {
   }
 }
 
-export class Food extends Edible implements Animate {
-  foodType: FoodType;
+export abstract class Food extends Edible implements Animate {
+  foodType: FoodType = FoodType.NONE;
   turnForDecay: Turn;
 
-  numOfSprite: number;
+  numOfSprite: number = 0;
   spriteState: number = 0;
-  interval: number;
-  spriteIndexGenerator: Generator<number, never, number>;
+  interval = Frame(6);
 
-  constructor(
-    foodType: FoodType,
-    turnForDecay: Turn,
-    position: MapPosition,
-    numOfState: number,
-    interval: Frame,
-    generator: Generator<number, never, number>
-  ) {
+  constructor(turnForDecay: Turn, position: MapPosition) {
     super(position);
-    this.foodType = foodType;
     this.turnForDecay = turnForDecay;
-
-    this.numOfSprite = numOfState;
-    this.spriteIndexGenerator = generator;
-    this.interval = interval;
   }
+
+  spriteIndexGenerator: Generator<number, never, any> = (function* () {
+    throw Error("제너레이터를 재선언하세요");
+  })();
 
   override getSupply(): number {
     // TODO: 구현하기
-    return 1;
+    return 0;
   }
 }
 
@@ -158,7 +149,7 @@ export abstract class Creature extends Edible implements Move {
         setTimeout(() => {
           this.gain += target.getSupply();
           target.eaten = true;
-        }, aFRAME * 24);
+        }, aFRAME * 12);
 
         this.creatureState = CreatureState.EAT_FOOD;
         return;

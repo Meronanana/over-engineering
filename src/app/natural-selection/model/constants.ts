@@ -11,11 +11,13 @@ import {
 } from "./render";
 import { FloatingTileType, MapTile, StaticTileType } from "./tile";
 import { CreatureType, FoodType, MapPosition, Turn } from "./types";
+import { Apple } from "./food";
 
 export const MAP_WIDTH = 30;
 export const MAP_HEIGHT = 20;
 export const TILE_SIZE = 30;
 export const aFRAME = 1000 / 24;
+export const aTurn = (1000 / 24) * 48;
 
 export const createInitalStaticTileRefs = (): TileRef<StaticTileType>[][] => {
   const result: TileRef<StaticTileType>[][] = [];
@@ -54,7 +56,7 @@ export const createInitialCreatureRefs = (): CreatureRef[] => {
 export const createInitialFoodRefs = (): FoodRef[] => {
   const result: FoodRef[] = [];
 
-  result.push(createFoodRef(new Food(FoodType.APPLE, Turn(64), { X: 10, Y: 7 }, 1, 1000, testIndexGenerator())));
+  result.push(createFoodRef(new Apple(Turn(64), { X: 10, Y: 7 })));
 
   return result;
 };

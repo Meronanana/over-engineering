@@ -1,5 +1,5 @@
 import { Creature } from "./abstractItem";
-import { CreatureType, Frame, CreatureState, Status, Turn, getDistance } from "./types";
+import { CreatureType, Frame, CreatureState, Status, Turn, getDistance, getRandomPosition } from "./types";
 import { MapPosition } from "./types";
 
 export class Pikachu extends Creature {
@@ -8,8 +8,6 @@ export class Pikachu extends Creature {
 
   constructor(status: Status, turnForLife: Turn, position: MapPosition) {
     super(status, turnForLife, position);
-    this.status = status;
-    this.turnForLife = turnForLife;
 
     this.spriteIndexGenerator = (function* (my: Pikachu) {
       while (true) {
@@ -67,15 +65,11 @@ export class Pikachu extends Creature {
         my.creatureState = CreatureState.IDLE;
 
         from = my.position;
-        if (to.X === 11 && to.Y === 15) {
-          to = { X: 11, Y: 5 };
-        } else if (to.X === 11 && to.Y === 5) {
-          to = { X: 6, Y: 5 };
-        } else if (to.X === 6 && to.Y === 5) {
-          to = { X: 6, Y: 15 };
-        } else {
-          to = { X: 11, Y: 15 };
+        let tmp = getRandomPosition();
+        while (getDistance(from, tmp) > 5) {
+          tmp = getRandomPosition();
         }
+        to = tmp;
       }
     })(this);
   }

@@ -23,6 +23,7 @@ export default function CreatureController({ creatureRefs, foodRefs }: Props) {
           newCreatureRefs.push(v);
         }
       });
+      // console.log(foodRefs.current);
       creatureRefs.current = newCreatureRefs;
     }, aFRAME);
 

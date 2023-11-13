@@ -1,3 +1,5 @@
+import { MAP_HEIGHT, MAP_WIDTH } from "./constants";
+
 export enum CreatureType {
   NONE = "",
   PIKACHU = "pikachu",
@@ -7,6 +9,7 @@ export enum CreatureType {
 }
 
 export enum FoodType {
+  NONE = "",
   APPLE = "apple",
   PEACH = "peach",
   FISH = "fish",
@@ -37,6 +40,10 @@ export type MapPosition = {
 
 export const getDistance = (from: MapPosition, to: MapPosition): number => {
   return Math.sqrt(Math.pow(from.X - to.X, 2) + Math.pow(from.Y - to.Y, 2));
+};
+
+export const getRandomPosition = () => {
+  return { X: Math.floor(Math.random() * MAP_WIDTH), Y: Math.floor(Math.random() * MAP_HEIGHT) };
 };
 
 // Frame은 양의 정수
