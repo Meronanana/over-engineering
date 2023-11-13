@@ -27,6 +27,6 @@ export class Apple extends Food {
   }
 
   override getSupply(): number {
-    return 0.1;
+    return 20;
   }
 }

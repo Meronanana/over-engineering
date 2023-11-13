@@ -6,7 +6,7 @@ import {
   FoodType,
   Frame,
   MapPosition,
-  SensingInterupt,
+  MoveInterupt,
   CreatureState,
   Status,
   Turn,
@@ -69,7 +69,7 @@ export abstract class Creature extends Edible implements Move {
   spriteIndexGenerator: Generator<number, never, number> = (function* () {
     throw Error("제너레이터를 재선언하세요");
   })();
-  screenPosGenerator: Generator<MapPosition, never, SensingInterupt> = (function* () {
+  screenPosGenerator: Generator<MapPosition, never, MoveInterupt> = (function* () {
     throw Error("제너레이터를 재선언하세요");
   })();
 
@@ -79,7 +79,17 @@ export abstract class Creature extends Edible implements Move {
 
   getBasecost(): number {
     const stat = this.status;
-    return Math.pow(stat.size, 3) * Math.pow(stat.speed, 2) + stat.sense;
+    return (Math.pow(stat.size, 3) * Math.pow(stat.speed, 2) + stat.sense) * 10;
+  }
+
+  makeChildStatus(): Status {
+    // +- 10% 변화
+    const status = this.status;
+    return {
+      speed: status.speed * (Math.random() / 5 + 0.9),
+      size: status.size * (Math.random() / 5 + 0.9),
+      sense: status.sense * (Math.random() / 5 + 0.9),
+    };
   }
 
   sensing(creatures: CreatureRef[], foods: FoodRef[]): void {
@@ -104,7 +114,7 @@ export abstract class Creature extends Edible implements Move {
       const direction = getRadian({ vx: dx, vy: dy }) + Math.PI;
       const pos = { X: this.status.sense * Math.cos(direction), Y: this.status.sense * Math.sin(direction) };
 
-      let interupt: SensingInterupt = { type: CreatureState.AVIOD_FROM_PREDATOR, pos: pos };
+      let interupt: MoveInterupt = { type: CreatureState.AVIOD_FROM_PREDATOR, pos: pos };
       this.screenPosGenerator.next(interupt);
 
       this.creatureState = CreatureState.AVIOD_FROM_PREDATOR;
@@ -144,7 +154,7 @@ export abstract class Creature extends Edible implements Move {
           throw Error("Target이 Edible이 아닙니다.");
         }
 
-        let interupt: SensingInterupt = { type: CreatureState.EAT_FOOD, pos: this.position };
+        let interupt: MoveInterupt = { type: CreatureState.EAT_FOOD, pos: this.position };
         this.screenPosGenerator.next(interupt);
         setTimeout(() => {
           this.gain += target.getSupply();
@@ -192,7 +202,7 @@ export abstract class Creature extends Edible implements Move {
           throw Error("Target이 Edible이 아닙니다.");
         }
 
-        let interupt: SensingInterupt = { type: CreatureState.FIND_FOOD, pos: target.position };
+        let interupt: MoveInterupt = { type: CreatureState.FIND_FOOD, pos: target.position };
         this.screenPosGenerator.next(interupt);
 
         this.creatureState = CreatureState.FIND_FOOD;

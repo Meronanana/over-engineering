@@ -1,6 +1,15 @@
 import { Creature } from "./abstractItem";
 import { GENERATION_TIME, TURN_TIME } from "./constants";
-import { CreatureType, Frame, CreatureState, Status, Turn, getDistance, getRandomPosition } from "./types";
+import {
+  CreatureType,
+  Frame,
+  CreatureState,
+  Status,
+  Turn,
+  getDistance,
+  getRandomPosition,
+  MoveInterupt,
+} from "./types";
 import { MapPosition } from "./types";
 
 export class Pikachu extends Creature {
@@ -47,7 +56,7 @@ export class Pikachu extends Creature {
                 vector = [];
               } else if (sign.type === CreatureState.FIND_FOOD) {
                 vector = [];
-              } else if (sign.type === CreatureState.EAT_FOOD) {
+              } else if (sign.type === CreatureState.EAT_FOOD || sign.type === CreatureState.DUPLICATE) {
                 vector = [...Array(24)].map(() => {
                   return sign.pos;
                 });
@@ -56,6 +65,11 @@ export class Pikachu extends Creature {
               to = sign.pos;
               interupt = true;
               break;
+            } else if (my.creatureState === CreatureState.DUPLICATE) {
+              vector = [...Array(24)].map(() => {
+                return my.position;
+              });
+              interupt = true;
             } else {
               my.position = nextValue;
             }
@@ -86,21 +100,25 @@ export class Pikachu extends Creature {
 
     const generationEnd = setInterval(() => {
       const baseCost = this.getBasecost();
+      console.log("Generation Changes, GAIN: ", this.gain, " BASE: ", baseCost);
       if (this.gain > baseCost) {
         const chance = (this.gain - baseCost) / baseCost;
         if (chance > Math.random()) {
           // Duplicate
+          let interupt: MoveInterupt = { type: CreatureState.DUPLICATE, pos: this.position };
+          this.screenPosGenerator.next(interupt);
+
+          this.creatureState = CreatureState.DUPLICATE;
         }
       } else {
         const chance = this.gain / baseCost;
-        if (chance > Math.random()) {
-          // Survive
-        } else {
+        if (chance < Math.random()) {
           // Die
           this.delete = true;
           clearInterval(generationEnd);
         }
       }
+      this.gain = 0;
     }, GENERATION_TIME);
   }
 }

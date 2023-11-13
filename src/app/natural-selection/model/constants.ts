@@ -50,7 +50,7 @@ export const createInitalFloatingTileRefs = (): TileRef<FloatingTileType>[][] =>
 export const createInitialCreatureRefs = (): CreatureRef[] => {
   const result: CreatureRef[] = [];
 
-  result.push(createCreatureRef(new Pikachu({ speed: 1, size: 1, sense: 1 }, Turn(64), { X: 15, Y: 10 })));
+  result.push(createCreatureRef(new Pikachu({ speed: 1, size: 1, sense: 1 }, Turn(192), { X: 15, Y: 10 })));
 
   return result;
 };

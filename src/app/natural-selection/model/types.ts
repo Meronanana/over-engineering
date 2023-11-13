@@ -20,9 +20,10 @@ export enum CreatureState {
   AVIOD_FROM_PREDATOR = 1,
   FIND_FOOD = 2,
   EAT_FOOD = 3,
+  DUPLICATE = 4,
 }
 
-export type SensingInterupt = {
+export type MoveInterupt = {
   type: CreatureState;
   pos: MapPosition;
 };
