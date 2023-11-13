@@ -4,7 +4,7 @@ import { RefObject, useEffect, useState } from "react";
 import { CreatureRef } from "../model/render";
 
 import "./creatureView.scss";
-import { TILE_SIZE, aFRAME } from "../model/constants";
+import { TILE_SIZE, FRAME_TIME, TURN_TIME } from "../model/constants";
 
 interface Props {
   creatureRefs: RefObject<CreatureRef[]>;
@@ -16,6 +16,11 @@ export default function CreatureView({ creatureRefs }: Props) {
     if (!creatureRefs.current) return;
     setCreatures(creatureRefs.current);
 
+    const renderInterval = setInterval(() => {
+      if (!creatureRefs.current) return;
+      setCreatures(creatureRefs.current);
+    }, TURN_TIME);
+
     const moveInterval = setInterval(() => {
       if (!creatureRefs.current) return;
       creatureRefs.current.forEach((v) => {
@@ -24,9 +29,10 @@ export default function CreatureView({ creatureRefs }: Props) {
         v.mainRef.current.style.top = `${v.data.position.Y * TILE_SIZE}px`;
         v.mainRef.current.style.left = `${v.data.position.X * TILE_SIZE}px`;
       });
-    }, aFRAME);
+    }, FRAME_TIME);
 
     return () => {
+      clearInterval(renderInterval);
       clearInterval(moveInterval);
     };
   }, []);

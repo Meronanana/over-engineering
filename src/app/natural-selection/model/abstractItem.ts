@@ -12,11 +12,11 @@ import {
   Turn,
   getDistance,
 } from "./types";
-import { aFRAME } from "./constants";
+import { FRAME_TIME } from "./constants";
 
 export abstract class Edible {
   position: MapPosition;
-  eaten: boolean = false;
+  delete: boolean = false;
 
   constructor(position: MapPosition) {
     this.position = position;
@@ -28,7 +28,7 @@ export abstract class Edible {
 }
 
 export abstract class Food extends Edible implements Animate {
-  foodType: FoodType = FoodType.NONE;
+  foodType: FoodType = FoodType.UNDEF;
   turnForDecay: Turn;
 
   numOfSprite: number = 0;
@@ -51,7 +51,7 @@ export abstract class Food extends Edible implements Animate {
 }
 
 export abstract class Creature extends Edible implements Move {
-  creatureType: CreatureType = CreatureType.NONE;
+  creatureType: CreatureType = CreatureType.UNDEF;
   creatureState: CreatureState = CreatureState.IDLE;
   gain: number = 0;
   status: Status;
@@ -148,8 +148,8 @@ export abstract class Creature extends Edible implements Move {
         this.screenPosGenerator.next(interupt);
         setTimeout(() => {
           this.gain += target.getSupply();
-          target.eaten = true;
-        }, aFRAME * 12);
+          target.delete = true;
+        }, FRAME_TIME * 12);
 
         this.creatureState = CreatureState.EAT_FOOD;
         return;

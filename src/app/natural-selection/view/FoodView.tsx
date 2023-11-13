@@ -2,7 +2,7 @@
 
 import { RefObject, useEffect, useState } from "react";
 import { FoodRef } from "../model/render";
-import { TILE_SIZE, aFRAME as FRAME_TIME } from "../model/constants";
+import { TILE_SIZE, FRAME_TIME as FRAME_TIME, TURN_TIME } from "../model/constants";
 
 import "./foodView.scss";
 import { Frame } from "../model/types";
@@ -20,7 +20,7 @@ export default function FoodView({ foodRefs }: Props) {
       setFoods(foodRefs.current);
 
       // console.log(foodRefs.current);
-    }, FRAME_TIME * Frame(24));
+    }, TURN_TIME);
 
     return () => {
       clearInterval(renderInterval);

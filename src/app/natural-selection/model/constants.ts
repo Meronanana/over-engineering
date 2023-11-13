@@ -16,8 +16,10 @@ import { Apple } from "./food";
 export const MAP_WIDTH = 30;
 export const MAP_HEIGHT = 20;
 export const TILE_SIZE = 30;
-export const aFRAME = 1000 / 24;
-export const aTurn = (1000 / 24) * 48;
+export const FRAME_TIME = 1000 / 24;
+export const TURN_TIME = FRAME_TIME * 48; // 2sec
+export const SEASON_TIME = TURN_TIME * 16; // 32sec
+export const GENERATION_TIME = SEASON_TIME * 4; // 128sec
 
 export const createInitalStaticTileRefs = (): TileRef<StaticTileType>[][] => {
   const result: TileRef<StaticTileType>[][] = [];

@@ -1,4 +1,5 @@
 import { Creature } from "./abstractItem";
+import { GENERATION_TIME, TURN_TIME } from "./constants";
 import { CreatureType, Frame, CreatureState, Status, Turn, getDistance, getRandomPosition } from "./types";
 import { MapPosition } from "./types";
 
@@ -66,11 +67,40 @@ export class Pikachu extends Creature {
 
         from = my.position;
         let tmp = getRandomPosition();
-        while (getDistance(from, tmp) > 5) {
+        while (getDistance(from, tmp) > my.status.speed * 3) {
           tmp = getRandomPosition();
         }
         to = tmp;
       }
     })(this);
+
+    const decTurnForLife = setInterval(() => {
+      if (this.turnForLife === 0) {
+        // Die
+        this.delete = true;
+        clearInterval(decTurnForLife);
+        return;
+      }
+      this.turnForLife -= 1;
+    }, TURN_TIME);
+
+    const generationEnd = setInterval(() => {
+      const baseCost = this.getBasecost();
+      if (this.gain > baseCost) {
+        const chance = (this.gain - baseCost) / baseCost;
+        if (chance > Math.random()) {
+          // Duplicate
+        }
+      } else {
+        const chance = this.gain / baseCost;
+        if (chance > Math.random()) {
+          // Survive
+        } else {
+          // Die
+          this.delete = true;
+          clearInterval(generationEnd);
+        }
+      }
+    }, GENERATION_TIME);
   }
 }

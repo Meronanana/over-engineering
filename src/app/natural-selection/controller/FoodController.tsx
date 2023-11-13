@@ -3,7 +3,7 @@
 import { MutableRefObject, useEffect, useRef } from "react";
 import { FoodRef, createFoodRef } from "../model/render";
 import FoodView from "../view/FoodView";
-import { aFRAME, aTurn } from "../model/constants";
+import { FRAME_TIME, TURN_TIME } from "../model/constants";
 import { Frame, Turn, getRandomPosition } from "../model/types";
 import { Apple } from "../model/food";
 
@@ -15,23 +15,23 @@ interface Props {
 
 export default function FoodController({ foodRefs }: Props) {
   useEffect(() => {
-    const checkEaten = setInterval(() => {
+    const checkDelete = setInterval(() => {
       const newFoodRefs: FoodRef[] = [];
       foodRefs.current?.forEach((v, i) => {
         if (!foodRefs.current) return;
-        if (v.data.eaten === false) {
+        if (v.data.delete === false) {
           newFoodRefs.push(v);
         }
       });
       foodRefs.current = newFoodRefs;
-    }, aFRAME);
+    }, FRAME_TIME);
 
     const addFood = setInterval(() => {
       foodRefs.current.push(createFoodRef(new Apple(Turn(64), getRandomPosition())));
-    }, aTurn * 4);
+    }, TURN_TIME * 4);
 
     return () => {
-      clearInterval(checkEaten);
+      clearInterval(checkDelete);
       clearInterval(addFood);
     };
   }, []);

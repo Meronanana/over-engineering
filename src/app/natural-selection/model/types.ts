@@ -1,7 +1,7 @@
 import { MAP_HEIGHT, MAP_WIDTH } from "./constants";
 
 export enum CreatureType {
-  NONE = "",
+  UNDEF = "",
   PIKACHU = "pikachu",
   PAIRI = "pairi",
   ISANGHAESSI = "isanghaessi",
@@ -9,7 +9,7 @@ export enum CreatureType {
 }
 
 export enum FoodType {
-  NONE = "",
+  UNDEF = "",
   APPLE = "apple",
   PEACH = "peach",
   FISH = "fish",
