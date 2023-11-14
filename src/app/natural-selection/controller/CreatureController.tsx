@@ -47,6 +47,14 @@ export default function CreatureController({ creatureRefs, foodRefs }: Props) {
             creatureRefs.current.push(
               createCreatureRef(new Pairi(v.data.makeChildStatus(), Turn(288), v.data.position))
             );
+          } else if (v.data.creatureType === CreatureType.ISANGHAESSI) {
+            creatureRefs.current.push(
+              createCreatureRef(new Pairi(v.data.makeChildStatus(), Turn(288), v.data.position))
+            );
+          } else if (v.data.creatureType === CreatureType.GGOBUGI) {
+            creatureRefs.current.push(
+              createCreatureRef(new Pairi(v.data.makeChildStatus(), Turn(288), v.data.position))
+            );
           }
           v.data.creatureState = CreatureState.IDLE;
         }
