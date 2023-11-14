@@ -20,7 +20,7 @@ export default function StaticTileView({ tileRefs }: Props) {
   }, []);
 
   return (
-    <div className="static-tile-div">
+    <div className="static-tile-area">
       {/* <div className={`static-tile-0000`}></div> */}
 
       {tiles !== undefined ? (

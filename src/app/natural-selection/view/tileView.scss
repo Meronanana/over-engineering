@@ -2,7 +2,7 @@
   --tile-size: 30px;
 }
 
-.static-tile-div {
+.static-tile-area {
   position: absolute;
 
   top: 50%;
@@ -14,9 +14,11 @@
   // border-color: black;
 
   transform: translate(-50%, -50%);
+
+  z-index: 0;
 }
 
-.floating-tile-div {
+.floating-tile-area {
   position: absolute;
 
   top: 50%;
@@ -28,6 +30,8 @@
   // border-color: black;
 
   transform: translate(-50%, -50%);
+
+  z-index: 10;
 }
 
 // StaticTileType -> Plain

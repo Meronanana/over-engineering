@@ -68,6 +68,7 @@ export abstract class Creature extends Edible implements Move {
     const decTurnForLife = setInterval(() => {
       if (this.turnForLife === 0) {
         // Die
+        console.log("LIFE END");
         this.delete = true;
         clearInterval(decTurnForLife);
         return;
@@ -173,7 +174,6 @@ export abstract class Creature extends Edible implements Move {
         const foodData = foods[i].data;
         const distance = getDistance(foodData.position, this.position);
         if (nearFood[0] === -1 && distance <= 0.6) {
-          console.log(distance);
           nearFood = [1, i];
         }
       }
@@ -182,7 +182,6 @@ export abstract class Creature extends Edible implements Move {
         const distance = getDistance(creatureData.position, this.position);
         if (creatureData === this) continue;
         if (nearFood[0] === -1 && distance <= 0.6) {
-          // console.log(distance);
           nearFood = [0, i];
         }
       }
@@ -201,8 +200,10 @@ export abstract class Creature extends Edible implements Move {
         let interupt: MoveInterupt = { type: CreatureState.EAT_FOOD, pos: this.position };
         this.screenPosGenerator.next(interupt);
         setTimeout(() => {
-          this.gain += target.getSupply();
-          target.delete = true;
+          if (this.creatureState === CreatureState.EAT_FOOD) {
+            this.gain += target.getSupply();
+            target.delete = true;
+          }
         }, FRAME_TIME * 12);
 
         this.creatureState = CreatureState.EAT_FOOD;

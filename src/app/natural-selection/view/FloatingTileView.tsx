@@ -20,7 +20,7 @@ export default function FlotingTileView({ tileRefs }: Props) {
   }, []);
 
   return (
-    <div className="floating-tile-div">
+    <div className="floating-tile-area">
       {/* <div className={`static-tile-0000`}></div> */}
 
       {tiles !== undefined ? (
