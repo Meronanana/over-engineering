@@ -35,8 +35,7 @@ export default function FoodView({ foodRefs }: Props) {
             <div
               className={`food-${v.data.foodType}`}
               ref={v.mainRef}
-              key={`${0}${i}`}
-              id={v.id}
+              key={v.id}
               style={{ top: `${v.data.position.Y * TILE_SIZE}px`, left: `${v.data.position.X * TILE_SIZE}px` }}
             ></div>
           );

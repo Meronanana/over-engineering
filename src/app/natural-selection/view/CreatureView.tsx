@@ -63,9 +63,7 @@ export default function CreatureView({ creatureRefs }: Props) {
     <div className="creature-area" onMouseDown={mouseDownEvent}>
       {creatures !== undefined ? (
         creatures.map((v, i) => {
-          return (
-            <div className={`creature ${v.data.creatureType}`} ref={v.mainRef} key={`${i}creature`} id={v.id}></div>
-          );
+          return <div className={`creature ${v.data.creatureType}`} ref={v.mainRef} key={v.id}></div>;
         })
       ) : (
         <></>

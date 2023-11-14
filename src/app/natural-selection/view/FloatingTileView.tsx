@@ -40,8 +40,7 @@ export default function FlotingTileView({ tileRefs }: Props) {
               <div
                 className={`floating-tile-${v.data.tileType}`}
                 ref={v.mainRef}
-                key={`${0}${i}`}
-                id={v.id}
+                key={v.id}
                 style={{ top: `${i * TILE_SIZE}px`, left: `${iA * TILE_SIZE}px` }}
               ></div>
             ) : null;
