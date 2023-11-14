@@ -69,8 +69,8 @@ export abstract class Creature extends Edible implements Move {
       if (this.turnForLife === 0) {
         // Die
         console.log("LIFE END");
-        this.delete = true;
         clearInterval(decTurnForLife);
+        this.delete = true;
         return;
       }
       this.turnForLife -= 1;
@@ -92,8 +92,9 @@ export abstract class Creature extends Edible implements Move {
         const chance = this.gain / baseCost;
         if (chance < Math.random()) {
           // Die
-          this.delete = true;
+          console.log("LIFE END");
           clearInterval(generationEnd);
+          this.delete = true;
         }
       }
       this.gain = 0;
@@ -181,7 +182,7 @@ export abstract class Creature extends Edible implements Move {
         const creatureData = creatures[i].data;
         const distance = getDistance(creatureData.position, this.position);
         if (creatureData === this) continue;
-        if (nearFood[0] === -1 && distance <= 0.6) {
+        if (nearFood[0] === -1 && distance <= 0.6 && isEdibleCreature(this, creatureData)) {
           nearFood = [0, i];
         }
       }
