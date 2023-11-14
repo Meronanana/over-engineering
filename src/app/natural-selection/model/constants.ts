@@ -58,9 +58,9 @@ export const createInitalFloatingTileRefs = (): TileRef<FloatingTileType>[][] =>
     }
   }
 
-  result[3][3] = createFloatingTileRef(new MapTile(FloatingTileType.TreeLeaves_BASE));
-  result[20][5] = createFloatingTileRef(new MapTile(FloatingTileType.TreeLeaves_BASE));
-  result[14][14] = createFloatingTileRef(new MapTile(FloatingTileType.TreeLeaves_BASE));
+  result[3][2] = createFloatingTileRef(new MapTile(FloatingTileType.TreeLeaves_BASE));
+  result[20][4] = createFloatingTileRef(new MapTile(FloatingTileType.TreeLeaves_BASE));
+  result[14][13] = createFloatingTileRef(new MapTile(FloatingTileType.TreeLeaves_BASE));
 
   return result;
 };

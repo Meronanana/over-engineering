@@ -138,6 +138,7 @@ export abstract class Creature extends Edible implements Move {
       const creatureData = creatures[i].data;
       if (
         getDistance(creatureData.position, this.position) <= this.status.sense &&
+        this.creatureType !== creatureData.creatureType &&
         isEdibleCreature(creatureData, this)
       ) {
         predetorIndex = i;
