@@ -6,7 +6,7 @@ import CreatureView from "../view/CreatureView";
 import { FRAME_TIME, TURN_TIME } from "../model/constants";
 import { CreatureState, CreatureType, Turn, getRandomPosition } from "../model/types";
 import { Creature } from "../model/abstractItem";
-import { Pairi, Pikachu } from "../model/creature";
+import { Ggobugi, Isanghaessi, Pairi, Pikachu } from "../model/creature";
 
 // import "./natsel.scss";
 
@@ -49,11 +49,11 @@ export default function CreatureController({ creatureRefs, foodRefs }: Props) {
             );
           } else if (v.data.creatureType === CreatureType.ISANGHAESSI) {
             creatureRefs.current.push(
-              createCreatureRef(new Pairi(v.data.makeChildStatus(), Turn(288), v.data.position))
+              createCreatureRef(new Isanghaessi(v.data.makeChildStatus(), Turn(288), v.data.position))
             );
           } else if (v.data.creatureType === CreatureType.GGOBUGI) {
             creatureRefs.current.push(
-              createCreatureRef(new Pairi(v.data.makeChildStatus(), Turn(288), v.data.position))
+              createCreatureRef(new Ggobugi(v.data.makeChildStatus(), Turn(288), v.data.position))
             );
           }
           v.data.creatureState = CreatureState.IDLE;

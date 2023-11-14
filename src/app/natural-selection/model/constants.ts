@@ -11,7 +11,7 @@ import {
 } from "./render";
 import { FloatingTileType, MapTile, StaticTileType } from "./tile";
 import { CreatureType, FoodType, MapPosition, Turn, getRandomPosition } from "./types";
-import { Apple } from "./food";
+import { Apple, Fish, Peach } from "./food";
 
 export const MAP_WIDTH = 30;
 export const MAP_HEIGHT = 20;
@@ -65,7 +65,15 @@ export const createInitialCreatureRefs = (): CreatureRef[] => {
 export const createInitialFoodRefs = (): FoodRef[] => {
   const result: FoodRef[] = [];
 
-  result.push(createFoodRef(new Apple(Turn(64), { X: 10, Y: 7 })));
+  result.push(createFoodRef(new Apple()));
+  result.push(createFoodRef(new Apple()));
+  result.push(createFoodRef(new Apple()));
+  result.push(createFoodRef(new Peach()));
+  result.push(createFoodRef(new Peach()));
+  result.push(createFoodRef(new Peach()));
+  result.push(createFoodRef(new Fish()));
+  result.push(createFoodRef(new Fish()));
+  result.push(createFoodRef(new Fish()));
 
   return result;
 };

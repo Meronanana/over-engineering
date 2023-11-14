@@ -182,7 +182,12 @@ export abstract class Creature extends Edible implements Move {
         const creatureData = creatures[i].data;
         const distance = getDistance(creatureData.position, this.position);
         if (creatureData === this) continue;
-        if (nearFood[0] === -1 && distance <= 0.6 && isEdibleCreature(this, creatureData)) {
+        if (
+          nearFood[0] === -1 &&
+          distance <= 0.6 &&
+          this.creatureType !== creatureData.creatureType &&
+          isEdibleCreature(this, creatureData)
+        ) {
           nearFood = [0, i];
         }
       }
@@ -229,6 +234,7 @@ export abstract class Creature extends Edible implements Move {
         if (creatureData === this) continue;
         if (
           getDistance(creatureData.position, this.position) <= this.status.sense &&
+          this.creatureType !== creatureData.creatureType &&
           isEdibleCreature(this, creatureData)
         ) {
           if (bestFood[0] !== -1) break;
