@@ -5,6 +5,7 @@ import { CreatureRef } from "../model/render";
 
 import "./creatureView.scss";
 import { TILE_SIZE, FRAME_TIME, TURN_TIME } from "../model/constants";
+import { Creature } from "../model/abstractItem";
 
 interface Props {
   creatureRefs: RefObject<CreatureRef[]>;
@@ -41,17 +42,21 @@ export default function CreatureView({ creatureRefs }: Props) {
     const str = (e.target as HTMLDivElement).id;
     if (!creatureRefs.current || str === "") return;
 
-    const focus = Number(str.substring(0, str.length - 8));
-    const data = creatureRefs.current[focus].data;
+    const focus = Number(str.substring(1));
+    creatureRefs.current.forEach((v) => {
+      if (v.id === str) {
+        let data = v.data;
 
-    console.log("------------------------------");
-    console.log("Type: " + data.creatureType);
-    console.log("Gain: " + data.gain);
-    console.log("Position: ");
-    console.log(data.position);
-    console.log("Status: ");
-    console.log(data.status);
-    console.log("------------------------------");
+        console.log("------------------------------");
+        console.log("Type: " + data.creatureType);
+        console.log("Gain: " + data.gain);
+        console.log("Position: ");
+        console.log(data.position);
+        console.log("Status: ");
+        console.log(data.status);
+        console.log("------------------------------");
+      }
+    });
   };
 
   return (
@@ -59,12 +64,7 @@ export default function CreatureView({ creatureRefs }: Props) {
       {creatures !== undefined ? (
         creatures.map((v, i) => {
           return (
-            <div
-              className={`creature-${v.data.creatureType}`}
-              ref={v.mainRef}
-              key={`${i}creature`}
-              id={`${i}creature`}
-            ></div>
+            <div className={`creature ${v.data.creatureType}`} ref={v.mainRef} key={`${i}creature`} id={v.id}></div>
           );
         })
       ) : (
