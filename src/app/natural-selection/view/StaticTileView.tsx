@@ -38,7 +38,7 @@ export default function StaticTileView({ tileRefs }: Props) {
           return vA.map((v, i) => {
             return (
               <div
-                className={`static-tile-${v.data.tileType}`}
+                className={`static-tile tile-${v.data.tileType}`}
                 ref={v.mainRef}
                 key={v.id}
                 style={{ top: `${i * TILE_SIZE}px`, left: `${iA * TILE_SIZE}px` }}

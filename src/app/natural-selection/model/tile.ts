@@ -1,6 +1,14 @@
 import { Animate } from "./animation";
 import { Frame } from "./types";
 
+/*
+TileType은 길이가 4인 문자열로 표현됩니다.
+각 자리의 의미는 다음과 같습니다.
+첫 자리: 테마
+둘째 자리: 보급 가능 여부
+셋째 자리: 통행 가능 여부
+넷째 자리: 버전
+ */
 export enum StaticTileType {
   Plain_BASE = "0000",
   TreeRoot_BASE = "1010",

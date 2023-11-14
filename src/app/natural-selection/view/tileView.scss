@@ -35,47 +35,46 @@
   pointer-events: none;
 }
 
+.static-tile {
+  position: absolute;
+
+  top: 0px;
+  left: 0px;
+  width: var(--tile-size);
+  height: var(--tile-size);
+
+  // transform: translate(-50%, -50%);
+}
 // StaticTileType -> Plain
-.static-tile-0000 {
-  position: absolute;
-
-  top: 0px;
-  left: 0px;
-  width: var(--tile-size);
-  height: var(--tile-size);
-
+.static-tile.tile-0000 {
   border-width: 1px;
-  border-color: pink;
-
-  // transform: translate(-50%, -50%);
+  border-color: rgba(144, 238, 144, 0.5);
 }
-
 // StaticTileType -> TreeRoot
-.static-tile-1010 {
+.static-tile.tile-1010 {
+  border-width: 1px;
+  border-color: brown;
+  background-color: rgba(165, 42, 42, 0.5);
+}
+
+.floating-tile {
   position: absolute;
 
   top: 0px;
   left: 0px;
   width: var(--tile-size);
   height: var(--tile-size);
-
-  border-width: 1px;
-  border-color: aqua;
 
   // transform: translate(-50%, -50%);
 }
-
 // FloatingTileType -> TreeLeaves
-.floating-tile-1100 {
-  position: absolute;
-
-  top: 0px;
-  left: 0px;
-  width: var(--tile-size);
-  height: var(--tile-size);
+.floating-tile.tile-1100 {
+  width: calc(var(--tile-size) * 3);
+  height: calc(var(--tile-size) * 2);
 
   border-width: 1px;
-  border-color: lightgreen;
+  border-color: rgb(16, 150, 16, 0.7);
+  background-color: rgb(6, 78, 6, 0.7);
 
   // transform: translate(-50%, -50%);
 }

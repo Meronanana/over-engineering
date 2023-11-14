@@ -1,21 +1,21 @@
 "use client";
 
 import { MutableRefObject, RefObject, useEffect, useRef } from "react";
-import { CreatureRef, FoodRef, createCreatureRef } from "../model/render";
+import { CreatureRef, FoodRef, TileRef, createCreatureRef } from "../model/render";
 import CreatureView from "../view/CreatureView";
 import { FRAME_TIME, TURN_TIME } from "../model/constants";
 import { CreatureState, CreatureType, Turn, getRandomPosition } from "../model/types";
-import { Creature } from "../model/abstractItem";
 import { Ggobugi, Isanghaessi, Pairi, Pikachu } from "../model/creature";
-
-// import "./natsel.scss";
+import { FloatingTileType, StaticTileType } from "../model/tile";
 
 interface Props {
+  staticTileRefs: RefObject<TileRef<StaticTileType>[][]>;
+  floatingTileRefs: RefObject<TileRef<FloatingTileType>[][]>;
   creatureRefs: MutableRefObject<CreatureRef[]>;
   foodRefs: MutableRefObject<FoodRef[]>;
 }
 
-export default function CreatureController({ creatureRefs, foodRefs }: Props) {
+export default function CreatureController({ staticTileRefs, floatingTileRefs, creatureRefs, foodRefs }: Props) {
   useEffect(() => {
     const checkDelete = setInterval(() => {
       const newCreatureRefs: CreatureRef[] = [];
@@ -70,7 +70,7 @@ export default function CreatureController({ creatureRefs, foodRefs }: Props) {
 
   return (
     <>
-      <CreatureView creatureRefs={creatureRefs} />
+      <CreatureView staticTileRefs={staticTileRefs} floatingTileRefs={floatingTileRefs} creatureRefs={creatureRefs} />
     </>
   );
 }

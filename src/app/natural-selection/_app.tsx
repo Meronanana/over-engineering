@@ -27,7 +27,12 @@ export default function NaturalSelection() {
       <div className="natsel-screen">
         <MapController staticTileRefs={staticTileRefs} floatingTileRefs={floatingTileRefs} />
         <FoodController foodRefs={foodRefs} />
-        <CreatureController creatureRefs={creatureRefs} foodRefs={foodRefs} />
+        <CreatureController
+          staticTileRefs={staticTileRefs}
+          floatingTileRefs={floatingTileRefs}
+          creatureRefs={creatureRefs}
+          foodRefs={foodRefs}
+        />
         <CreatureDataInspector creatureRefs={creatureRefs} />
       </div>
     </main>

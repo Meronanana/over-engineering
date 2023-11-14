@@ -1,5 +1,5 @@
 import { Creature } from "./abstractItem";
-import { GENERATION_TIME, TURN_TIME } from "./constants";
+import { GENERATION_TIME, TURN_TIME, UNPASSALBE } from "./constants";
 import {
   CreatureType,
   Frame,
@@ -45,13 +45,21 @@ export class Pikachu extends Creature {
             vector.push({ X: from.X + (dx * i) / count, Y: from.Y + (dy * i) / count });
           }
         }
-        // console.log(vector);
 
         let interupt = false;
         while (vector.length !== 0) {
           const nextValue = vector.shift();
           if (nextValue) {
-            // console.log(from, to, nextValue);
+            let unpass = false;
+            for (let i = 0; i < UNPASSALBE.length; i++) {
+              if (getDistance(nextValue, UNPASSALBE[i]) < 1) {
+                unpass = true;
+                vector = [];
+                break;
+              }
+            }
+            if (unpass) break;
+
             const sign = yield nextValue;
             if (sign !== undefined) {
               vector.unshift(nextValue);
@@ -133,7 +141,16 @@ export class Pairi extends Creature {
         while (vector.length !== 0) {
           const nextValue = vector.shift();
           if (nextValue) {
-            // console.log(from, to, nextValue);
+            let unpass = false;
+            for (let i = 0; i < UNPASSALBE.length; i++) {
+              if (getDistance(nextValue, UNPASSALBE[i]) < 1) {
+                unpass = true;
+                vector = [];
+                break;
+              }
+            }
+            if (unpass) break;
+
             const sign = yield nextValue;
             if (sign !== undefined) {
               vector.unshift(nextValue);
@@ -215,7 +232,16 @@ export class Isanghaessi extends Creature {
         while (vector.length !== 0) {
           const nextValue = vector.shift();
           if (nextValue) {
-            // console.log(from, to, nextValue);
+            let unpass = false;
+            for (let i = 0; i < UNPASSALBE.length; i++) {
+              if (getDistance(nextValue, UNPASSALBE[i]) < 1) {
+                unpass = true;
+                vector = [];
+                break;
+              }
+            }
+            if (unpass) break;
+
             const sign = yield nextValue;
             if (sign !== undefined) {
               vector.unshift(nextValue);
@@ -297,7 +323,16 @@ export class Ggobugi extends Creature {
         while (vector.length !== 0) {
           const nextValue = vector.shift();
           if (nextValue) {
-            // console.log(from, to, nextValue);
+            let unpass = false;
+            for (let i = 0; i < UNPASSALBE.length; i++) {
+              if (getDistance(nextValue, UNPASSALBE[i]) < 1) {
+                unpass = true;
+                vector = [];
+                break;
+              }
+            }
+            if (unpass) break;
+
             const sign = yield nextValue;
             if (sign !== undefined) {
               vector.unshift(nextValue);

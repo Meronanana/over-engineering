@@ -1,16 +1,19 @@
 "use client";
 
 import { RefObject, useEffect, useState } from "react";
-import { CreatureRef } from "../model/render";
+import { CreatureRef, TileRef } from "../model/render";
 
 import "./creatureView.scss";
-import { TILE_SIZE, FRAME_TIME, TURN_TIME } from "../model/constants";
-import { Creature } from "../model/abstractItem";
+import { TILE_SIZE, FRAME_TIME, TURN_TIME, UNPASSALBE } from "../model/constants";
+import { FloatingTileType, StaticTileType } from "../model/tile";
+import { MapPosition, getDistance } from "../model/types";
 
 interface Props {
+  staticTileRefs: RefObject<TileRef<StaticTileType>[][]>;
+  floatingTileRefs: RefObject<TileRef<FloatingTileType>[][]>;
   creatureRefs: RefObject<CreatureRef[]>;
 }
-export default function CreatureView({ creatureRefs }: Props) {
+export default function CreatureView({ staticTileRefs, floatingTileRefs, creatureRefs }: Props) {
   const [creatures, setCreatures] = useState<CreatureRef[]>();
 
   useEffect(() => {
@@ -25,7 +28,8 @@ export default function CreatureView({ creatureRefs }: Props) {
     const moveInterval = setInterval(() => {
       if (!creatureRefs.current) return;
       creatureRefs.current.forEach((v) => {
-        let pos = v.data.screenPosGenerator.next();
+        let pos = v.data.screenPosGenerator.next().value;
+
         if (!v.mainRef.current) return;
         v.mainRef.current.style.top = `${v.data.position.Y * TILE_SIZE}px`;
         v.mainRef.current.style.left = `${v.data.position.X * TILE_SIZE}px`;

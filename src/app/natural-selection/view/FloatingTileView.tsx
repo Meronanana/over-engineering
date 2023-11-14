@@ -38,7 +38,7 @@ export default function FlotingTileView({ tileRefs }: Props) {
           return vA.map((v, i) => {
             return v.data.tileType !== FloatingTileType.BLANK ? (
               <div
-                className={`floating-tile-${v.data.tileType}`}
+                className={`floating-tile tile-${v.data.tileType}`}
                 ref={v.mainRef}
                 key={v.id}
                 style={{ top: `${i * TILE_SIZE}px`, left: `${iA * TILE_SIZE}px` }}

@@ -21,6 +21,8 @@ export const TURN_TIME = FRAME_TIME * 48; // 2sec
 export const SEASON_TIME = TURN_TIME * 16; // 32sec
 export const GENERATION_TIME = SEASON_TIME * 4; // 128sec
 
+export const UNPASSALBE: MapPosition[] = [];
+
 export const createInitalStaticTileRefs = (): TileRef<StaticTileType>[][] => {
   const result: TileRef<StaticTileType>[][] = [];
 
@@ -28,6 +30,18 @@ export const createInitalStaticTileRefs = (): TileRef<StaticTileType>[][] => {
     result.push(new Array(MAP_HEIGHT));
     for (let j = 0; j < MAP_HEIGHT; j++) {
       result[i][j] = createStaticTileRef(new MapTile(StaticTileType.Plain_BASE));
+    }
+  }
+
+  result[4][5] = createStaticTileRef(new MapTile(StaticTileType.TreeRoot_BASE));
+  result[21][7] = createStaticTileRef(new MapTile(StaticTileType.TreeRoot_BASE));
+  result[15][16] = createStaticTileRef(new MapTile(StaticTileType.TreeRoot_BASE));
+
+  for (let i = 0; i < MAP_WIDTH; i++) {
+    for (let j = 0; j < MAP_HEIGHT; j++) {
+      if (result[i][j].data.tileType.toString().charAt(2) === "1") {
+        UNPASSALBE.push({ X: i, Y: j });
+      }
     }
   }
 
@@ -43,6 +57,10 @@ export const createInitalFloatingTileRefs = (): TileRef<FloatingTileType>[][] =>
       result[i][j] = createFloatingTileRef(new MapTile(FloatingTileType.BLANK));
     }
   }
+
+  result[3][3] = createFloatingTileRef(new MapTile(FloatingTileType.TreeLeaves_BASE));
+  result[20][5] = createFloatingTileRef(new MapTile(FloatingTileType.TreeLeaves_BASE));
+  result[14][14] = createFloatingTileRef(new MapTile(FloatingTileType.TreeLeaves_BASE));
 
   return result;
 };
