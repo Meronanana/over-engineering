@@ -1,4 +1,4 @@
-import { Pikachu } from "./creature";
+import { Ggobugi, Isanghaessi, Pairi, Pikachu } from "./creature";
 import { Creature, Food } from "./abstractItem";
 import {
   CreatureRef,
@@ -10,7 +10,7 @@ import {
   createStaticTileRef,
 } from "./render";
 import { FloatingTileType, MapTile, StaticTileType } from "./tile";
-import { CreatureType, FoodType, MapPosition, Turn } from "./types";
+import { CreatureType, FoodType, MapPosition, Turn, getRandomPosition } from "./types";
 import { Apple } from "./food";
 
 export const MAP_WIDTH = 30;
@@ -50,7 +50,14 @@ export const createInitalFloatingTileRefs = (): TileRef<FloatingTileType>[][] =>
 export const createInitialCreatureRefs = (): CreatureRef[] => {
   const result: CreatureRef[] = [];
 
-  result.push(createCreatureRef(new Pikachu({ speed: 1, size: 1, sense: 1 }, Turn(192), { X: 15, Y: 10 })));
+  result.push(createCreatureRef(new Pikachu()));
+  result.push(createCreatureRef(new Pikachu()));
+  result.push(createCreatureRef(new Pairi()));
+  result.push(createCreatureRef(new Pairi()));
+  result.push(createCreatureRef(new Isanghaessi()));
+  result.push(createCreatureRef(new Isanghaessi()));
+  result.push(createCreatureRef(new Ggobugi()));
+  result.push(createCreatureRef(new Ggobugi()));
 
   return result;
 };

@@ -6,7 +6,7 @@ import CreatureView from "../view/CreatureView";
 import { FRAME_TIME, TURN_TIME } from "../model/constants";
 import { CreatureState, CreatureType, Turn, getRandomPosition } from "../model/types";
 import { Creature } from "../model/abstractItem";
-import { Pikachu } from "../model/creature";
+import { Pairi, Pikachu } from "../model/creature";
 
 // import "./natsel.scss";
 
@@ -41,7 +41,11 @@ export default function CreatureController({ creatureRefs, foodRefs }: Props) {
         if (v.data.creatureState === CreatureState.DUPLICATE) {
           if (v.data.creatureType === CreatureType.PIKACHU) {
             creatureRefs.current.push(
-              createCreatureRef(new Pikachu(v.data.makeChildStatus(), Turn(192), v.data.position))
+              createCreatureRef(new Pikachu(v.data.makeChildStatus(), Turn(288), v.data.position))
+            );
+          } else if (v.data.creatureType === CreatureType.PAIRI) {
+            creatureRefs.current.push(
+              createCreatureRef(new Pairi(v.data.makeChildStatus(), Turn(288), v.data.position))
             );
           }
           v.data.creatureState = CreatureState.IDLE;

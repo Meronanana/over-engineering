@@ -12,7 +12,7 @@ import {
   Turn,
   getDistance,
 } from "./types";
-import { FRAME_TIME } from "./constants";
+import { FRAME_TIME, GENERATION_TIME, MAP_HEIGHT, MAP_WIDTH, TURN_TIME } from "./constants";
 
 export abstract class Edible {
   position: MapPosition;
@@ -64,6 +64,39 @@ export abstract class Creature extends Edible implements Move {
     super(position);
     this.status = status;
     this.turnForLife = turnForLife;
+
+    const decTurnForLife = setInterval(() => {
+      if (this.turnForLife === 0) {
+        // Die
+        this.delete = true;
+        clearInterval(decTurnForLife);
+        return;
+      }
+      this.turnForLife -= 1;
+    }, TURN_TIME);
+
+    const generationEnd = setInterval(() => {
+      const baseCost = this.getBasecost();
+      console.log("Generation Changes, GAIN: ", this.gain, " BASE: ", baseCost);
+      if (this.gain > baseCost) {
+        const chance = (this.gain - baseCost) / baseCost;
+        if (chance > Math.random()) {
+          // Duplicate
+          let interupt: MoveInterupt = { type: CreatureState.DUPLICATE, pos: this.position };
+          this.screenPosGenerator.next(interupt);
+
+          this.creatureState = CreatureState.DUPLICATE;
+        }
+      } else {
+        const chance = this.gain / baseCost;
+        if (chance < Math.random()) {
+          // Die
+          this.delete = true;
+          clearInterval(generationEnd);
+        }
+      }
+      this.gain = 0;
+    }, GENERATION_TIME);
   }
 
   spriteIndexGenerator: Generator<number, never, number> = (function* () {
@@ -74,7 +107,7 @@ export abstract class Creature extends Edible implements Move {
   })();
 
   override getSupply(): number {
-    return Math.pow(this.status.size, 3);
+    return Math.floor(Math.pow(this.status.size, 3) * 40);
   }
 
   getBasecost(): number {
@@ -94,6 +127,10 @@ export abstract class Creature extends Edible implements Move {
 
   sensing(creatures: CreatureRef[], foods: FoodRef[]): void {
     // 1. 포식자 감지 시 반대 방향으로 도망
+    if (this.creatureState === CreatureState.AVIOD_FROM_PREDATOR) {
+      return;
+    }
+
     let predetorIndex = -1;
     for (let i = 0; i < creatures.length; i++) {
       const creatureData = creatures[i].data;
@@ -109,10 +146,17 @@ export abstract class Creature extends Edible implements Move {
     if (predetorIndex !== -1) {
       console.log("PREDETOR");
       const predator = creatures[predetorIndex].data;
-      const dx = predator.position.X - this.position.X;
-      const dy = predator.position.Y - this.position.Y;
-      const direction = getRadian({ vx: dx, vy: dy }) + Math.PI;
-      const pos = { X: this.status.sense * Math.cos(direction), Y: this.status.sense * Math.sin(direction) };
+      const dx = this.position.X - predator.position.X;
+      const dy = this.position.Y - predator.position.Y;
+      const direction = getRadian({ vx: dx, vy: dy });
+
+      let posX = this.position.X + this.status.sense * Math.cos(direction);
+      let posY = this.position.Y - this.status.sense * Math.sin(direction);
+      if (posX < 0) posX = 0;
+      if (posX > MAP_WIDTH - 1) posX = MAP_WIDTH - 1;
+      if (posY < 0) posY = 0;
+      if (posY > MAP_HEIGHT - 1) posY = MAP_HEIGHT - 1;
+      const pos = { X: posX, Y: posY };
 
       let interupt: MoveInterupt = { type: CreatureState.AVIOD_FROM_PREDATOR, pos: pos };
       this.screenPosGenerator.next(interupt);

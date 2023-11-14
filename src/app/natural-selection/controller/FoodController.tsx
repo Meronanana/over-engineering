@@ -5,7 +5,7 @@ import { FoodRef, createFoodRef } from "../model/render";
 import FoodView from "../view/FoodView";
 import { FRAME_TIME, TURN_TIME } from "../model/constants";
 import { Frame, Turn, getRandomPosition } from "../model/types";
-import { Apple } from "../model/food";
+import { Apple, Fish, Peach } from "../model/food";
 
 // import "./natsel.scss";
 
@@ -27,8 +27,10 @@ export default function FoodController({ foodRefs }: Props) {
     }, FRAME_TIME);
 
     const addFood = setInterval(() => {
-      foodRefs.current.push(createFoodRef(new Apple(Turn(64), getRandomPosition())));
-    }, TURN_TIME * 4);
+      foodRefs.current.push(createFoodRef(new Apple()));
+      foodRefs.current.push(createFoodRef(new Peach()));
+      foodRefs.current.push(createFoodRef(new Fish()));
+    }, TURN_TIME * 6);
 
     return () => {
       clearInterval(checkDelete);

@@ -33,7 +33,7 @@ export default function FoodView({ foodRefs }: Props) {
         foods.map((v, i) => {
           return (
             <div
-              className={`food-${v.data.foodType}`}
+              className={`food ${v.data.foodType}`}
               ref={v.mainRef}
               key={v.id}
               style={{ top: `${v.data.position.Y * TILE_SIZE}px`, left: `${v.data.position.X * TILE_SIZE}px` }}

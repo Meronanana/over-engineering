@@ -14,19 +14,43 @@
   pointer-events: none;
 }
 
-.food-apple {
-  position: absolute;
+.food {
+  position: fixed;
 
-  top: 0px;
-  left: 0px;
+  top: -100px;
+  left: -100px;
   width: calc(var(--tile-size) - 12px);
   height: calc(var(--tile-size) - 12px);
 
   margin: 6px;
+}
+.food.apple {
+  position: absolute;
 
-  // border-width: 3px;
+  border-width: 3px;
   border-radius: 15px;
-  // border-color: red;
+  border-color: red;
 
-  background-color: red;
+  background-color: rgb(255, 61, 61, 0.8);
+}
+.food.peach {
+  position: absolute;
+
+  border-width: 3px;
+  border-radius: 15px;
+  border-color: rgb(255, 160, 253);
+
+  background-color: rgb(255, 160, 253, 0.8);
+}
+.food.fish {
+  position: absolute;
+
+  height: calc(var(--tile-size) - 16px);
+
+  margin-top: 8px;
+  border-width: 3px;
+  border-radius: 7px;
+  border-color: rgb(77, 190, 255);
+
+  background-color: rgb(25, 171, 255);
 }
