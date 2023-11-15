@@ -31,7 +31,6 @@ export abstract class Food extends Edible implements Animate {
   foodType: FoodType = FoodType.UNDEF;
   turnForDecay: Turn;
 
-  numOfSprite: number = 0;
   spriteState: number = 0;
   interval = Frame(6);
 
@@ -56,7 +55,6 @@ export abstract class Creature extends Edible implements Move {
   gain: number = 0;
   status: Status;
   turnForLife: Turn;
-  numOfSprite: number = 0;
   spriteState: number = 0;
   interval: 1 = 1;
 

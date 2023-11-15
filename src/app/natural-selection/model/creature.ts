@@ -14,7 +14,6 @@ import { MapPosition } from "./types";
 
 export class Pikachu extends Creature {
   creatureType: CreatureType = CreatureType.PIKACHU;
-  numOfSprite: number = 4;
 
   constructor(
     status: Status = { speed: 1.1, size: 0.9, sense: 1 },
@@ -104,7 +103,6 @@ export class Pikachu extends Creature {
 
 export class Pairi extends Creature {
   creatureType: CreatureType = CreatureType.PAIRI;
-  numOfSprite: number = 4;
 
   constructor(
     status: Status = { speed: 0.8, size: 1.3, sense: 1 },
@@ -195,7 +193,6 @@ export class Pairi extends Creature {
 
 export class Isanghaessi extends Creature {
   creatureType: CreatureType = CreatureType.ISANGHAESSI;
-  numOfSprite: number = 4;
 
   constructor(
     status: Status = { speed: 0.8, size: 1, sense: 1.3 },
@@ -286,7 +283,6 @@ export class Isanghaessi extends Creature {
 
 export class Ggobugi extends Creature {
   creatureType: CreatureType = CreatureType.GGOBUGI;
-  numOfSprite: number = 4;
 
   constructor(
     status: Status = { speed: 1, size: 1, sense: 1 },
