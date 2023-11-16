@@ -1,0 +1,58 @@
+:root {
+  --creature-size: 40px;
+}
+
+.creature-area {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+  width: 960px;
+  height: 640px;
+
+  // border-width: 2px;
+  // border-color: black;
+
+  transform: translate(-50%, -50%);
+
+  z-index: 11;
+}
+
+.creature {
+  position: fixed;
+
+  top: -100px;
+  left: 100px;
+  width: var(--creature-size);
+  height: var(--creature-size);
+
+  transform: translate(-4px, -4px);
+
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+  background-size: calc(var(--creature-size) * 4) auto;
+}
+
+.creature.pikachu {
+  position: absolute;
+
+  background-image: url("../../../../public/assets/images/natsel/pikachu.png");
+}
+
+.creature.pairi {
+  position: absolute;
+
+  background-image: url("../../../../public/assets/images/natsel/pairi.png");
+}
+
+.creature.isanghaessi {
+  position: absolute;
+
+  background-image: url("../../../../public/assets/images/natsel/isanghaessi.png");
+}
+
+.creature.ggobugi {
+  position: absolute;
+
+  background-image: url("../../../../public/assets/images/natsel/ggobugi.png");
+}

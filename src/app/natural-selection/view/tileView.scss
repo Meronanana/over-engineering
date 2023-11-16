@@ -1,0 +1,186 @@
+:root {
+  --tile-size: 32px;
+}
+
+.flat-tile-area {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+  width: 960px;
+  height: 640px;
+
+  transform: translate(-50%, -50%);
+
+  z-index: 0;
+}
+
+.above-deco-area {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+  width: 960px;
+  height: 640px;
+
+  transform: translate(-50%, -50%);
+
+  z-index: 1;
+  pointer-events: none;
+}
+
+.over-deco-area {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+  width: 960px;
+  height: 640px;
+
+  transform: translate(-50%, -50%);
+
+  z-index: 20;
+  pointer-events: none;
+}
+
+.flat-tile {
+  position: absolute;
+
+  top: 0px;
+  left: 0px;
+  width: var(--tile-size);
+  height: var(--tile-size);
+
+  // transform: translate(-50%, -50%);
+
+  background-image: url("../../../../public/assets/images/natsel/map-tile.png");
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+  background-size: auto calc(var(--tile-size) * 3);
+}
+// FlatTileType -> Grass_SPROUT
+.flat-tile.tile-0000 {
+  background-position: calc(var(--tile-size) * -5) calc(var(--tile-size) * 0);
+}
+// FlatTileType -> Grass_LEFT_TOP
+.flat-tile.tile-0007 {
+  background-position: calc(var(--tile-size) * 0) calc(var(--tile-size) * 0);
+}
+// FlatTileType -> Grass_TOP
+.flat-tile.tile-0008 {
+  background-position: calc(var(--tile-size) * -1) calc(var(--tile-size) * 0);
+}
+// FlatTileType -> Grass_RIGHT_TOP
+.flat-tile.tile-0009 {
+  background-position: calc(var(--tile-size) * -2) calc(var(--tile-size) * 0);
+}
+// FlatTileType -> Grass_LEFT
+.flat-tile.tile-0004 {
+  background-position: calc(var(--tile-size) * 0) calc(var(--tile-size) * -1);
+}
+// FlatTileType -> Grass_BASE
+.flat-tile.tile-0005 {
+  background-position: calc(var(--tile-size) * -1) calc(var(--tile-size) * -1);
+}
+// FlatTileType -> Grass_RIGHT
+.flat-tile.tile-0006 {
+  background-position: calc(var(--tile-size) * -2) calc(var(--tile-size) * -1);
+}
+// FlatTileType -> Grass_LEFT_BOTTOM
+.flat-tile.tile-0001 {
+  background-position: calc(var(--tile-size) * 0) calc(var(--tile-size) * -2);
+}
+// FlatTileType -> Grass_BOTTOM
+.flat-tile.tile-0002 {
+  background-position: calc(var(--tile-size) * -1) calc(var(--tile-size) * -2);
+}
+// FlatTileType -> Grass_RIGHT_BOTTOM
+.flat-tile.tile-0003 {
+  background-position: calc(var(--tile-size) * -2) calc(var(--tile-size) * -2);
+}
+// FlatTileType -> Grass_INNER_RIGHT_BOTTOM
+.flat-tile.tile-000q {
+  background-position: calc(var(--tile-size) * -3) calc(var(--tile-size) * 0);
+}
+// FlatTileType -> Grass_INNER_LEFT_BOTTOM
+.flat-tile.tile-000w {
+  background-position: calc(var(--tile-size) * -4) calc(var(--tile-size) * 0);
+}
+// FlatTileType -> Grass_INNER_RIGHT_TOP
+.flat-tile.tile-000a {
+  background-position: calc(var(--tile-size) * -3) calc(var(--tile-size) * -1);
+}
+// FlatTileType -> Grass_INNER_LEFT_TOP
+.flat-tile.tile-000s {
+  background-position: calc(var(--tile-size) * -4) calc(var(--tile-size) * -1);
+}
+// FlatTileType -> Plain_BASE1
+.flat-tile.tile-1000 {
+  background-position: calc(var(--tile-size) * -3) calc(var(--tile-size) * -2);
+}
+// FlatTileType -> Plain_BASE2
+.flat-tile.tile-1001 {
+  background-position: calc(var(--tile-size) * -4) calc(var(--tile-size) * -2);
+}
+// FlatTileType -> Plain_ROCK
+.flat-tile.tile-1002 {
+  background-position: calc(var(--tile-size) * -5) calc(var(--tile-size) * -1);
+}
+// FlatTileType -> Plain_GRASS
+.flat-tile.tile-1003 {
+  background-position: calc(var(--tile-size) * -5) calc(var(--tile-size) * -2);
+}
+
+.above-deco {
+  position: absolute;
+
+  top: 0px;
+  left: 0px;
+  width: var(--tile-size);
+  height: var(--tile-size);
+
+  background-image: url("../../../../public/assets/images/natsel/map-above-decorate.png");
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+  background-size: auto calc(var(--tile-size) * 1);
+}
+// AboveDecorateType -> Tree_ROOT1
+.above-deco.tile-2010 {
+  background-position: calc(var(--tile-size) * 0) calc(var(--tile-size) * 0);
+}
+// AboveDecorateType -> Tree_ROOT2
+.above-deco.tile-2011 {
+  background-position: calc(var(--tile-size) * -1) calc(var(--tile-size) * 0);
+}
+
+.over-deco {
+  position: absolute;
+
+  top: 0px;
+  left: 0px;
+  width: var(--tile-size);
+  height: var(--tile-size);
+
+  background-image: url("../../../../public/assets/images/natsel/map-over-decorate.png");
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+  background-size: auto calc(var(--tile-size) * 6);
+
+  opacity: 0.8;
+}
+// OverDecorateType -> Tree_LEAVES1
+.over-deco.tile-2100 {
+  width: calc(var(--tile-size) * 3);
+  height: calc(var(--tile-size) * 6);
+
+  transform: translate(calc(-50% + var(--tile-size) / 2), calc(-100% + var(--tile-size)));
+  background-position: calc(var(--tile-size) * 0) calc(var(--tile-size) * 0);
+}
+// OverDecorateType -> Tree_LEAVES2
+.over-deco.tile-2101 {
+  width: calc(var(--tile-size) * 3);
+  height: calc(var(--tile-size) * 6);
+
+  transform: translate(calc(-50% + var(--tile-size) / 2), calc(-100% + var(--tile-size)));
+  background-position: calc(var(--tile-size) * -3) calc(var(--tile-size) * 0);
+}
