@@ -4,9 +4,9 @@ import { RefObject, useEffect, useState } from "react";
 import { CreatureRef, TileRef } from "../model/render";
 
 import "./creatureView.scss";
-import { TILE_SIZE, FRAME_TIME, TURN_TIME, UNPASSALBE } from "../model/constants";
+import { TILE_SIZE, FRAME_TIME, TURN_TIME, UNPASSALBE, CREATURE_SIZE } from "../model/constants";
 import { FloatingTileType, StaticTileType } from "../model/tile";
-import { MapPosition, getDistance } from "../model/types";
+import { Frame, MapPosition, getDistance } from "../model/types";
 
 interface Props {
   staticTileRefs: RefObject<TileRef<StaticTileType>[][]>;
@@ -25,6 +25,18 @@ export default function CreatureView({ staticTileRefs, floatingTileRefs, creatur
       setCreatures(creatureRefs.current);
     }, TURN_TIME);
 
+    const animateInterval = setInterval(() => {
+      if (!creatureRefs.current) return;
+      creatureRefs.current.forEach((v) => {
+        let idx = v.data.spriteIndexGenerator.next().value;
+
+        if (!v.mainRef.current) return;
+        let ix = CREATURE_SIZE * v.data.spriteState[1];
+        let iy = CREATURE_SIZE * v.data.spriteState[0];
+        v.mainRef.current.style.backgroundPosition = `-${ix}px -${iy}px`;
+      });
+    }, FRAME_TIME * Frame(4));
+
     const moveInterval = setInterval(() => {
       if (!creatureRefs.current) return;
       creatureRefs.current.forEach((v) => {
@@ -39,6 +51,7 @@ export default function CreatureView({ staticTileRefs, floatingTileRefs, creatur
     return () => {
       clearInterval(renderInterval);
       clearInterval(moveInterval);
+      clearInterval(animateInterval);
     };
   }, []);
 

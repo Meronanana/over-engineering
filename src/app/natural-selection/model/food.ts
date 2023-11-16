@@ -11,7 +11,7 @@ export class Apple extends Food {
 
     this.spriteIndexGenerator = (function* (my: Apple) {
       while (true) {
-        yield 0;
+        yield [0, 0];
       }
     })(this);
 
@@ -40,7 +40,7 @@ export class Peach extends Food {
 
     this.spriteIndexGenerator = (function* (my: Peach) {
       while (true) {
-        yield 0;
+        yield [0, 0];
       }
     })(this);
 
@@ -69,7 +69,7 @@ export class Fish extends Food {
 
     this.spriteIndexGenerator = (function* (my: Fish) {
       while (true) {
-        yield 0;
+        yield [0, 0];
       }
     })(this);
 

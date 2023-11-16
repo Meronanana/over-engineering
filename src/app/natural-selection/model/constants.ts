@@ -16,6 +16,7 @@ import { Apple, Fish, Peach } from "./food";
 export const MAP_WIDTH = 30;
 export const MAP_HEIGHT = 20;
 export const TILE_SIZE = 30;
+export const CREATURE_SIZE = 40;
 export const FRAME_TIME = 1000 / 24;
 export const TURN_TIME = FRAME_TIME * 48; // 2sec
 export const SEASON_TIME = TURN_TIME * 16; // 32sec

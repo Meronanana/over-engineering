@@ -1,3 +1,7 @@
+:root {
+  --creature-size: 40px;
+}
+
 .creature-area {
   position: absolute;
 
@@ -19,19 +23,21 @@
 
   top: -100px;
   left: 100px;
-  width: calc(var(--tile-size) - 4px);
-  height: calc(var(--tile-size) - 4px);
+  width: var(--creature-size);
+  height: var(--creature-size);
 
-  margin: 2px;
+  transform: translate(-5px, -5px);
 
-  border-width: 3px;
-  border-radius: 5px;
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+  background-size: calc(var(--creature-size) * 4) auto;
 }
 
 .creature.pikachu {
   position: absolute;
 
-  border-color: rgb(188, 188, 0);
+  background-image: url("../../../../public/assets/images/natsel/pikachu.png");
+
   background-color: rgba(188, 188, 0, 0.3);
 }
 

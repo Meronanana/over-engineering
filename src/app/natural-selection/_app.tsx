@@ -34,7 +34,6 @@ export default function NaturalSelection() {
           foodRefs={foodRefs}
         />
         <CreatureDataInspector creatureRefs={creatureRefs} />
-        <div className="temp" />
       </div>
     </main>
   );

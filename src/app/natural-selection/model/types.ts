@@ -28,6 +28,12 @@ export type MoveInterupt = {
   pos: MapPosition;
 };
 
+export type AnimateInterupt = {
+  type: CreatureState;
+  from: MapPosition;
+  to: MapPosition;
+};
+
 export type Status = {
   speed: number;
   size: number;
@@ -38,6 +44,8 @@ export type MapPosition = {
   X: number;
   Y: number;
 };
+
+export type SpriteIndex = [number, number];
 
 export const getDistance = (from: MapPosition, to: MapPosition): number => {
   return Math.sqrt(Math.pow(from.X - to.X, 2) + Math.pow(from.Y - to.Y, 2));

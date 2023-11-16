@@ -1,4 +1,6 @@
+import { getRadian } from "@/utils/physicalEngine";
 import { Creature } from "./abstractItem";
+import { EAT_LEFT, EAT_RIGHT, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, MOVE_UP } from "./animation";
 import { GENERATION_TIME, TURN_TIME, UNPASSALBE } from "./constants";
 import {
   CreatureType,
@@ -9,6 +11,8 @@ import {
   getDistance,
   getRandomPosition,
   MoveInterupt,
+  SpriteIndex,
+  AnimateInterupt,
 } from "./types";
 import { MapPosition } from "./types";
 
@@ -23,17 +27,58 @@ export class Pikachu extends Creature {
     super(status, turnForLife, position);
 
     this.spriteIndexGenerator = (function* (my: Pikachu) {
+      let direction: number = 0;
+      let vector: SpriteIndex[] = [];
+
       while (true) {
-        yield 1;
+        if (vector.length === 0) {
+          console.log(direction);
+          if (direction < Math.PI / 3) {
+            vector = [...MOVE_RIGHT];
+          } else if (direction < (Math.PI * 2) / 3) {
+            vector = [...MOVE_UP];
+          } else if (direction < (Math.PI * 4) / 3) {
+            vector = [...MOVE_LEFT];
+          } else if (direction < (Math.PI * 5) / 3) {
+            vector = [...MOVE_DOWN];
+          } else {
+            vector = [...MOVE_RIGHT];
+          }
+        }
+
+        while (vector.length !== 0) {
+          const nextValue = vector.shift();
+          if (nextValue) {
+            const sign = yield nextValue;
+            if (sign !== undefined) {
+              vector.unshift(nextValue);
+              if (sign.type === CreatureState.IDLE) {
+                direction = getRadian({ vx: sign.to.X - sign.from.X, vy: sign.to.Y - sign.from.Y }) % (Math.PI * 2);
+              } else if (sign.type === CreatureState.EAT_FOOD) {
+                if (direction > Math.PI / 2 && direction < (Math.PI * 3) / 2) {
+                  vector = [...EAT_LEFT];
+                } else {
+                  vector = [...EAT_RIGHT];
+                }
+              }
+
+              break;
+            } else {
+              my.spriteState = nextValue;
+            }
+          }
+        }
       }
     })(this);
 
     this.screenPosGenerator = (function* (my: Pikachu) {
       let from: MapPosition = my.position;
-      let to: MapPosition = getRandomPosition();
+      let to: MapPosition = my.position;
       let vector: MapPosition[] = [];
       while (true) {
         let distance = getDistance(from, to);
+        let animateInterput: AnimateInterupt = { type: CreatureState.IDLE, from: from, to: to };
+        my.spriteIndexGenerator.next(animateInterput);
 
         if (vector.length === 0) {
           // console.log("create?  " + distance);
@@ -113,7 +158,7 @@ export class Pairi extends Creature {
 
     this.spriteIndexGenerator = (function* (my: Pairi) {
       while (true) {
-        yield 1;
+        yield [0, 0];
       }
     })(this);
 
@@ -203,7 +248,7 @@ export class Isanghaessi extends Creature {
 
     this.spriteIndexGenerator = (function* (my: Isanghaessi) {
       while (true) {
-        yield 1;
+        yield [0, 0];
       }
     })(this);
 
@@ -293,7 +338,7 @@ export class Ggobugi extends Creature {
 
     this.spriteIndexGenerator = (function* (my: Ggobugi) {
       while (true) {
-        yield 1;
+        yield [0, 0];
       }
     })(this);
 

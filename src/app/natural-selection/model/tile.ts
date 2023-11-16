@@ -1,5 +1,5 @@
 import { Animate } from "./animation";
-import { Frame } from "./types";
+import { AnimateInterupt, Frame, SpriteIndex } from "./types";
 
 /*
 TileType은 길이가 4인 문자열로 표현됩니다.
@@ -28,14 +28,12 @@ export class MapTile<T extends StaticTileType | FloatingTileType> {
 }
 
 export class AnimateMapTile<T extends StaticTileType | FloatingTileType> extends MapTile<T> implements Animate {
-  numOfSprite: number;
-  spriteState: number = 0;
+  spriteState: [number, number] = [0, 0];
   interval: number;
-  spriteIndexGenerator: Generator<number, never, number>;
+  spriteIndexGenerator: Generator<SpriteIndex, never, AnimateInterupt>;
 
-  constructor(tileType: T, numOfState: number, interval: Frame, generator: Generator<number, never, number>) {
+  constructor(tileType: T, interval: Frame, generator: Generator<SpriteIndex, never, AnimateInterupt>) {
     super(tileType);
-    this.numOfSprite = numOfState;
     this.interval = interval;
     this.spriteIndexGenerator = generator;
   }

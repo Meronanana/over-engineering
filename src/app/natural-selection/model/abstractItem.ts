@@ -11,6 +11,8 @@ import {
   Status,
   Turn,
   getDistance,
+  SpriteIndex,
+  AnimateInterupt,
 } from "./types";
 import { FRAME_TIME, GENERATION_TIME, MAP_HEIGHT, MAP_WIDTH, TURN_TIME } from "./constants";
 
@@ -31,7 +33,7 @@ export abstract class Food extends Edible implements Animate {
   foodType: FoodType = FoodType.UNDEF;
   turnForDecay: Turn;
 
-  spriteState: number = 0;
+  spriteState: [number, number] = [0, 0];
   interval = Frame(6);
 
   constructor(turnForDecay: Turn, position: MapPosition) {
@@ -39,7 +41,7 @@ export abstract class Food extends Edible implements Animate {
     this.turnForDecay = turnForDecay;
   }
 
-  spriteIndexGenerator: Generator<number, never, any> = (function* () {
+  spriteIndexGenerator: Generator<SpriteIndex, never, any> = (function* () {
     throw Error("제너레이터를 재선언하세요");
   })();
 
@@ -55,7 +57,7 @@ export abstract class Creature extends Edible implements Move {
   gain: number = 0;
   status: Status;
   turnForLife: Turn;
-  spriteState: number = 0;
+  spriteState: [number, number] = [0, 0];
   interval: 1 = 1;
 
   constructor(status: Status, turnForLife: Turn, position: MapPosition) {
@@ -99,7 +101,7 @@ export abstract class Creature extends Edible implements Move {
     }, GENERATION_TIME);
   }
 
-  spriteIndexGenerator: Generator<number, never, number> = (function* () {
+  spriteIndexGenerator: Generator<SpriteIndex, never, AnimateInterupt> = (function* () {
     throw Error("제너레이터를 재선언하세요");
   })();
   screenPosGenerator: Generator<MapPosition, never, MoveInterupt> = (function* () {
@@ -202,8 +204,14 @@ export abstract class Creature extends Edible implements Move {
           throw Error("Target이 Edible이 아닙니다.");
         }
 
-        let interupt: MoveInterupt = { type: CreatureState.EAT_FOOD, pos: this.position };
-        this.screenPosGenerator.next(interupt);
+        let animateInterupt: AnimateInterupt = {
+          type: CreatureState.EAT_FOOD,
+          from: { X: -1, Y: -1 },
+          to: { X: -1, Y: -1 },
+        };
+        let moveInterupt: MoveInterupt = { type: CreatureState.EAT_FOOD, pos: this.position };
+        this.spriteIndexGenerator.next(animateInterupt);
+        this.screenPosGenerator.next(moveInterupt);
         setTimeout(() => {
           if (this.creatureState === CreatureState.EAT_FOOD) {
             this.gain += target.getSupply();
