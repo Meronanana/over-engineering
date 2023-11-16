@@ -32,7 +32,6 @@ export class Pikachu extends Creature {
 
       while (true) {
         if (vector.length === 0) {
-          console.log(direction);
           if (direction < Math.PI / 3) {
             vector = [...MOVE_RIGHT];
           } else if (direction < (Math.PI * 2) / 3) {
@@ -157,17 +156,57 @@ export class Pairi extends Creature {
     super(status, turnForLife, position);
 
     this.spriteIndexGenerator = (function* (my: Pairi) {
+      let direction: number = 0;
+      let vector: SpriteIndex[] = [];
+
       while (true) {
-        yield [0, 0];
+        if (vector.length === 0) {
+          if (direction < Math.PI / 3) {
+            vector = [...MOVE_RIGHT];
+          } else if (direction < (Math.PI * 2) / 3) {
+            vector = [...MOVE_UP];
+          } else if (direction < (Math.PI * 4) / 3) {
+            vector = [...MOVE_LEFT];
+          } else if (direction < (Math.PI * 5) / 3) {
+            vector = [...MOVE_DOWN];
+          } else {
+            vector = [...MOVE_RIGHT];
+          }
+        }
+
+        while (vector.length !== 0) {
+          const nextValue = vector.shift();
+          if (nextValue) {
+            const sign = yield nextValue;
+            if (sign !== undefined) {
+              vector.unshift(nextValue);
+              if (sign.type === CreatureState.IDLE) {
+                direction = getRadian({ vx: sign.to.X - sign.from.X, vy: sign.to.Y - sign.from.Y }) % (Math.PI * 2);
+              } else if (sign.type === CreatureState.EAT_FOOD) {
+                if (direction > Math.PI / 2 && direction < (Math.PI * 3) / 2) {
+                  vector = [...EAT_LEFT];
+                } else {
+                  vector = [...EAT_RIGHT];
+                }
+              }
+
+              break;
+            } else {
+              my.spriteState = nextValue;
+            }
+          }
+        }
       }
     })(this);
 
     this.screenPosGenerator = (function* (my: Pairi) {
       let from: MapPosition = my.position;
-      let to: MapPosition = getRandomPosition();
+      let to: MapPosition = my.position;
       let vector: MapPosition[] = [];
       while (true) {
         let distance = getDistance(from, to);
+        let animateInterput: AnimateInterupt = { type: CreatureState.IDLE, from: from, to: to };
+        my.spriteIndexGenerator.next(animateInterput);
 
         if (vector.length === 0) {
           // console.log("create?  " + distance);
@@ -247,17 +286,57 @@ export class Isanghaessi extends Creature {
     super(status, turnForLife, position);
 
     this.spriteIndexGenerator = (function* (my: Isanghaessi) {
+      let direction: number = 0;
+      let vector: SpriteIndex[] = [];
+
       while (true) {
-        yield [0, 0];
+        if (vector.length === 0) {
+          if (direction < Math.PI / 3) {
+            vector = [...MOVE_RIGHT];
+          } else if (direction < (Math.PI * 2) / 3) {
+            vector = [...MOVE_UP];
+          } else if (direction < (Math.PI * 4) / 3) {
+            vector = [...MOVE_LEFT];
+          } else if (direction < (Math.PI * 5) / 3) {
+            vector = [...MOVE_DOWN];
+          } else {
+            vector = [...MOVE_RIGHT];
+          }
+        }
+
+        while (vector.length !== 0) {
+          const nextValue = vector.shift();
+          if (nextValue) {
+            const sign = yield nextValue;
+            if (sign !== undefined) {
+              vector.unshift(nextValue);
+              if (sign.type === CreatureState.IDLE) {
+                direction = getRadian({ vx: sign.to.X - sign.from.X, vy: sign.to.Y - sign.from.Y }) % (Math.PI * 2);
+              } else if (sign.type === CreatureState.EAT_FOOD) {
+                if (direction > Math.PI / 2 && direction < (Math.PI * 3) / 2) {
+                  vector = [...EAT_LEFT];
+                } else {
+                  vector = [...EAT_RIGHT];
+                }
+              }
+
+              break;
+            } else {
+              my.spriteState = nextValue;
+            }
+          }
+        }
       }
     })(this);
 
     this.screenPosGenerator = (function* (my: Isanghaessi) {
       let from: MapPosition = my.position;
-      let to: MapPosition = getRandomPosition();
+      let to: MapPosition = my.position;
       let vector: MapPosition[] = [];
       while (true) {
         let distance = getDistance(from, to);
+        let animateInterput: AnimateInterupt = { type: CreatureState.IDLE, from: from, to: to };
+        my.spriteIndexGenerator.next(animateInterput);
 
         if (vector.length === 0) {
           // console.log("create?  " + distance);
@@ -337,17 +416,57 @@ export class Ggobugi extends Creature {
     super(status, turnForLife, position);
 
     this.spriteIndexGenerator = (function* (my: Ggobugi) {
+      let direction: number = 0;
+      let vector: SpriteIndex[] = [];
+
       while (true) {
-        yield [0, 0];
+        if (vector.length === 0) {
+          if (direction < Math.PI / 3) {
+            vector = [...MOVE_RIGHT];
+          } else if (direction < (Math.PI * 2) / 3) {
+            vector = [...MOVE_UP];
+          } else if (direction < (Math.PI * 4) / 3) {
+            vector = [...MOVE_LEFT];
+          } else if (direction < (Math.PI * 5) / 3) {
+            vector = [...MOVE_DOWN];
+          } else {
+            vector = [...MOVE_RIGHT];
+          }
+        }
+
+        while (vector.length !== 0) {
+          const nextValue = vector.shift();
+          if (nextValue) {
+            const sign = yield nextValue;
+            if (sign !== undefined) {
+              vector.unshift(nextValue);
+              if (sign.type === CreatureState.IDLE) {
+                direction = getRadian({ vx: sign.to.X - sign.from.X, vy: sign.to.Y - sign.from.Y }) % (Math.PI * 2);
+              } else if (sign.type === CreatureState.EAT_FOOD) {
+                if (direction > Math.PI / 2 && direction < (Math.PI * 3) / 2) {
+                  vector = [...EAT_LEFT];
+                } else {
+                  vector = [...EAT_RIGHT];
+                }
+              }
+
+              break;
+            } else {
+              my.spriteState = nextValue;
+            }
+          }
+        }
       }
     })(this);
 
     this.screenPosGenerator = (function* (my: Ggobugi) {
       let from: MapPosition = my.position;
-      let to: MapPosition = getRandomPosition();
+      let to: MapPosition = my.position;
       let vector: MapPosition[] = [];
       while (true) {
         let distance = getDistance(from, to);
+        let animateInterput: AnimateInterupt = { type: CreatureState.IDLE, from: from, to: to };
+        my.spriteIndexGenerator.next(animateInterput);
 
         if (vector.length === 0) {
           // console.log("create?  " + distance);
