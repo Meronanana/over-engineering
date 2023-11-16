@@ -1,21 +1,21 @@
 import { Ggobugi, Isanghaessi, Pairi, Pikachu } from "./creature";
-import { Creature, Food } from "./abstractItem";
 import {
   CreatureRef,
   FoodRef,
   TileRef,
   createCreatureRef,
-  createFloatingTileRef,
+  createOverDecoRef,
   createFoodRef,
-  createStaticTileRef,
+  createAboveDecoRef,
+  createFlatTileRef,
 } from "./render";
-import { FloatingTileType, MapTile, StaticTileType } from "./tile";
+import { OverDecorateType, MapTile, AboveDecorateType, FlatTileType } from "./tile";
 import { CreatureType, FoodType, MapPosition, Turn, getRandomPosition } from "./types";
 import { Apple, Fish, Peach } from "./food";
 
 export const MAP_WIDTH = 30;
 export const MAP_HEIGHT = 20;
-export const TILE_SIZE = 30;
+export const TILE_SIZE = 32;
 export const CREATURE_SIZE = 40;
 export const FRAME_TIME = 1000 / 24;
 export const TURN_TIME = FRAME_TIME * 48; // 2sec
@@ -24,49 +24,44 @@ export const GENERATION_TIME = SEASON_TIME * 4; // 128sec
 
 export const UNPASSALBE: MapPosition[] = [];
 
-export const createInitalStaticTileRefs = (): TileRef<StaticTileType>[][] => {
-  const result: TileRef<StaticTileType>[][] = [];
+export const createInitFlatTileRefs = (): TileRef<FlatTileType>[][] => {
+  const result: TileRef<FlatTileType>[][] = [];
 
   for (let i = 0; i < MAP_WIDTH; i++) {
     result.push(new Array(MAP_HEIGHT));
     for (let j = 0; j < MAP_HEIGHT; j++) {
-      result[i][j] = createStaticTileRef(new MapTile(StaticTileType.Plain_BASE));
-    }
-  }
-
-  result[4][5] = createStaticTileRef(new MapTile(StaticTileType.TreeRoot_BASE));
-  result[21][7] = createStaticTileRef(new MapTile(StaticTileType.TreeRoot_BASE));
-  result[15][16] = createStaticTileRef(new MapTile(StaticTileType.TreeRoot_BASE));
-
-  for (let i = 0; i < MAP_WIDTH; i++) {
-    for (let j = 0; j < MAP_HEIGHT; j++) {
-      if (result[i][j].data.tileType.toString().charAt(2) === "1") {
-        UNPASSALBE.push({ X: i, Y: j });
-      }
+      result[i][j] = createFlatTileRef(new MapTile(FlatTileType.Plain_BASE1));
     }
   }
 
   return result;
 };
 
-export const createInitalFloatingTileRefs = (): TileRef<FloatingTileType>[][] => {
-  const result: TileRef<FloatingTileType>[][] = [];
+export const createInitAboveDecoRefs = (): Map<MapPosition, TileRef<AboveDecorateType>> => {
+  const result: Map<MapPosition, TileRef<AboveDecorateType>> = new Map();
 
-  for (let i = 0; i < MAP_WIDTH; i++) {
-    result.push(new Array(MAP_HEIGHT));
-    for (let j = 0; j < MAP_HEIGHT; j++) {
-      result[i][j] = createFloatingTileRef(new MapTile(FloatingTileType.BLANK));
-    }
-  }
+  result.set({ X: 4, Y: 5 }, createAboveDecoRef(new MapTile(AboveDecorateType.Tree_ROOT1)));
+  result.set({ X: 21, Y: 7 }, createAboveDecoRef(new MapTile(AboveDecorateType.Tree_ROOT1)));
+  result.set({ X: 15, Y: 16 }, createAboveDecoRef(new MapTile(AboveDecorateType.Tree_ROOT2)));
 
-  result[3][2] = createFloatingTileRef(new MapTile(FloatingTileType.TreeLeaves_BASE));
-  result[20][4] = createFloatingTileRef(new MapTile(FloatingTileType.TreeLeaves_BASE));
-  result[14][13] = createFloatingTileRef(new MapTile(FloatingTileType.TreeLeaves_BASE));
+  UNPASSALBE.push({ X: 4, Y: 5 });
+  UNPASSALBE.push({ X: 21, Y: 7 });
+  UNPASSALBE.push({ X: 15, Y: 16 });
 
   return result;
 };
 
-export const createInitialCreatureRefs = (): CreatureRef[] => {
+export const createInitOverDecoRefs = (): Map<MapPosition, TileRef<OverDecorateType>> => {
+  const result: Map<MapPosition, TileRef<OverDecorateType>> = new Map();
+
+  result.set({ X: 4, Y: 5 }, createOverDecoRef(new MapTile(OverDecorateType.Tree_LEAVES1)));
+  result.set({ X: 21, Y: 7 }, createOverDecoRef(new MapTile(OverDecorateType.Tree_LEAVES1)));
+  result.set({ X: 15, Y: 16 }, createOverDecoRef(new MapTile(OverDecorateType.Tree_LEAVES2)));
+
+  return result;
+};
+
+export const createInitCreatureRefs = (): CreatureRef[] => {
   const result: CreatureRef[] = [];
 
   result.push(createCreatureRef(new Pikachu()));
@@ -81,7 +76,7 @@ export const createInitialCreatureRefs = (): CreatureRef[] => {
   return result;
 };
 
-export const createInitialFoodRefs = (): FoodRef[] => {
+export const createInitFoodRefs = (): FoodRef[] => {
   const result: FoodRef[] = [];
 
   result.push(createFoodRef(new Apple()));
@@ -96,15 +91,3 @@ export const createInitialFoodRefs = (): FoodRef[] => {
 
   return result;
 };
-
-function* testIndexGenerator(): Generator<number, never, number> {
-  while (true) {
-    yield 0;
-  }
-}
-
-function* testPosGenerator(): Generator<MapPosition, never, MapPosition> {
-  while (true) {
-    yield { X: 5, Y: 5 };
-  }
-}

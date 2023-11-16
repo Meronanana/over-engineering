@@ -5,15 +5,13 @@ import { CreatureRef, TileRef } from "../model/render";
 
 import "./creatureView.scss";
 import { TILE_SIZE, FRAME_TIME, TURN_TIME, UNPASSALBE, CREATURE_SIZE } from "../model/constants";
-import { FloatingTileType, StaticTileType } from "../model/tile";
+import { OverDecorateType, AboveDecorateType } from "../model/tile";
 import { Frame, MapPosition, getDistance } from "../model/types";
 
 interface Props {
-  staticTileRefs: RefObject<TileRef<StaticTileType>[][]>;
-  floatingTileRefs: RefObject<TileRef<FloatingTileType>[][]>;
   creatureRefs: RefObject<CreatureRef[]>;
 }
-export default function CreatureView({ staticTileRefs, floatingTileRefs, creatureRefs }: Props) {
+export default function CreatureView({ creatureRefs }: Props) {
   const [creatures, setCreatures] = useState<CreatureRef[]>();
 
   useEffect(() => {
@@ -35,7 +33,7 @@ export default function CreatureView({ staticTileRefs, floatingTileRefs, creatur
         let iy = CREATURE_SIZE * v.data.spriteState[0];
         v.mainRef.current.style.backgroundPosition = `-${ix}px -${iy}px`;
       });
-    }, FRAME_TIME * Frame(4));
+    }, FRAME_TIME * Frame(6));
 
     const moveInterval = setInterval(() => {
       if (!creatureRefs.current) return;

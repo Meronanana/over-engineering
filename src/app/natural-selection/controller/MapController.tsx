@@ -2,27 +2,31 @@
 
 import { RefObject, useRef } from "react";
 import { TileRef } from "../model/render";
-import { FloatingTileType, MapTile, StaticTileType } from "../model/tile";
-import StaticTileView from "../view/StaticTileView";
-import FloatingTileView from "../view/FloatingTileView";
+import { OverDecorateType, MapTile, AboveDecorateType, FlatTileType } from "../model/tile";
+import FlatTileView from "../view/FlatTileView";
+import FloatingTileView from "../view/OverDecoView";
+import { MapPosition } from "../model/types";
+import AboveDecoView from "../view/AboveDecoView";
 
 // import "./natsel.scss";
 
 interface Props {
-  staticTileRefs: RefObject<TileRef<StaticTileType>[][]>;
-  floatingTileRefs: RefObject<TileRef<FloatingTileType>[][]>;
+  flatTileRefs: RefObject<TileRef<FlatTileType>[][]>;
+  aboveDecoRefs: RefObject<Map<MapPosition, TileRef<AboveDecorateType>>>;
+  overDecoRefs: RefObject<Map<MapPosition, TileRef<OverDecorateType>>>;
 }
 
-export default function MapController({ staticTileRefs, floatingTileRefs }: Props) {
-  if (staticTileRefs.current) {
+export default function MapController({ flatTileRefs, aboveDecoRefs, overDecoRefs }: Props) {
+  if (flatTileRefs.current) {
     // staticTileRefs.current.push(new Array(20));
     // staticTileRefs.current[0][0] = createStaticTileRef(new MapTile(StaticTileType.Plain_BASE));
     // console.log(staticTileRefs.current);
   }
   return (
     <>
-      <StaticTileView tileRefs={staticTileRefs} />
-      <FloatingTileView tileRefs={floatingTileRefs} />
+      <FlatTileView tileRefs={flatTileRefs} />
+      <AboveDecoView tileRefs={aboveDecoRefs} />
+      <FloatingTileView tileRefs={overDecoRefs} />
     </>
   );
 }

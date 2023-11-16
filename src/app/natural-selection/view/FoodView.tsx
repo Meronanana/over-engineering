@@ -18,12 +18,23 @@ export default function FoodView({ foodRefs }: Props) {
     const renderInterval = setInterval(() => {
       if (!foodRefs.current) return;
       setFoods(foodRefs.current);
-
-      // console.log(foodRefs.current);
     }, FRAME_TIME * 6);
+
+    const animateInterval = setInterval(() => {
+      if (!foodRefs.current) return;
+      foodRefs.current.forEach((v) => {
+        let idx = v.data.spriteIndexGenerator.next().value;
+
+        if (!v.mainRef.current) return;
+        let ix = TILE_SIZE * v.data.spriteState[1];
+        let iy = TILE_SIZE * v.data.spriteState[0];
+        v.mainRef.current.style.backgroundPosition = `-${ix}px -${iy}px`;
+      });
+    }, FRAME_TIME * Frame(6));
 
     return () => {
       clearInterval(renderInterval);
+      clearInterval(animateInterval);
     };
   }, []);
 

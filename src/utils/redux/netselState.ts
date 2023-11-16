@@ -1,16 +1,16 @@
-import { createInitalStaticTileRefs } from "@/app/natural-selection/model/constants";
+import { createInitFlatTileRefs } from "@/app/natural-selection/model/constants";
 import { TileRef } from "@/app/natural-selection/model/render";
-import { StaticTileType } from "@/app/natural-selection/model/tile";
+import { AboveDecorateType } from "@/app/natural-selection/model/tile";
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface NetselState {
-  staticTileRefs: TileRef<StaticTileType>[][];
+  staticTileRefs: TileRef<AboveDecorateType>[][];
 }
 
 export const netsetStateSlice = createSlice({
   name: "netselState",
   initialState: {
-    staticTileRefs: createInitalStaticTileRefs(),
+    staticTileRefs: createInitFlatTileRefs(),
   } as NetselState,
   reducers: {
     // modalOpen: (state) => {

@@ -1,23 +1,30 @@
 import { RefObject, createRef } from "react";
-import { FloatingTileType, MapTile, StaticTileType } from "./tile";
+import { OverDecorateType, MapTile, AboveDecorateType, TileType, FlatTileType } from "./tile";
 import { Creature, Food } from "./abstractItem";
 
-export type TileRef<T extends StaticTileType | FloatingTileType> = {
+export type TileRef<T extends TileType> = {
   id: string;
   data: MapTile<T>;
   mainRef: RefObject<HTMLDivElement>;
 };
 
-export const createStaticTileRef = (data: MapTile<StaticTileType>): TileRef<StaticTileType> => {
+export const createFlatTileRef = (data: MapTile<FlatTileType>): TileRef<FlatTileType> => {
   return {
-    id: `st${Math.random() * 1000000}`,
+    id: `fl${Math.random() * 1000000}`,
     data: data,
     mainRef: createRef(),
   };
 };
-export const createFloatingTileRef = (data: MapTile<FloatingTileType>): TileRef<FloatingTileType> => {
+export const createAboveDecoRef = (data: MapTile<AboveDecorateType>): TileRef<AboveDecorateType> => {
   return {
-    id: `ft${Math.random() * 1000000}`,
+    id: `ab${Math.random() * 1000000}`,
+    data: data,
+    mainRef: createRef(),
+  };
+};
+export const createOverDecoRef = (data: MapTile<OverDecorateType>): TileRef<OverDecorateType> => {
+  return {
+    id: `ov${Math.random() * 1000000}`,
     data: data,
     mainRef: createRef(),
   };

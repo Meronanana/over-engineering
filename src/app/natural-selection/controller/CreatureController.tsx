@@ -6,16 +6,14 @@ import CreatureView from "../view/CreatureView";
 import { FRAME_TIME, TURN_TIME } from "../model/constants";
 import { CreatureState, CreatureType, Turn, getRandomPosition } from "../model/types";
 import { Ggobugi, Isanghaessi, Pairi, Pikachu } from "../model/creature";
-import { FloatingTileType, StaticTileType } from "../model/tile";
+import { OverDecorateType, AboveDecorateType } from "../model/tile";
 
 interface Props {
-  staticTileRefs: RefObject<TileRef<StaticTileType>[][]>;
-  floatingTileRefs: RefObject<TileRef<FloatingTileType>[][]>;
   creatureRefs: MutableRefObject<CreatureRef[]>;
   foodRefs: MutableRefObject<FoodRef[]>;
 }
 
-export default function CreatureController({ staticTileRefs, floatingTileRefs, creatureRefs, foodRefs }: Props) {
+export default function CreatureController({ creatureRefs, foodRefs }: Props) {
   useEffect(() => {
     const checkDelete = setInterval(() => {
       const newCreatureRefs: CreatureRef[] = [];
@@ -70,7 +68,7 @@ export default function CreatureController({ staticTileRefs, floatingTileRefs, c
 
   return (
     <>
-      <CreatureView staticTileRefs={staticTileRefs} floatingTileRefs={floatingTileRefs} creatureRefs={creatureRefs} />
+      <CreatureView creatureRefs={creatureRefs} />
     </>
   );
 }

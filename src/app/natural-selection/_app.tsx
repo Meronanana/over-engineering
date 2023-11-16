@@ -7,32 +7,30 @@ import CreatureController from "./controller/CreatureController";
 import FoodController from "./controller/FoodController";
 import MapController from "./controller/MapController";
 import { CreatureRef, FoodRef, TileRef } from "./model/render";
-import { FloatingTileType, StaticTileType } from "./model/tile";
+import { OverDecorateType, AboveDecorateType, FlatTileType } from "./model/tile";
 import {
-  createInitalFloatingTileRefs,
-  createInitalStaticTileRefs,
-  createInitialCreatureRefs,
-  createInitialFoodRefs,
+  createInitOverDecoRefs,
+  createInitFlatTileRefs,
+  createInitCreatureRefs,
+  createInitFoodRefs,
+  createInitAboveDecoRefs,
 } from "./model/constants";
 import CreatureDataInspector from "./controller/CreatureDataInspector";
+import { MapPosition } from "./model/types";
 
 export default function NaturalSelection() {
-  const staticTileRefs = useRef<TileRef<StaticTileType>[][]>(createInitalStaticTileRefs());
-  const floatingTileRefs = useRef<TileRef<FloatingTileType>[][]>(createInitalFloatingTileRefs());
-  const creatureRefs = useRef<CreatureRef[]>(createInitialCreatureRefs());
-  const foodRefs = useRef<FoodRef[]>(createInitialFoodRefs());
+  const flatTileRefs = useRef<TileRef<FlatTileType>[][]>(createInitFlatTileRefs());
+  const aboveDecoRefs = useRef<Map<MapPosition, TileRef<AboveDecorateType>>>(createInitAboveDecoRefs());
+  const overDecoRefs = useRef<Map<MapPosition, TileRef<OverDecorateType>>>(createInitOverDecoRefs());
+  const creatureRefs = useRef<CreatureRef[]>(createInitCreatureRefs());
+  const foodRefs = useRef<FoodRef[]>(createInitFoodRefs());
 
   return (
     <main>
       <div className="natsel-screen">
-        <MapController staticTileRefs={staticTileRefs} floatingTileRefs={floatingTileRefs} />
+        <MapController flatTileRefs={flatTileRefs} aboveDecoRefs={aboveDecoRefs} overDecoRefs={overDecoRefs} />
         <FoodController foodRefs={foodRefs} />
-        <CreatureController
-          staticTileRefs={staticTileRefs}
-          floatingTileRefs={floatingTileRefs}
-          creatureRefs={creatureRefs}
-          foodRefs={foodRefs}
-        />
+        <CreatureController creatureRefs={creatureRefs} foodRefs={foodRefs} />
         <CreatureDataInspector creatureRefs={creatureRefs} />
       </div>
     </main>

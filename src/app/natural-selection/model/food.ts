@@ -1,17 +1,43 @@
 import { Food } from "./abstractItem";
 import { TURN_TIME } from "./constants";
-import { FoodType, MapPosition, Turn, getRandomPosition } from "./types";
+import { FoodType, MapPosition, SpriteIndex, Turn, getRandomPosition } from "./types";
 
 export class Apple extends Food {
   foodType = FoodType.APPLE;
-  numOfSprite: number = 4;
 
   constructor(turnForDecay: Turn = Turn(64), position: MapPosition = getRandomPosition()) {
     super(turnForDecay, position);
 
     this.spriteIndexGenerator = (function* (my: Apple) {
+      let vector: SpriteIndex[] = [];
       while (true) {
-        yield [0, 0];
+        if (vector.length === 0) {
+          if (my.turnForDecay <= 4)
+            vector = [
+              [0, 4],
+              [0, 4],
+              [0, 4],
+              [0, 4],
+            ];
+          else
+            vector = [
+              [0, 0],
+              [0, 0],
+              [0, 0],
+              [0, 0],
+              [0, 1],
+              [0, 1],
+              [0, 1],
+              [0, 1],
+            ];
+        }
+        while (vector.length !== 0) {
+          let nextValue = vector.shift();
+          if (nextValue) {
+            yield nextValue;
+            my.spriteState = nextValue;
+          }
+        }
       }
     })(this);
 
@@ -33,14 +59,40 @@ export class Apple extends Food {
 
 export class Peach extends Food {
   foodType = FoodType.PEACH;
-  numOfSprite: number = 4;
 
   constructor(turnForDecay: Turn = Turn(96), position: MapPosition = getRandomPosition()) {
     super(turnForDecay, position);
 
     this.spriteIndexGenerator = (function* (my: Peach) {
+      let vector: SpriteIndex[] = [];
       while (true) {
-        yield [0, 0];
+        if (vector.length === 0) {
+          if (my.turnForDecay <= 4)
+            vector = [
+              [0, 4],
+              [0, 4],
+              [0, 4],
+              [0, 4],
+            ];
+          else
+            vector = [
+              [0, 0],
+              [0, 0],
+              [0, 0],
+              [0, 0],
+              [0, 1],
+              [0, 1],
+              [0, 1],
+              [0, 1],
+            ];
+        }
+        while (vector.length !== 0) {
+          let nextValue = vector.shift();
+          if (nextValue) {
+            yield nextValue;
+            my.spriteState = nextValue;
+          }
+        }
       }
     })(this);
 
@@ -62,14 +114,36 @@ export class Peach extends Food {
 
 export class Fish extends Food {
   foodType = FoodType.FISH;
-  numOfSprite: number = 4;
 
   constructor(turnForDecay: Turn = Turn(32), position: MapPosition = getRandomPosition()) {
     super(turnForDecay, position);
 
     this.spriteIndexGenerator = (function* (my: Fish) {
+      let vector: SpriteIndex[] = [];
       while (true) {
-        yield [0, 0];
+        if (vector.length === 0) {
+          if (my.turnForDecay <= 4)
+            vector = [
+              [0, 4],
+              [0, 4],
+              [0, 4],
+              [0, 4],
+            ];
+          else
+            vector = [
+              [0, 0],
+              [0, 1],
+              [0, 2],
+              [0, 3],
+            ];
+        }
+        while (vector.length !== 0) {
+          let nextValue = vector.shift();
+          if (nextValue) {
+            yield nextValue;
+            my.spriteState = nextValue;
+          }
+        }
       }
     })(this);
 

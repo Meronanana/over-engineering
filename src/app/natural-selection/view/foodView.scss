@@ -1,19 +1,20 @@
+:root {
+  --tile-size: 32px;
+}
+
 .food-area {
   position: absolute;
 
   top: 50%;
   left: 50%;
-  width: 900px;
-  height: 600px;
-
-  // border-width: 2px;
-  // border-color: black;
+  width: 960px;
+  height: 640px;
 
   transform: translate(-50%, -50%);
 
   pointer-events: none;
 
-  z-index: 1;
+  z-index: 10;
 }
 
 .food {
@@ -21,38 +22,25 @@
 
   top: -100px;
   left: -100px;
-  width: calc(var(--tile-size) - 12px);
-  height: calc(var(--tile-size) - 12px);
+  width: var(--tile-size);
+  height: var(--tile-size);
 
-  margin: 6px;
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+  background-size: auto var(--tile-size);
 }
 .food.apple {
   position: absolute;
 
-  border-width: 3px;
-  border-radius: 15px;
-  border-color: red;
-
-  background-color: rgb(255, 61, 61, 0.8);
+  background-image: url("../../../../public/assets/images/natsel/apple.png");
 }
 .food.peach {
   position: absolute;
 
-  border-width: 3px;
-  border-radius: 15px;
-  border-color: rgb(255, 160, 253);
-
-  background-color: rgb(255, 160, 253, 0.8);
+  background-image: url("../../../../public/assets/images/natsel/peach.png");
 }
 .food.fish {
   position: absolute;
 
-  height: calc(var(--tile-size) - 16px);
-
-  margin-top: 8px;
-  border-width: 3px;
-  border-radius: 7px;
-  border-color: rgb(77, 190, 255);
-
-  background-color: rgb(25, 171, 255);
+  background-image: url("../../../../public/assets/images/natsel/enchovy.png");
 }
