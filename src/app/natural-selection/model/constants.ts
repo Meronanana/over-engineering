@@ -30,9 +30,57 @@ export const createInitFlatTileRefs = (): TileRef<FlatTileType>[][] => {
   for (let i = 0; i < MAP_WIDTH; i++) {
     result.push(new Array(MAP_HEIGHT));
     for (let j = 0; j < MAP_HEIGHT; j++) {
-      result[i][j] = createFlatTileRef(new MapTile(FlatTileType.Plain_BASE1));
+      let k = Math.random();
+      if (k < 0.01) {
+        result[i][j] = createFlatTileRef(new MapTile(FlatTileType.Plain_ROCK));
+      } else if (k < 0.02) {
+        result[i][j] = createFlatTileRef(new MapTile(FlatTileType.Plain_GRASS));
+      } else if (k < 0.1) {
+        result[i][j] = createFlatTileRef(new MapTile(FlatTileType.Plain_BASE1));
+      } else {
+        result[i][j] = createFlatTileRef(new MapTile(FlatTileType.Plain_BASE2));
+      }
     }
   }
+
+  // TODO: GRASS 생성 알고리즘 만들기
+  result[18][6] = createFlatTileRef(new MapTile(FlatTileType.Grass_LEFT_TOP));
+  result[19][6] = createFlatTileRef(new MapTile(FlatTileType.Grass_TOP));
+  result[20][6] = createFlatTileRef(new MapTile(FlatTileType.Grass_TOP));
+  result[21][6] = createFlatTileRef(new MapTile(FlatTileType.Grass_TOP));
+  result[22][6] = createFlatTileRef(new MapTile(FlatTileType.Grass_RIGHT_TOP));
+
+  result[18][7] = createFlatTileRef(new MapTile(FlatTileType.Grass_LEFT));
+  result[19][7] = createFlatTileRef(new MapTile(FlatTileType.Grass_BASE));
+  result[20][7] = createFlatTileRef(new MapTile(FlatTileType.Grass_BASE));
+  result[21][7] = createFlatTileRef(new MapTile(FlatTileType.Grass_BASE));
+  result[22][7] = createFlatTileRef(new MapTile(FlatTileType.Grass_INNER_RIGHT_TOP));
+  result[23][7] = createFlatTileRef(new MapTile(FlatTileType.Grass_TOP));
+  result[24][7] = createFlatTileRef(new MapTile(FlatTileType.Grass_RIGHT_TOP));
+
+  result[16][8] = createFlatTileRef(new MapTile(FlatTileType.Grass_LEFT_TOP));
+  result[17][8] = createFlatTileRef(new MapTile(FlatTileType.Grass_TOP));
+  result[18][8] = createFlatTileRef(new MapTile(FlatTileType.Grass_INNER_LEFT_TOP));
+  result[19][8] = createFlatTileRef(new MapTile(FlatTileType.Grass_BASE));
+  result[20][8] = createFlatTileRef(new MapTile(FlatTileType.Grass_INNER_RIGHT_BOTTOM));
+  result[21][8] = createFlatTileRef(new MapTile(FlatTileType.Grass_INNER_LEFT_BOTTOM));
+  result[22][8] = createFlatTileRef(new MapTile(FlatTileType.Grass_BASE));
+  result[23][8] = createFlatTileRef(new MapTile(FlatTileType.Grass_BASE));
+  result[24][8] = createFlatTileRef(new MapTile(FlatTileType.Grass_RIGHT));
+
+  result[16][9] = createFlatTileRef(new MapTile(FlatTileType.Grass_LEFT_BOTTOM));
+  result[17][9] = createFlatTileRef(new MapTile(FlatTileType.Grass_BOTTOM));
+  result[18][9] = createFlatTileRef(new MapTile(FlatTileType.Grass_BOTTOM));
+  result[19][9] = createFlatTileRef(new MapTile(FlatTileType.Grass_BOTTOM));
+  result[20][9] = createFlatTileRef(new MapTile(FlatTileType.Grass_RIGHT_BOTTOM));
+  result[21][9] = createFlatTileRef(new MapTile(FlatTileType.Grass_LEFT_BOTTOM));
+  result[22][9] = createFlatTileRef(new MapTile(FlatTileType.Grass_BOTTOM));
+  result[23][9] = createFlatTileRef(new MapTile(FlatTileType.Grass_INNER_LEFT_BOTTOM));
+  result[24][9] = createFlatTileRef(new MapTile(FlatTileType.Grass_RIGHT));
+
+  result[23][10] = createFlatTileRef(new MapTile(FlatTileType.Grass_LEFT_BOTTOM));
+  result[24][10] = createFlatTileRef(new MapTile(FlatTileType.Grass_RIGHT_BOTTOM));
+  // TODO: 수작업은 좀 아닌 것 같습니다
 
   return result;
 };

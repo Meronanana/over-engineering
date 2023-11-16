@@ -60,11 +60,75 @@
 }
 // FlatTileType -> Grass_SPROUT
 .flat-tile.tile-0000 {
-  background-position: calc(var(--tile-size) * 0) calc(var(--tile-size) * -6);
+  background-position: calc(var(--tile-size) * -5) calc(var(--tile-size) * 0);
+}
+// FlatTileType -> Grass_LEFT_TOP
+.flat-tile.tile-0007 {
+  background-position: calc(var(--tile-size) * 0) calc(var(--tile-size) * 0);
+}
+// FlatTileType -> Grass_TOP
+.flat-tile.tile-0008 {
+  background-position: calc(var(--tile-size) * -1) calc(var(--tile-size) * 0);
+}
+// FlatTileType -> Grass_RIGHT_TOP
+.flat-tile.tile-0009 {
+  background-position: calc(var(--tile-size) * -2) calc(var(--tile-size) * 0);
+}
+// FlatTileType -> Grass_LEFT
+.flat-tile.tile-0004 {
+  background-position: calc(var(--tile-size) * 0) calc(var(--tile-size) * -1);
+}
+// FlatTileType -> Grass_BASE
+.flat-tile.tile-0005 {
+  background-position: calc(var(--tile-size) * -1) calc(var(--tile-size) * -1);
+}
+// FlatTileType -> Grass_RIGHT
+.flat-tile.tile-0006 {
+  background-position: calc(var(--tile-size) * -2) calc(var(--tile-size) * -1);
+}
+// FlatTileType -> Grass_LEFT_BOTTOM
+.flat-tile.tile-0001 {
+  background-position: calc(var(--tile-size) * 0) calc(var(--tile-size) * -2);
+}
+// FlatTileType -> Grass_BOTTOM
+.flat-tile.tile-0002 {
+  background-position: calc(var(--tile-size) * -1) calc(var(--tile-size) * -2);
+}
+// FlatTileType -> Grass_RIGHT_BOTTOM
+.flat-tile.tile-0003 {
+  background-position: calc(var(--tile-size) * -2) calc(var(--tile-size) * -2);
+}
+// FlatTileType -> Grass_INNER_RIGHT_BOTTOM
+.flat-tile.tile-000q {
+  background-position: calc(var(--tile-size) * -3) calc(var(--tile-size) * 0);
+}
+// FlatTileType -> Grass_INNER_LEFT_BOTTOM
+.flat-tile.tile-000w {
+  background-position: calc(var(--tile-size) * -4) calc(var(--tile-size) * 0);
+}
+// FlatTileType -> Grass_INNER_RIGHT_TOP
+.flat-tile.tile-000a {
+  background-position: calc(var(--tile-size) * -3) calc(var(--tile-size) * -1);
+}
+// FlatTileType -> Grass_INNER_LEFT_TOP
+.flat-tile.tile-000s {
+  background-position: calc(var(--tile-size) * -4) calc(var(--tile-size) * -1);
 }
 // FlatTileType -> Plain_BASE1
 .flat-tile.tile-1000 {
   background-position: calc(var(--tile-size) * -3) calc(var(--tile-size) * -2);
+}
+// FlatTileType -> Plain_BASE2
+.flat-tile.tile-1001 {
+  background-position: calc(var(--tile-size) * -4) calc(var(--tile-size) * -2);
+}
+// FlatTileType -> Plain_ROCK
+.flat-tile.tile-1002 {
+  background-position: calc(var(--tile-size) * -5) calc(var(--tile-size) * -1);
+}
+// FlatTileType -> Plain_GRASS
+.flat-tile.tile-1003 {
+  background-position: calc(var(--tile-size) * -5) calc(var(--tile-size) * -2);
 }
 
 .above-deco {
