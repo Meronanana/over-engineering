@@ -1,14 +1,10 @@
-:root {
-  --tile-size: 32px;
-}
-
 .food-area {
   position: absolute;
 
   top: 50%;
   left: 50%;
-  width: 960px;
-  height: 640px;
+  width: calc((var(--tile-size) * var(--map-size)));
+  height: calc((var(--tile-size) * var(--map-size)));
 
   transform: translate(-50%, -50%);
 

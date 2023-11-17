@@ -14,19 +14,21 @@ interface Props {
   flatTileRefs: RefObject<TileRef<FlatTileType>[][]>;
   aboveDecoRefs: RefObject<Map<MapPosition, TileRef<AboveDecorateType>>>;
   overDecoRefs: RefObject<Map<MapPosition, TileRef<OverDecorateType>>>;
+  sizeIndex: RefObject<number>;
 }
 
-export default function MapController({ flatTileRefs, aboveDecoRefs, overDecoRefs }: Props) {
+export default function MapController({ flatTileRefs, aboveDecoRefs, overDecoRefs, sizeIndex }: Props) {
   if (flatTileRefs.current) {
     // staticTileRefs.current.push(new Array(20));
     // staticTileRefs.current[0][0] = createStaticTileRef(new MapTile(StaticTileType.Plain_BASE));
     // console.log(staticTileRefs.current);
   }
+  // console.log(sizeIndex.current);
   return (
     <>
-      <FlatTileView tileRefs={flatTileRefs} />
-      <AboveDecoView tileRefs={aboveDecoRefs} />
-      <FloatingTileView tileRefs={overDecoRefs} />
+      <FlatTileView tileRefs={flatTileRefs} sizeIndex={sizeIndex} />
+      <AboveDecoView tileRefs={aboveDecoRefs} sizeIndex={sizeIndex} />
+      <FloatingTileView tileRefs={overDecoRefs} sizeIndex={sizeIndex} />
     </>
   );
 }

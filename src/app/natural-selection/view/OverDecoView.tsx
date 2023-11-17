@@ -10,9 +10,10 @@ import { MapPosition } from "../model/types";
 
 interface Props {
   tileRefs: RefObject<Map<MapPosition, TileRef<OverDecorateType>>>;
+  sizeIndex: RefObject<number>;
 }
 
-export default function OverDecoView({ tileRefs }: Props) {
+export default function OverDecoView({ tileRefs, sizeIndex }: Props) {
   const [tiles, setTiles] = useState<Map<MapPosition, TileRef<OverDecorateType>>>();
 
   useEffect(() => {
@@ -23,12 +24,13 @@ export default function OverDecoView({ tileRefs }: Props) {
   const renderTiles = () => {
     const result: JSX.Element[] = [];
     tiles?.forEach((v, k) => {
+      if (sizeIndex.current === null) return;
       result.push(
         <div
           className={`over-deco tile-${v.data.tileType}`}
           ref={v.mainRef}
           key={v.id}
-          style={{ top: `${k.Y * TILE_SIZE}px`, left: `${k.X * TILE_SIZE}px` }}
+          style={{ top: `${k.Y * TILE_SIZE[sizeIndex.current]}px`, left: `${k.X * TILE_SIZE[sizeIndex.current]}px` }}
         ></div>
       );
     });

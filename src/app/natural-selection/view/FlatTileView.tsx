@@ -5,19 +5,34 @@ import { TileRef } from "../model/render";
 import { AboveDecorateType, FlatTileType } from "../model/tile";
 
 import "./tileView.scss";
-import { TILE_SIZE } from "../model/constants";
+import { FRAME_TIME, TILE_SIZE } from "../model/constants";
 
 interface Props {
   tileRefs: RefObject<TileRef<FlatTileType>[][]>;
+  sizeIndex: RefObject<number>;
 }
 
-export default function FlatTileView({ tileRefs }: Props) {
+export default function FlatTileView({ tileRefs, sizeIndex }: Props) {
   const [tiles, setTiles] = useState<TileRef<FlatTileType>[][]>();
+  const [sizeIdx, setSizeIdx] = useState<number>(0);
 
   useEffect(() => {
-    if (!tileRefs.current) return;
-    setTiles(tileRefs.current);
+    window.addEventListener("resize", renderTile);
+
+    setTimeout(() => {
+      renderTile();
+      if (tileRefs.current) setTiles(tileRefs.current);
+    }, FRAME_TIME);
+
+    return () => {
+      window.removeEventListener("resize", renderTile);
+    };
   }, []);
+
+  const renderTile = () => {
+    if (sizeIndex.current === null) return;
+    setSizeIdx(sizeIndex.current);
+  };
 
   return (
     <div className="flat-tile-area">
@@ -29,7 +44,7 @@ export default function FlatTileView({ tileRefs }: Props) {
                 className={`flat-tile tile-${v.data.tileType}`}
                 ref={v.mainRef}
                 key={v.id}
-                style={{ top: `${i * TILE_SIZE}px`, left: `${iA * TILE_SIZE}px` }}
+                style={{ top: `${i * TILE_SIZE[sizeIdx]}px`, left: `${iA * TILE_SIZE[sizeIdx]}px` }}
               ></div>
             );
           });

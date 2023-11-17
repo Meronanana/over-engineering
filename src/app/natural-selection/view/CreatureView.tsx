@@ -4,14 +4,14 @@ import { RefObject, useEffect, useState } from "react";
 import { CreatureRef, TileRef } from "../model/render";
 
 import "./creatureView.scss";
-import { TILE_SIZE, FRAME_TIME, TURN_TIME, UNPASSALBE, CREATURE_SIZE } from "../model/constants";
-import { OverDecorateType, AboveDecorateType } from "../model/tile";
+import { TILE_SIZE, FRAME_TIME, TURN_TIME, CREATURE_SIZE } from "../model/constants";
 import { Frame, MapPosition, getDistance } from "../model/types";
 
 interface Props {
   creatureRefs: RefObject<CreatureRef[]>;
+  sizeIndex: RefObject<number>;
 }
-export default function CreatureView({ creatureRefs }: Props) {
+export default function CreatureView({ creatureRefs, sizeIndex }: Props) {
   const [creatures, setCreatures] = useState<CreatureRef[]>();
 
   useEffect(() => {
@@ -28,9 +28,9 @@ export default function CreatureView({ creatureRefs }: Props) {
       creatureRefs.current.forEach((v) => {
         let idx = v.data.spriteIndexGenerator.next().value;
 
-        if (!v.mainRef.current) return;
-        let ix = CREATURE_SIZE * v.data.spriteState[1];
-        let iy = CREATURE_SIZE * v.data.spriteState[0];
+        if (!v.mainRef.current || sizeIndex.current === null) return;
+        let ix = CREATURE_SIZE[sizeIndex.current] * v.data.spriteState[1];
+        let iy = CREATURE_SIZE[sizeIndex.current] * v.data.spriteState[0];
         v.mainRef.current.style.backgroundPosition = `-${ix}px -${iy}px`;
       });
     }, FRAME_TIME * Frame(6));
@@ -40,9 +40,9 @@ export default function CreatureView({ creatureRefs }: Props) {
       creatureRefs.current.forEach((v) => {
         let pos = v.data.screenPosGenerator.next().value;
 
-        if (!v.mainRef.current) return;
-        v.mainRef.current.style.top = `${v.data.position.Y * TILE_SIZE}px`;
-        v.mainRef.current.style.left = `${v.data.position.X * TILE_SIZE}px`;
+        if (!v.mainRef.current || sizeIndex.current === null) return;
+        v.mainRef.current.style.top = `${v.data.position.Y * TILE_SIZE[sizeIndex.current]}px`;
+        v.mainRef.current.style.left = `${v.data.position.X * TILE_SIZE[sizeIndex.current]}px`;
       });
     }, FRAME_TIME);
 

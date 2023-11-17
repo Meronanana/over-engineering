@@ -11,9 +11,10 @@ import { OverDecorateType, AboveDecorateType } from "../model/tile";
 interface Props {
   creatureRefs: MutableRefObject<CreatureRef[]>;
   foodRefs: MutableRefObject<FoodRef[]>;
+  sizeIndex: RefObject<number>;
 }
 
-export default function CreatureController({ creatureRefs, foodRefs }: Props) {
+export default function CreatureController({ creatureRefs, foodRefs, sizeIndex }: Props) {
   useEffect(() => {
     const checkDelete = setInterval(() => {
       const newCreatureRefs: CreatureRef[] = [];
@@ -68,7 +69,7 @@ export default function CreatureController({ creatureRefs, foodRefs }: Props) {
 
   return (
     <>
-      <CreatureView creatureRefs={creatureRefs} />
+      <CreatureView creatureRefs={creatureRefs} sizeIndex={sizeIndex} />
     </>
   );
 }

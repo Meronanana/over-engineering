@@ -9,9 +9,10 @@ import { Frame } from "../model/types";
 
 interface Props {
   foodRefs: RefObject<FoodRef[]>;
+  sizeIndex: RefObject<number>;
 }
 
-export default function FoodView({ foodRefs }: Props) {
+export default function FoodView({ foodRefs, sizeIndex }: Props) {
   const [foods, setFoods] = useState<FoodRef[]>();
 
   useEffect(() => {
@@ -25,9 +26,9 @@ export default function FoodView({ foodRefs }: Props) {
       foodRefs.current.forEach((v) => {
         let idx = v.data.spriteIndexGenerator.next().value;
 
-        if (!v.mainRef.current) return;
-        let ix = TILE_SIZE * v.data.spriteState[1];
-        let iy = TILE_SIZE * v.data.spriteState[0];
+        if (!v.mainRef.current || sizeIndex.current === null) return;
+        let ix = TILE_SIZE[sizeIndex.current] * v.data.spriteState[1];
+        let iy = TILE_SIZE[sizeIndex.current] * v.data.spriteState[0];
         v.mainRef.current.style.backgroundPosition = `-${ix}px -${iy}px`;
       });
     }, FRAME_TIME * Frame(6));
@@ -42,12 +43,16 @@ export default function FoodView({ foodRefs }: Props) {
     <div className="food-area">
       {foods !== undefined ? (
         foods.map((v, i) => {
+          if (sizeIndex.current === null) return;
           return (
             <div
               className={`food ${v.data.foodType}`}
               ref={v.mainRef}
               key={v.id}
-              style={{ top: `${v.data.position.Y * TILE_SIZE}px`, left: `${v.data.position.X * TILE_SIZE}px` }}
+              style={{
+                top: `${v.data.position.Y * TILE_SIZE[sizeIndex.current]}px`,
+                left: `${v.data.position.X * TILE_SIZE[sizeIndex.current]}px`,
+              }}
             ></div>
           );
         })

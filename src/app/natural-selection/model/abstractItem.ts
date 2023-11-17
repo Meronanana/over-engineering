@@ -14,7 +14,7 @@ import {
   SpriteIndex,
   AnimateInterupt,
 } from "./types";
-import { FRAME_TIME, GENERATION_TIME, MAP_HEIGHT, MAP_WIDTH, TURN_TIME } from "./constants";
+import { FRAME_TIME, GENERATION_TIME, MAP_SIZE, TURN_TIME } from "./constants";
 
 export abstract class Edible {
   position: MapPosition;
@@ -156,9 +156,9 @@ export abstract class Creature extends Edible implements Move {
       let posX = this.position.X + this.status.sense * Math.cos(direction);
       let posY = this.position.Y - this.status.sense * Math.sin(direction);
       if (posX < 0) posX = 0;
-      if (posX > MAP_WIDTH - 1) posX = MAP_WIDTH - 1;
+      if (posX > MAP_SIZE - 1) posX = MAP_SIZE - 1;
       if (posY < 0) posY = 0;
-      if (posY > MAP_HEIGHT - 1) posY = MAP_HEIGHT - 1;
+      if (posY > MAP_SIZE - 1) posY = MAP_SIZE - 1;
       const pos = { X: posX, Y: posY };
 
       let interupt: MoveInterupt = { type: CreatureState.AVIOD_FROM_PREDATOR, pos: pos };
