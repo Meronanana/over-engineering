@@ -1,20 +1,25 @@
 "use client";
 
-import { RefObject, useEffect, useState } from "react";
+import "./tileView.scss";
+
+import { RefObject, useEffect, useRef, useState } from "react";
 import { TileRef } from "../model/render";
 import { AboveDecorateType, FlatTileType } from "../model/tile";
 
-import "./tileView.scss";
 import { FRAME_TIME, TILE_SIZE } from "../model/constants";
+import { ScreenCoordinate } from "@/utils/physicalEngine";
 
 interface Props {
   tileRefs: RefObject<TileRef<FlatTileType>[][]>;
   sizeIndex: RefObject<number>;
+  camPosRef: RefObject<ScreenCoordinate>;
 }
 
-export default function FlatTileView({ tileRefs, sizeIndex }: Props) {
+export default function FlatTileView({ tileRefs, sizeIndex, camPosRef }: Props) {
   const [tiles, setTiles] = useState<TileRef<FlatTileType>[][]>();
   const [sizeIdx, setSizeIdx] = useState<number>(0);
+
+  const areaRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     window.addEventListener("resize", renderTile);
@@ -24,8 +29,16 @@ export default function FlatTileView({ tileRefs, sizeIndex }: Props) {
       if (tileRefs.current) setTiles(tileRefs.current);
     }, FRAME_TIME);
 
+    const camMove = setInterval(() => {
+      if (!areaRef.current || !camPosRef.current) return;
+
+      areaRef.current.style.top = `-${camPosRef.current.Y}px`;
+      areaRef.current.style.left = `-${camPosRef.current.X}px`;
+    }, FRAME_TIME);
+
     return () => {
       window.removeEventListener("resize", renderTile);
+      clearInterval(camMove);
     };
   }, []);
 
@@ -35,7 +48,7 @@ export default function FlatTileView({ tileRefs, sizeIndex }: Props) {
   };
 
   return (
-    <div className="flat-tile-area">
+    <div className="flat-tile-area" ref={areaRef}>
       {tiles !== undefined ? (
         tiles.map((vA, iA) => {
           return vA.map((v, i) => {

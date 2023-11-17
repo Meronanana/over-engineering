@@ -1,21 +1,32 @@
 "use client";
 
-import { RefObject, useEffect, useState } from "react";
+import { RefObject, useEffect, useState, useRef } from "react";
 import { FoodRef } from "../model/render";
 import { TILE_SIZE, FRAME_TIME as FRAME_TIME, TURN_TIME } from "../model/constants";
 
 import "./foodView.scss";
 import { Frame } from "../model/types";
+import { ScreenCoordinate } from "@/utils/physicalEngine";
 
 interface Props {
   foodRefs: RefObject<FoodRef[]>;
   sizeIndex: RefObject<number>;
+  camPosRef: RefObject<ScreenCoordinate>;
 }
 
-export default function FoodView({ foodRefs, sizeIndex }: Props) {
+export default function FoodView({ foodRefs, sizeIndex, camPosRef }: Props) {
   const [foods, setFoods] = useState<FoodRef[]>();
 
+  const areaRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
+    const camMove = setInterval(() => {
+      if (!areaRef.current || !camPosRef.current) return;
+
+      areaRef.current.style.top = `-${camPosRef.current.Y}px`;
+      areaRef.current.style.left = `-${camPosRef.current.X}px`;
+    }, FRAME_TIME);
+
     const renderInterval = setInterval(() => {
       if (!foodRefs.current) return;
       setFoods(foodRefs.current);
@@ -34,13 +45,14 @@ export default function FoodView({ foodRefs, sizeIndex }: Props) {
     }, FRAME_TIME * Frame(6));
 
     return () => {
+      clearInterval(camMove);
       clearInterval(renderInterval);
       clearInterval(animateInterval);
     };
   }, []);
 
   return (
-    <div className="food-area">
+    <div className="food-area" ref={areaRef}>
       {foods !== undefined ? (
         foods.map((v, i) => {
           if (sizeIndex.current === null) return;

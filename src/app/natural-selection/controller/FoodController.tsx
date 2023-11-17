@@ -5,15 +5,17 @@ import { FoodRef, createFoodRef } from "../model/render";
 import FoodView from "../view/FoodView";
 import { FRAME_TIME, TURN_TIME } from "../model/constants";
 import { Apple, Fish, Peach } from "../model/food";
+import { ScreenCoordinate } from "@/utils/physicalEngine";
 
 // import "./natsel.scss";
 
 interface Props {
   foodRefs: MutableRefObject<FoodRef[]>;
   sizeIndex: RefObject<number>;
+  camPosRef: RefObject<ScreenCoordinate>;
 }
 
-export default function FoodController({ foodRefs, sizeIndex }: Props) {
+export default function FoodController({ foodRefs, sizeIndex, camPosRef }: Props) {
   useEffect(() => {
     const checkDelete = setInterval(() => {
       const newFoodRefs: FoodRef[] = [];
@@ -40,7 +42,7 @@ export default function FoodController({ foodRefs, sizeIndex }: Props) {
 
   return (
     <>
-      <FoodView foodRefs={foodRefs} sizeIndex={sizeIndex} />
+      <FoodView foodRefs={foodRefs} sizeIndex={sizeIndex} camPosRef={camPosRef} />
     </>
   );
 }

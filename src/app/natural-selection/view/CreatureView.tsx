@@ -1,22 +1,33 @@
 "use client";
 
-import { RefObject, useEffect, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { CreatureRef, TileRef } from "../model/render";
 
 import "./creatureView.scss";
 import { TILE_SIZE, FRAME_TIME, TURN_TIME, CREATURE_SIZE } from "../model/constants";
 import { Frame, MapPosition, getDistance } from "../model/types";
+import { ScreenCoordinate } from "@/utils/physicalEngine";
 
 interface Props {
   creatureRefs: RefObject<CreatureRef[]>;
   sizeIndex: RefObject<number>;
+  camPosRef: RefObject<ScreenCoordinate>;
 }
-export default function CreatureView({ creatureRefs, sizeIndex }: Props) {
+export default function CreatureView({ creatureRefs, sizeIndex, camPosRef }: Props) {
   const [creatures, setCreatures] = useState<CreatureRef[]>();
+
+  const areaRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!creatureRefs.current) return;
     setCreatures(creatureRefs.current);
+
+    const camMove = setInterval(() => {
+      if (!areaRef.current || !camPosRef.current) return;
+
+      areaRef.current.style.top = `-${camPosRef.current.Y}px`;
+      areaRef.current.style.left = `-${camPosRef.current.X}px`;
+    }, FRAME_TIME);
 
     const renderInterval = setInterval(() => {
       if (!creatureRefs.current) return;
@@ -47,6 +58,7 @@ export default function CreatureView({ creatureRefs, sizeIndex }: Props) {
     }, FRAME_TIME);
 
     return () => {
+      clearInterval(camMove);
       clearInterval(renderInterval);
       clearInterval(moveInterval);
       clearInterval(animateInterval);
@@ -75,7 +87,7 @@ export default function CreatureView({ creatureRefs, sizeIndex }: Props) {
   };
 
   return (
-    <div className="creature-area" onMouseDown={mouseDownEvent}>
+    <div className="creature-area" ref={areaRef} onMouseDown={mouseDownEvent}>
       {creatures !== undefined ? (
         creatures.map((v, i) => {
           return <div className={`creature ${v.data.creatureType}`} ref={v.mainRef} key={v.id} id={v.id}></div>;

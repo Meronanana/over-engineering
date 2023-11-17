@@ -2,7 +2,7 @@
 import { MutableRefObject, RefObject } from "react";
 import { sleep } from "../../utils/utilFunctions";
 import { Toy, ToyPhysics } from "./model/types";
-import { Coordinate } from "@/utils/physicalEngine";
+import { ScreenCoordinate } from "@/utils/physicalEngine";
 import { SPIN_SPEED_OFFSET, TUTORIAL_INDEX } from "./model/constants";
 
 export const SandboxTutorial = async (
@@ -13,7 +13,7 @@ export const SandboxTutorial = async (
   dockerRef: RefObject<HTMLDivElement>,
   toyGravityDrop: Function,
   spread: Function,
-  dockerCoor: Coordinate
+  dockerCoor: ScreenCoordinate
 ) => {
   const toyMoveRef = toys[TUTORIAL_INDEX].moveRef;
   const toyRotateRef = toys[TUTORIAL_INDEX].rotateRef;

@@ -32,7 +32,7 @@ import {
   zIndexs,
 } from "./model/constants";
 import { sleep } from "@/utils/utilFunctions";
-import { Circle, Coordinate, lerp, randomCoordinate, reactionByCircleCollision } from "@/utils/physicalEngine";
+import { Circle, ScreenCoordinate, lerp, randomCoordinate, reactionByCircleCollision } from "@/utils/physicalEngine";
 import { modalOpen, modalSwitch, setChild } from "@/utils/redux/modalState";
 
 import ToyComponent from "./components/ToyComponent";
@@ -126,7 +126,7 @@ export default function Sandbox() {
 
       const stdWidth = Math.round(screenWidth / (cols + 1));
       const stdHeight = Math.round((screenHeight * UNDER_BOUND) / (rows + 1));
-      const coors: Array<Coordinate> = [];
+      const coors: Array<ScreenCoordinate> = [];
 
       for (let i = 1; i <= rows; i++) {
         for (let j = 1; j <= cols; j++) {

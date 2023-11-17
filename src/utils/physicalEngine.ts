@@ -5,7 +5,7 @@ export type Vector = {
   vy: number;
 };
 
-export type Coordinate = {
+export type ScreenCoordinate = {
   X: number;
   Y: number;
 };
@@ -77,7 +77,7 @@ export const isObjectInFront = (data: Array<CarBox | null>, index: number): bool
   const thisBox = data[index];
   if (thisBox === null) return false;
 
-  let coords: Coordinate[] = [];
+  let coords: ScreenCoordinate[] = [];
   let gapRatio = 4 / 5;
   if (thisBox.type === CarType.FromLeft) {
     coords.push({ X: thisBox.x + thisBox.w / 4, Y: thisBox.y }); // 겹침 판정

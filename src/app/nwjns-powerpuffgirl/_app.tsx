@@ -15,7 +15,7 @@ import { NWJNSCharacter, Offsets, defaultCharacters } from "./model/types";
 
 import { ScreenType } from "@/utils/types";
 import { FPS_OFFSET } from "@/utils/constants";
-import { Coordinate } from "@/utils/physicalEngine";
+import { ScreenCoordinate } from "@/utils/physicalEngine";
 import { moveSequence } from "./utils/stream";
 import { getWindowRatio, sleep } from "@/utils/utilFunctions";
 
@@ -121,7 +121,7 @@ export default function NWJNS_Powerpuffgirl() {
     });
   }, []);
 
-  const singleMove = async (index: number, end: Coordinate, frames: number = 70) => {
+  const singleMove = async (index: number, end: ScreenCoordinate, frames: number = 70) => {
     const charaRef = charaList.current[index].ref;
     const charaPhysics = charaList.current[index].physics;
 

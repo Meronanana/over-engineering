@@ -33,6 +33,7 @@ export default function NaturalSelection() {
 
   const mouseDownRef = useRef<boolean>(false);
   const camPosRef = useRef<ScreenCoordinate>({ X: 0, Y: 0 });
+  const touchPosRef = useRef<ScreenCoordinate>({ X: 0, Y: 0 });
 
   useEffect(() => {
     initPage();
@@ -72,13 +73,18 @@ export default function NaturalSelection() {
     document.documentElement.style.setProperty("--creature-size", `${CREATURE_SIZE[sizeIndexRef.current]}px`);
   };
 
-  const mouseDownEvent = (e: React.MouseEvent) => {
+  const mouseDownEvent = () => {
     mouseDownRef.current = true;
   };
+  const touchStartEvent = (e: React.TouchEvent) => {
+    mouseDownRef.current = true;
+    touchPosRef.current = { X: e.touches[0].clientX, Y: e.touches[0].clientY };
+  };
 
-  const mouseUpEvent = (e: React.MouseEvent) => {
+  const mouseUpEvent = () => {
     mouseDownRef.current = false;
   };
+  const touchEndEvent = mouseUpEvent;
 
   const mouseMoveEvent = (e: React.MouseEvent) => {
     if (!mouseDownRef.current) return;
@@ -95,13 +101,39 @@ export default function NaturalSelection() {
     if (newY < 0) camPosRef.current.Y = 0;
     else if (newY > limitY) camPosRef.current.Y = limitY;
     else camPosRef.current.Y = newY;
+  };
 
-    console.log(camPosRef.current);
+  const touchMoveEvent = (e: React.TouchEvent) => {
+    if (!mouseDownRef.current) return;
+
+    const newX = camPosRef.current.X + e.touches[0].clientX - touchPosRef.current.X;
+    const newY = camPosRef.current.Y + e.touches[0].clientY - touchPosRef.current.Y;
+    const limitX = MAP_SIZE * TILE_SIZE[sizeIndexRef.current] - window.innerWidth;
+    const limitY = MAP_SIZE * TILE_SIZE[sizeIndexRef.current] - window.innerHeight;
+
+    if (newX < 0) camPosRef.current.X = 0;
+    else if (newX > limitX) camPosRef.current.X = limitX;
+    else camPosRef.current.X = newX;
+
+    if (newY < 0) camPosRef.current.Y = 0;
+    else if (newY > limitY) camPosRef.current.Y = limitY;
+    else camPosRef.current.Y = newY;
+
+    touchPosRef.current = { X: e.touches[0].clientX, Y: e.touches[0].clientY };
   };
 
   return (
     <main>
-      <div className="natsel-screen" onMouseDown={mouseDownEvent} onMouseUp={mouseUpEvent} onMouseMove={mouseMoveEvent}>
+      <div
+        className="natsel-screen"
+        onMouseDown={mouseDownEvent}
+        onMouseMove={mouseMoveEvent}
+        onMouseUp={mouseUpEvent}
+        onMouseLeave={mouseUpEvent}
+        onTouchStart={touchStartEvent}
+        onTouchEnd={touchEndEvent}
+        onTouchMove={touchMoveEvent}
+      >
         <MapController
           flatTileRefs={flatTileRefs}
           aboveDecoRefs={aboveDecoRefs}
