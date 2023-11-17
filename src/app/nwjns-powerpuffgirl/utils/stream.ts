@@ -1,4 +1,4 @@
-import { Coordinate, getBezierArray } from "@/utils/physicalEngine";
+import { ScreenCoordinate, getBezierArray } from "@/utils/physicalEngine";
 
 export function* hoveringSequence(index: number): Generator<number> {
   const seq: Array<number> = [-1]; // 0 > -5 > 5 > 0
@@ -34,14 +34,18 @@ export function* hoveringSequence(index: number): Generator<number> {
   }
 }
 
-export function* moveSequence(start: Coordinate, end: Coordinate, frames: number): Generator<Coordinate> {
+export function* moveSequence(
+  start: ScreenCoordinate,
+  end: ScreenCoordinate,
+  frames: number
+): Generator<ScreenCoordinate> {
   const moveX = end.X - start.X;
   const moveY = end.Y - start.Y;
   const xRoute = getBezierArray(frames).map((v) => v * moveX + start.X);
   const yRoute = getBezierArray(frames).map((v) => v * moveY + start.Y);
 
   for (let i = 0; i < frames - 1; i++) {
-    yield { X: xRoute[i], Y: yRoute[i] } as Coordinate;
+    yield { X: xRoute[i], Y: yRoute[i] } as ScreenCoordinate;
   }
-  return { X: xRoute[frames - 1], Y: yRoute[frames - 1] } as Coordinate;
+  return { X: xRoute[frames - 1], Y: yRoute[frames - 1] } as ScreenCoordinate;
 }

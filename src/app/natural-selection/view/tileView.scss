@@ -1,16 +1,12 @@
-:root {
-  --tile-size: 32px;
-}
-
 .flat-tile-area {
   position: absolute;
 
-  top: 50%;
-  left: 50%;
-  width: 960px;
-  height: 640px;
+  top: 0%;
+  left: 0%;
+  width: calc((var(--tile-size) * var(--map-size)));
+  height: calc((var(--tile-size) * var(--map-size)));
 
-  transform: translate(-50%, -50%);
+  // transform: translate(-50%, -50%);
 
   z-index: 0;
 }
@@ -18,12 +14,12 @@
 .above-deco-area {
   position: absolute;
 
-  top: 50%;
-  left: 50%;
-  width: 960px;
-  height: 640px;
+  top: 0%;
+  left: 0%;
+  width: calc((var(--tile-size) * var(--map-size)));
+  height: calc((var(--tile-size) * var(--map-size)));
 
-  transform: translate(-50%, -50%);
+  // transform: translate(-50%, -50%);
 
   z-index: 1;
   pointer-events: none;
@@ -32,12 +28,12 @@
 .over-deco-area {
   position: absolute;
 
-  top: 50%;
-  left: 50%;
-  width: 960px;
-  height: 640px;
+  top: 0%;
+  left: 0%;
+  width: calc((var(--tile-size) * var(--map-size)));
+  height: calc((var(--tile-size) * var(--map-size)));
 
-  transform: translate(-50%, -50%);
+  // transform: translate(-50%, -50%);
 
   z-index: 20;
   pointer-events: none;

@@ -1,19 +1,21 @@
 "use client";
 
-import { MutableRefObject, useEffect, useRef } from "react";
+import { MutableRefObject, RefObject, useEffect, useRef } from "react";
 import { FoodRef, createFoodRef } from "../model/render";
 import FoodView from "../view/FoodView";
 import { FRAME_TIME, TURN_TIME } from "../model/constants";
-import { Frame, Turn, getRandomPosition } from "../model/types";
 import { Apple, Fish, Peach } from "../model/food";
+import { ScreenCoordinate } from "@/utils/physicalEngine";
 
 // import "./natsel.scss";
 
 interface Props {
   foodRefs: MutableRefObject<FoodRef[]>;
+  sizeIndex: RefObject<number>;
+  camPosRef: RefObject<ScreenCoordinate>;
 }
 
-export default function FoodController({ foodRefs }: Props) {
+export default function FoodController({ foodRefs, sizeIndex, camPosRef }: Props) {
   useEffect(() => {
     const checkDelete = setInterval(() => {
       const newFoodRefs: FoodRef[] = [];
@@ -30,7 +32,7 @@ export default function FoodController({ foodRefs }: Props) {
       foodRefs.current.push(createFoodRef(new Apple()));
       foodRefs.current.push(createFoodRef(new Peach()));
       foodRefs.current.push(createFoodRef(new Fish()));
-    }, TURN_TIME * 6);
+    }, TURN_TIME * 3);
 
     return () => {
       clearInterval(checkDelete);
@@ -40,7 +42,7 @@ export default function FoodController({ foodRefs }: Props) {
 
   return (
     <>
-      <FoodView foodRefs={foodRefs} />
+      <FoodView foodRefs={foodRefs} sizeIndex={sizeIndex} camPosRef={camPosRef} />
     </>
   );
 }

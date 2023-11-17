@@ -13,14 +13,23 @@ import {
   getDistance,
   SpriteIndex,
   AnimateInterupt,
+  getRandomPosition,
 } from "./types";
-import { FRAME_TIME, GENERATION_TIME, MAP_HEIGHT, MAP_WIDTH, TURN_TIME } from "./constants";
+import { FRAME_TIME, GENERATION_TIME, MAP_SIZE, TURN_TIME, UNPASSALBE } from "./constants";
 
 export abstract class Edible {
   position: MapPosition;
   delete: boolean = false;
 
   constructor(position: MapPosition) {
+    while (true) {
+      let flag = true;
+      UNPASSALBE.forEach((v) => {
+        if (v.X === position.X && v.Y === position.Y) flag = false;
+      });
+      if (flag) break;
+      else position = getRandomPosition();
+    }
     this.position = position;
   }
 
@@ -78,7 +87,7 @@ export abstract class Creature extends Edible implements Move {
 
     const generationEnd = setInterval(() => {
       const baseCost = this.getBasecost();
-      console.log("Generation Changes, GAIN: ", this.gain, " BASE: ", baseCost);
+      // console.log("Generation Changes, GAIN: ", this.gain, " BASE: ", baseCost);
       if (this.gain > baseCost) {
         const chance = (this.gain - baseCost) / baseCost;
         if (chance > Math.random()) {
@@ -92,7 +101,7 @@ export abstract class Creature extends Edible implements Move {
         const chance = this.gain / baseCost;
         if (chance < Math.random()) {
           // Die
-          console.log("LIFE END");
+          // console.log("LIFE END");
           clearInterval(generationEnd);
           this.delete = true;
         }
@@ -147,7 +156,6 @@ export abstract class Creature extends Edible implements Move {
     }
 
     if (predetorIndex !== -1) {
-      console.log("PREDETOR");
       const predator = creatures[predetorIndex].data;
       const dx = this.position.X - predator.position.X;
       const dy = this.position.Y - predator.position.Y;
@@ -156,9 +164,9 @@ export abstract class Creature extends Edible implements Move {
       let posX = this.position.X + this.status.sense * Math.cos(direction);
       let posY = this.position.Y - this.status.sense * Math.sin(direction);
       if (posX < 0) posX = 0;
-      if (posX > MAP_WIDTH - 1) posX = MAP_WIDTH - 1;
+      if (posX > MAP_SIZE - 1) posX = MAP_SIZE - 1;
       if (posY < 0) posY = 0;
-      if (posY > MAP_HEIGHT - 1) posY = MAP_HEIGHT - 1;
+      if (posY > MAP_SIZE - 1) posY = MAP_SIZE - 1;
       const pos = { X: posX, Y: posY };
 
       let interupt: MoveInterupt = { type: CreatureState.AVIOD_FROM_PREDATOR, pos: pos };
@@ -170,7 +178,6 @@ export abstract class Creature extends Edible implements Move {
 
     // 2. 인접한 식량 섭취
     if (this.creatureState === CreatureState.FIND_FOOD) {
-      // console.log("chkchk");
       let nearFood = [-1, -1]; // [type(creature, food), index]
       for (let i = 0; i < foods.length; i++) {
         const foodData = foods[i].data;
@@ -194,7 +201,6 @@ export abstract class Creature extends Edible implements Move {
       }
 
       if (nearFood[0] !== -1) {
-        console.log("EEEEEEEEAT");
         let target: Edible;
         if (nearFood[0] === 0) {
           target = creatures[nearFood[1]].data;
@@ -251,7 +257,6 @@ export abstract class Creature extends Edible implements Move {
       }
 
       if (bestFood[0] !== -1) {
-        console.log("FOOOOOOOOOOOD");
         let target: Edible;
         if (bestFood[0] === 0) {
           target = creatures[bestFood[1]].data;

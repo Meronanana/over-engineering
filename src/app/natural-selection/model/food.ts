@@ -60,7 +60,7 @@ export class Apple extends Food {
 export class Peach extends Food {
   foodType = FoodType.PEACH;
 
-  constructor(turnForDecay: Turn = Turn(96), position: MapPosition = getRandomPosition()) {
+  constructor(turnForDecay: Turn = Turn(64), position: MapPosition = getRandomPosition()) {
     super(turnForDecay, position);
 
     this.spriteIndexGenerator = (function* (my: Peach) {
@@ -115,10 +115,10 @@ export class Peach extends Food {
 export class Fish extends Food {
   foodType = FoodType.FISH;
 
-  constructor(turnForDecay: Turn = Turn(32), position: MapPosition = getRandomPosition()) {
+  constructor(turnForDecay: Turn = Turn(64), position: MapPosition = getRandomPosition()) {
     super(turnForDecay, position);
 
-    this.spriteIndexGenerator = (function* (my: Fish) {
+    this.spriteIndexGenerator = (function* (my: Apple) {
       let vector: SpriteIndex[] = [];
       while (true) {
         if (vector.length === 0) {

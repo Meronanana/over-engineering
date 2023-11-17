@@ -1,10 +1,11 @@
 import { RefObject, createRef } from "react";
-import { Coordinate, Vector } from "@/utils/physicalEngine";
+import { ScreenCoordinate, Vector } from "@/utils/physicalEngine";
 import { StaticImageData } from "next/image";
 
 import ToyTutoMouse from "/public/assets/icons/toy-tuto-mouse.svg";
 import ToyLinkQR from "/public/assets/icons/toy-link-qr.png";
 import ToyDeadlock from "/public/assets/icons/toy-deadlock.svg";
+import ToyNatsel from "/public/assets/images/natsel/toy-natsel.png";
 import { charaSelector } from "@/utils/nwjnsCharacter";
 import {
   Cloud1,
@@ -36,7 +37,7 @@ export type Toy = {
 export type ToyPhysics = {
   X: Array<number>; // X값 변량 추적
   Y: Array<number>; // Y값 변량 추적
-  DST: Coordinate; // 목적 좌표
+  DST: ScreenCoordinate; // 목적 좌표
   V: Vector; // 현재 이동 방향
   R: number; // 현재 회전각
   dR: number; // 현재 회전각속도
@@ -44,7 +45,7 @@ export type ToyPhysics = {
 };
 
 export type SandboxItem = {
-  position: Coordinate;
+  position: ScreenCoordinate;
   width: number | Array<number>;
   height: number;
   ref: RefObject<HTMLDivElement>;
@@ -54,7 +55,7 @@ export type SandboxItem = {
 export const defaultToyPhysics: ToyPhysics = {
   X: [0],
   Y: [0],
-  DST: { X: -1, Y: -1 } as Coordinate,
+  DST: { X: -1, Y: -1 } as ScreenCoordinate,
   V: { vx: 0, vy: 0 } as Vector,
   R: 0,
   dR: 0,
@@ -85,6 +86,14 @@ export const defaultToyList: Array<Toy> = [
     physics: { ...defaultToyPhysics },
     link: "nwjns-powerpuffgirl",
     image: charaSelector(),
+  },
+  {
+    name: "natural-selection",
+    moveRef: createRef(),
+    rotateRef: createRef(),
+    physics: { ...defaultToyPhysics },
+    link: "natural-selection",
+    image: ToyNatsel,
   },
   {
     name: "tutorial",

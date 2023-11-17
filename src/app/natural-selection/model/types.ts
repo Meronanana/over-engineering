@@ -1,4 +1,4 @@
-import { MAP_HEIGHT, MAP_WIDTH } from "./constants";
+import { MAP_SIZE } from "./constants";
 
 export enum CreatureType {
   UNDEF = "",
@@ -52,7 +52,7 @@ export const getDistance = (from: MapPosition, to: MapPosition): number => {
 };
 
 export const getRandomPosition = () => {
-  return { X: Math.floor(Math.random() * MAP_WIDTH), Y: Math.floor(Math.random() * MAP_HEIGHT) };
+  return { X: Math.floor(Math.random() * MAP_SIZE), Y: Math.floor(Math.random() * MAP_SIZE) };
 };
 
 // Frame은 양의 정수

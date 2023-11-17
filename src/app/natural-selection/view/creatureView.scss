@@ -1,19 +1,15 @@
-:root {
-  --creature-size: 40px;
-}
-
 .creature-area {
   position: absolute;
 
-  top: 50%;
-  left: 50%;
-  width: 960px;
-  height: 640px;
+  top: 0%;
+  left: 0%;
+  width: calc((var(--tile-size) * var(--map-size)));
+  height: calc((var(--tile-size) * var(--map-size)));
 
   // border-width: 2px;
   // border-color: black;
 
-  transform: translate(-50%, -50%);
+  // transform: translate(-50%, -50%);
 
   z-index: 11;
 }

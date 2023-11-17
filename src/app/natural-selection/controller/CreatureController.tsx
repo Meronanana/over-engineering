@@ -7,13 +7,16 @@ import { FRAME_TIME, TURN_TIME } from "../model/constants";
 import { CreatureState, CreatureType, Turn, getRandomPosition } from "../model/types";
 import { Ggobugi, Isanghaessi, Pairi, Pikachu } from "../model/creature";
 import { OverDecorateType, AboveDecorateType } from "../model/tile";
+import { ScreenCoordinate } from "@/utils/physicalEngine";
 
 interface Props {
   creatureRefs: MutableRefObject<CreatureRef[]>;
   foodRefs: MutableRefObject<FoodRef[]>;
+  sizeIndex: RefObject<number>;
+  camPosRef: RefObject<ScreenCoordinate>;
 }
 
-export default function CreatureController({ creatureRefs, foodRefs }: Props) {
+export default function CreatureController({ creatureRefs, foodRefs, sizeIndex, camPosRef }: Props) {
   useEffect(() => {
     const checkDelete = setInterval(() => {
       const newCreatureRefs: CreatureRef[] = [];
@@ -68,7 +71,7 @@ export default function CreatureController({ creatureRefs, foodRefs }: Props) {
 
   return (
     <>
-      <CreatureView creatureRefs={creatureRefs} />
+      <CreatureView creatureRefs={creatureRefs} sizeIndex={sizeIndex} camPosRef={camPosRef} />
     </>
   );
 }

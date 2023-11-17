@@ -1,5 +1,7 @@
 "use client";
 
+import "./sandbox.scss";
+
 import {
   MouseEventHandler,
   MutableRefObject,
@@ -32,7 +34,7 @@ import {
   zIndexs,
 } from "./model/constants";
 import { sleep } from "@/utils/utilFunctions";
-import { Circle, Coordinate, lerp, randomCoordinate, reactionByCircleCollision } from "@/utils/physicalEngine";
+import { Circle, ScreenCoordinate, lerp, randomCoordinate, reactionByCircleCollision } from "@/utils/physicalEngine";
 import { modalOpen, modalSwitch, setChild } from "@/utils/redux/modalState";
 
 import ToyComponent from "./components/ToyComponent";
@@ -40,9 +42,6 @@ import SandboxController from "./components/SandboxController";
 import SandboxDescription from "./components/SandboxDescription";
 import ToyDescription from "./components/ToyDescription";
 import { FPS_OFFSET } from "@/utils/constants";
-
-import "./sandbox.scss";
-import Link from "next/link";
 
 export default function Sandbox() {
   // console.log("re-render!");
@@ -126,7 +125,7 @@ export default function Sandbox() {
 
       const stdWidth = Math.round(screenWidth / (cols + 1));
       const stdHeight = Math.round((screenHeight * UNDER_BOUND) / (rows + 1));
-      const coors: Array<Coordinate> = [];
+      const coors: Array<ScreenCoordinate> = [];
 
       for (let i = 1; i <= rows; i++) {
         for (let j = 1; j <= cols; j++) {
@@ -532,9 +531,6 @@ export default function Sandbox() {
         onTouchMove={touchMoveEvent}
         ref={screenRef}
       >
-        <Link href={"/sandbox"} style={{ position: "fixed", zIndex: "200" }}>
-          옛-버젼
-        </Link>
         <div className="sandbox-shadow" ref={bgShadowRef}></div>
         <div className="sandbox-sand-back" ref={sandBackItem.ref}>
           <sandBackItem.image />
