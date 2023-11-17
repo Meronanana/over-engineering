@@ -25,8 +25,10 @@ export default function OverDecoView({ tileRefs, sizeIndex, camPosRef }: Props) 
   useEffect(() => {
     window.addEventListener("resize", updateIndex);
 
-    if (!tileRefs.current) return;
-    setTiles(tileRefs.current);
+    setTimeout(() => {
+      updateIndex();
+      if (tileRefs.current) setTiles(tileRefs.current);
+    }, FRAME_TIME);
 
     const camMove = setInterval(() => {
       if (!areaRef.current || !camPosRef.current) return;
