@@ -21,6 +21,7 @@ import {
 import CreatureDataInspector from "./controller/CreatureDataInspector";
 import { MapPosition } from "./model/types";
 import { ScreenCoordinate } from "@/utils/physicalEngine";
+import NatselController from "./components/NatselController";
 
 export default function NaturalSelection() {
   const flatTileRefs = useRef<TileRef<FlatTileType>[][]>([]);
@@ -89,8 +90,8 @@ export default function NaturalSelection() {
   const mouseMoveEvent = (e: React.MouseEvent) => {
     if (!mouseDownRef.current) return;
 
-    const newX = camPosRef.current.X + e.movementX;
-    const newY = camPosRef.current.Y + e.movementY;
+    const newX = camPosRef.current.X - e.movementX;
+    const newY = camPosRef.current.Y - e.movementY;
     const limitX = MAP_SIZE * TILE_SIZE[sizeIndexRef.current] - window.innerWidth;
     const limitY = MAP_SIZE * TILE_SIZE[sizeIndexRef.current] - window.innerHeight;
 
@@ -106,8 +107,8 @@ export default function NaturalSelection() {
   const touchMoveEvent = (e: React.TouchEvent) => {
     if (!mouseDownRef.current) return;
 
-    const newX = camPosRef.current.X + e.touches[0].clientX - touchPosRef.current.X;
-    const newY = camPosRef.current.Y + e.touches[0].clientY - touchPosRef.current.Y;
+    const newX = camPosRef.current.X - e.touches[0].clientX + touchPosRef.current.X;
+    const newY = camPosRef.current.Y - e.touches[0].clientY + touchPosRef.current.Y;
     const limitX = MAP_SIZE * TILE_SIZE[sizeIndexRef.current] - window.innerWidth;
     const limitY = MAP_SIZE * TILE_SIZE[sizeIndexRef.current] - window.innerHeight;
 
@@ -149,6 +150,7 @@ export default function NaturalSelection() {
           camPosRef={camPosRef}
         />
         <CreatureDataInspector creatureRefs={creatureRefs} />
+        <NatselController />
       </div>
     </main>
   );

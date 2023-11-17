@@ -22,10 +22,10 @@ export default function FlatTileView({ tileRefs, sizeIndex, camPosRef }: Props) 
   const areaRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    window.addEventListener("resize", renderTile);
+    window.addEventListener("resize", updateIndex);
 
     setTimeout(() => {
-      renderTile();
+      updateIndex();
       if (tileRefs.current) setTiles(tileRefs.current);
     }, FRAME_TIME);
 
@@ -37,12 +37,12 @@ export default function FlatTileView({ tileRefs, sizeIndex, camPosRef }: Props) 
     }, FRAME_TIME);
 
     return () => {
-      window.removeEventListener("resize", renderTile);
+      window.removeEventListener("resize", updateIndex);
       clearInterval(camMove);
     };
   }, []);
 
-  const renderTile = () => {
+  const updateIndex = () => {
     if (sizeIndex.current === null) return;
     setSizeIdx(sizeIndex.current);
   };
