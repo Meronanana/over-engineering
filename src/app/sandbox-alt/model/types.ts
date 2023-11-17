@@ -5,6 +5,7 @@ import { StaticImageData } from "next/image";
 import ToyTutoMouse from "/public/assets/icons/toy-tuto-mouse.svg";
 import ToyLinkQR from "/public/assets/icons/toy-link-qr.png";
 import ToyDeadlock from "/public/assets/icons/toy-deadlock.svg";
+import ToyNatsel from "/public/assets/images/natsel/toy-natsel.png";
 import { charaSelector } from "@/utils/nwjnsCharacter";
 import {
   Cloud1,
@@ -85,6 +86,14 @@ export const defaultToyList: Array<Toy> = [
     physics: { ...defaultToyPhysics },
     link: "nwjns-powerpuffgirl",
     image: charaSelector(),
+  },
+  {
+    name: "natural-selection",
+    moveRef: createRef(),
+    rotateRef: createRef(),
+    physics: { ...defaultToyPhysics },
+    link: "natural-selection",
+    image: ToyNatsel,
   },
   {
     name: "tutorial",

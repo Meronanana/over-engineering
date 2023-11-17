@@ -52,3 +52,26 @@
   opacity: 0.7;
   transition: 0.5s;
 }
+
+.natsel-description {
+  position: absolute;
+  overflow-y: scroll;
+
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 80%;
+
+  border-radius: 1vh;
+  padding: 2vh;
+
+  background-color: rgba(0, 0, 0, 0.7);
+
+  color: white;
+  font-size: auto;
+
+  transform: translate(-50%, -50%);
+}
+.natsel-description::-webkit-scrollbar {
+  width: 0px;
+}

@@ -18,7 +18,7 @@ import {
   CREATURE_SIZE,
   MAP_SIZE,
 } from "./model/constants";
-import CreatureDataInspector from "./controller/CreatureDataInspector";
+import CreatureDataInspector from "./components/CreatureDataInspector";
 import { MapPosition } from "./model/types";
 import { ScreenCoordinate } from "@/utils/physicalEngine";
 import NatselController from "./components/NatselController";

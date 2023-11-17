@@ -10,6 +10,7 @@ import IconLog from "/public/assets/icons/Icon-Log.svg";
 import { modalSwitch, setChild } from "@/utils/redux/modalState";
 
 import { sleep } from "@/utils/utilFunctions";
+import NatselDescription from "./NatselDescription";
 
 interface Props {}
 
@@ -41,8 +42,8 @@ export default function NatselController({}: Props) {
   };
 
   const setDiscriptionModal = () => {
-    // dispatch(setChild((<DeadlockDescription />) as JSX.Element));
-    // dispatch(modalSwitch());
+    dispatch(setChild((<NatselDescription />) as JSX.Element));
+    dispatch(modalSwitch());
   };
 
   return (

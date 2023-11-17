@@ -11,9 +11,5 @@ interface Props {
 }
 
 export default function CreatureDataInspector({ creatureRefs }: Props) {
-  return (
-    <div className="data-inspector">
-      <h3>가나다</h3>
-    </div>
-  );
+  return <div className="data-inspector">{/* <h3>가나다</h3> */}</div>;
 }

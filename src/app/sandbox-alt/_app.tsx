@@ -1,5 +1,7 @@
 "use client";
 
+import "./sandbox.scss";
+
 import {
   MouseEventHandler,
   MutableRefObject,
@@ -40,9 +42,6 @@ import SandboxController from "./components/SandboxController";
 import SandboxDescription from "./components/SandboxDescription";
 import ToyDescription from "./components/ToyDescription";
 import { FPS_OFFSET } from "@/utils/constants";
-
-import "./sandbox.scss";
-import Link from "next/link";
 
 export default function Sandbox() {
   // console.log("re-render!");
@@ -532,9 +531,6 @@ export default function Sandbox() {
         onTouchMove={touchMoveEvent}
         ref={screenRef}
       >
-        <Link href={"/sandbox"} style={{ position: "fixed", zIndex: "200" }}>
-          옛-버젼
-        </Link>
         <div className="sandbox-shadow" ref={bgShadowRef}></div>
         <div className="sandbox-sand-back" ref={sandBackItem.ref}>
           <sandBackItem.image />
