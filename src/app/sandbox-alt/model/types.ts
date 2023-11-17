@@ -4,7 +4,7 @@ import { StaticImageData } from "next/image";
 
 import ToyTutoMouse from "/public/assets/icons/toy-tuto-mouse.svg";
 import ToyLinkQR from "/public/assets/icons/toy-link-qr.png";
-import ToyDeadlock from "/public/assets/icons/toy-deadlock.svg";
+import ToyDeadlock from "/public/assets/icons/toy-deadlock.png";
 import ToyNatsel from "/public/assets/images/natsel/toy-natsel.png";
 import { charaSelector } from "@/utils/nwjnsCharacter";
 import {
