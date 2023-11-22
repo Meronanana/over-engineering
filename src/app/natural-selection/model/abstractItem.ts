@@ -82,6 +82,9 @@ export abstract class Creature extends Edible implements Move {
         clearInterval(increaseAge);
         this.delete = true;
         return;
+      } else if (this.currentAge === this.maxAge - 1) {
+        let mInterupt: MoveInterupt = { type: CreatureState.SLEEP, pos: { X: -1, Y: -1 } };
+        this.screenPosGenerator.next(mInterupt);
       }
       this.currentAge += 1;
     }, TURN_TIME);
