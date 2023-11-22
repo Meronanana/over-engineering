@@ -32,7 +32,7 @@ export default function CreatureView({ creatureRefs, sizeIndex, camPosRef }: Pro
     const renderInterval = setInterval(() => {
       if (!creatureRefs.current) return;
       setCreatures(creatureRefs.current);
-    }, TURN_TIME);
+    }, FRAME_TIME * Frame(6));
 
     const animateInterval = setInterval(() => {
       if (!creatureRefs.current) return;
@@ -77,6 +77,7 @@ export default function CreatureView({ creatureRefs, sizeIndex, camPosRef }: Pro
         console.log("------------------------------");
         console.log("Type: " + data.creatureType);
         console.log("Gain: " + data.gain);
+        console.log("Life: " + data.currentAge + "/" + data.maxAge);
         console.log("Position: ");
         console.log(data.position);
         console.log("Status: ");

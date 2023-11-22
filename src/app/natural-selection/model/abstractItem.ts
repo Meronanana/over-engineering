@@ -65,24 +65,25 @@ export abstract class Creature extends Edible implements Move {
   creatureState: CreatureState = CreatureState.IDLE;
   gain: number = 0;
   status: Status;
-  turnForLife: Turn;
-  spriteState: [number, number] = [0, 0];
+  currentAge: Turn = Turn(0);
+  readonly maxAge: Turn;
+  spriteState: [number, number] = [2, 1];
   interval: 1 = 1;
 
-  constructor(status: Status, turnForLife: Turn, position: MapPosition) {
+  constructor(status: Status, maxAge: Turn, position: MapPosition) {
     super(position);
     this.status = status;
-    this.turnForLife = turnForLife;
+    this.maxAge = maxAge;
 
-    const decTurnForLife = setInterval(() => {
-      if (this.turnForLife === 0) {
+    const increaseAge = setInterval(() => {
+      if (this.currentAge === this.maxAge) {
         // Die
         console.log("LIFE END");
-        clearInterval(decTurnForLife);
+        clearInterval(increaseAge);
         this.delete = true;
         return;
       }
-      this.turnForLife -= 1;
+      this.currentAge += 1;
     }, TURN_TIME);
 
     const generationEnd = setInterval(() => {
@@ -92,8 +93,14 @@ export abstract class Creature extends Edible implements Move {
         const chance = (this.gain - baseCost) / baseCost;
         if (chance > Math.random()) {
           // Duplicate
-          let interupt: MoveInterupt = { type: CreatureState.DUPLICATE, pos: this.position };
-          this.screenPosGenerator.next(interupt);
+          let mInterupt: MoveInterupt = { type: CreatureState.DUPLICATE, pos: this.position };
+          let aInterupt: AnimateInterupt = {
+            type: CreatureState.DUPLICATE,
+            from: { X: -1, Y: -1 },
+            to: { X: -1, Y: -1 },
+          };
+          this.screenPosGenerator.next(mInterupt);
+          this.spriteIndexGenerator.next(aInterupt);
 
           this.creatureState = CreatureState.DUPLICATE;
         }

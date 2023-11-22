@@ -17,10 +17,11 @@ export enum FoodType {
 
 export enum CreatureState {
   IDLE = 0,
-  AVIOD_FROM_PREDATOR = 1,
-  FIND_FOOD = 2,
-  EAT_FOOD = 3,
-  DUPLICATE = 4,
+  SLEEP = 1,
+  AVIOD_FROM_PREDATOR = 2,
+  FIND_FOOD = 3,
+  EAT_FOOD = 4,
+  DUPLICATE = 5,
 }
 
 export type MoveInterupt = {
