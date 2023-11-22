@@ -22,7 +22,10 @@
   width: var(--creature-size);
   height: var(--creature-size);
 
-  transform: translate(-4px, -4px);
+  transform: translate(
+    calc((var(--creature-size) - var(--tile-size) / 2)),
+    calc((var(--creature-size) - var(--tile-size) / 2))
+  );
 
   background-repeat: no-repeat;
   background-position: calc(var(--creature-size) * -3) calc(var(--creature-size) * -2);

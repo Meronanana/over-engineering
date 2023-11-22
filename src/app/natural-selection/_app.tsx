@@ -37,12 +37,12 @@ export default function NaturalSelection() {
   const touchPosRef = useRef<ScreenCoordinate>({ X: 0, Y: 0 });
 
   useEffect(() => {
-    initPage();
-    window.addEventListener("resize", initPage);
-    // setIndex();
     flatTileRefs.current = createInitFlatTileRefs();
     creatureRefs.current = createInitCreatureRefs();
     foodRefs.current = createInitFoodRefs();
+
+    initPage();
+    window.addEventListener("resize", initPage);
 
     return () => {
       window.removeEventListener("resize", initPage);
@@ -72,6 +72,19 @@ export default function NaturalSelection() {
     document.documentElement.style.setProperty("--map-size", `${MAP_SIZE}`);
     document.documentElement.style.setProperty("--tile-size", `${TILE_SIZE[sizeIndexRef.current]}px`);
     document.documentElement.style.setProperty("--creature-size", `${CREATURE_SIZE[sizeIndexRef.current]}px`);
+
+    creatureRefs.current.forEach((v, i) => {
+      const creatureRefCur = v.mainRef.current;
+      if (!creatureRefCur) return;
+
+      const size = CREATURE_SIZE[sizeIndexRef.current] * v.data.status.size;
+      const offset = (TILE_SIZE[sizeIndexRef.current] - CREATURE_SIZE[sizeIndexRef.current]) / 2;
+      console.log(size + "px");
+      creatureRefCur.style.width = `${size}px`;
+      creatureRefCur.style.height = `${size}px`;
+      creatureRefCur.style.transform = `translate(${offset}px, ${offset}px)`;
+      creatureRefCur.style.backgroundSize = `${size * 4}px auto`;
+    });
   };
 
   const mouseDownEvent = () => {

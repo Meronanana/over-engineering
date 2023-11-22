@@ -3,7 +3,7 @@
 import { MutableRefObject, RefObject, useEffect, useRef } from "react";
 import { CreatureRef, FoodRef, TileRef, createCreatureRef } from "../model/render";
 import CreatureView from "../view/CreatureView";
-import { FRAME_TIME, TURN_TIME } from "../model/constants";
+import { CREATURE_SIZE, FRAME_TIME, TILE_SIZE, TURN_TIME } from "../model/constants";
 import { CreatureState, CreatureType, Turn, getRandomPosition } from "../model/types";
 import { Ggobugi, Isanghaessi, Pairi, Pikachu } from "../model/creature";
 import { OverDecorateType, AboveDecorateType } from "../model/tile";
@@ -24,6 +24,17 @@ export default function CreatureController({ creatureRefs, foodRefs, sizeIndex, 
         if (!creatureRefs.current) return;
         if (v.data.delete === false) {
           newCreatureRefs.push(v);
+
+          const creatureRefCur = v.mainRef.current;
+          if (!creatureRefCur || sizeIndex.current === null) return;
+
+          const size = CREATURE_SIZE[sizeIndex.current] * v.data.status.size;
+          const offset = (TILE_SIZE[sizeIndex.current] - CREATURE_SIZE[sizeIndex.current]) / 2;
+          // console.log(size + "px");
+          creatureRefCur.style.width = `${size}px`;
+          creatureRefCur.style.height = `${size}px`;
+          creatureRefCur.style.transform = `translate(${offset}px, ${offset}px)`;
+          creatureRefCur.style.backgroundSize = `${size * 4}px auto`;
         }
       });
       creatureRefs.current = newCreatureRefs;

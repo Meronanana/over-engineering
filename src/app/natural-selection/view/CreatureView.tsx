@@ -40,8 +40,8 @@ export default function CreatureView({ creatureRefs, sizeIndex, camPosRef }: Pro
         let idx = v.data.spriteIndexGenerator.next().value;
 
         if (!v.mainRef.current || sizeIndex.current === null) return;
-        let ix = CREATURE_SIZE[sizeIndex.current] * v.data.spriteState[1];
-        let iy = CREATURE_SIZE[sizeIndex.current] * v.data.spriteState[0];
+        let ix = CREATURE_SIZE[sizeIndex.current] * v.data.status.size * v.data.spriteState[1];
+        let iy = CREATURE_SIZE[sizeIndex.current] * v.data.status.size * v.data.spriteState[0];
         v.mainRef.current.style.backgroundPosition = `-${ix}px -${iy}px`;
       });
     }, FRAME_TIME * Frame(6));
