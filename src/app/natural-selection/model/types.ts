@@ -53,7 +53,7 @@ export const getDistance = (from: MapPosition, to: MapPosition): number => {
 };
 
 export const getRandomPosition = () => {
-  return { X: Math.floor(Math.random() * MAP_SIZE), Y: Math.floor(Math.random() * MAP_SIZE) };
+  return { X: Math.floor(Math.random() * (MAP_SIZE - 2) + 1), Y: Math.floor(Math.random() * (MAP_SIZE - 2) + 1) };
 };
 
 // Frame은 양의 정수

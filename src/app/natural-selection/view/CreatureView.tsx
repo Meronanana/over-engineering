@@ -22,6 +22,24 @@ export default function CreatureView({ creatureRefs, sizeIndex, camPosRef }: Pro
     if (!creatureRefs.current) return;
     setCreatures(creatureRefs.current);
 
+    setTimeout(() => {
+      if (creatures !== undefined) {
+        console.log("wow");
+        creatures.forEach((v, i) => {
+          const creatureRefCur = v.mainRef.current;
+          if (!creatureRefCur || sizeIndex.current === null) return;
+
+          const size = CREATURE_SIZE[sizeIndex.current] * v.data.status.size;
+          const offset = (TILE_SIZE[sizeIndex.current] - CREATURE_SIZE[sizeIndex.current]) / 2;
+          console.log(size + "px");
+          creatureRefCur.style.width = `${size}px`;
+          creatureRefCur.style.height = `${size}px`;
+          creatureRefCur.style.transform = `translate(${offset}px, ${offset}px)`;
+          creatureRefCur.style.backgroundSize = `${size * 4}px auto`;
+        });
+      }
+    }, FRAME_TIME);
+
     const camMove = setInterval(() => {
       if (!areaRef.current || !camPosRef.current) return;
 

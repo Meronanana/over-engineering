@@ -170,10 +170,10 @@ export abstract class Creature extends Edible implements Move {
 
       let posX = this.position.X + this.status.sense * Math.cos(direction);
       let posY = this.position.Y - this.status.sense * Math.sin(direction);
-      if (posX < 0) posX = 0;
-      if (posX > MAP_SIZE - 1) posX = MAP_SIZE - 1;
-      if (posY < 0) posY = 0;
-      if (posY > MAP_SIZE - 1) posY = MAP_SIZE - 1;
+      if (posX < 1) posX = 1;
+      if (posX > MAP_SIZE - 2) posX = MAP_SIZE - 2;
+      if (posY < 1) posY = 1;
+      if (posY > MAP_SIZE - 2) posY = MAP_SIZE - 2;
       const pos = { X: posX, Y: posY };
 
       let interupt: MoveInterupt = { type: CreatureState.AVIOD_FROM_PREDATOR, pos: pos };
