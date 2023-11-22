@@ -63,6 +63,8 @@ export class Pikachu extends Creature {
               vector.unshift(nextValue);
               if (sign.type === CreatureState.IDLE) {
                 direction = getRadian({ vx: sign.to.X - sign.from.X, vy: sign.to.Y - sign.from.Y }) % (Math.PI * 2);
+              } else if (sign.type === CreatureState.AVIOD_FROM_PREDATOR) {
+                vector = [];
               } else if (sign.type === CreatureState.EAT_FOOD) {
                 if (direction > Math.PI / 2 && direction < (Math.PI * 3) / 2) {
                   vector = [...SPRITES_EAT_LEFT];
@@ -128,11 +130,12 @@ export class Pikachu extends Creature {
 
             const sign = yield nextValue;
             if (sign !== undefined) {
-              console.log(sign);
               vector.unshift(nextValue);
 
               if (sign.type === CreatureState.AVIOD_FROM_PREDATOR) {
                 vector = [];
+                aInterput = { type: CreatureState.AVIOD_FROM_PREDATOR, from: { X: -1, Y: -1 }, to: { X: -1, Y: -1 } };
+                my.spriteIndexGenerator.next(aInterput);
               } else if (sign.type === CreatureState.FIND_FOOD) {
                 vector = [];
               } else if (sign.type === CreatureState.EAT_FOOD || sign.type === CreatureState.DUPLICATE) {
