@@ -1,0 +1,42 @@
+.food-area {
+  position: absolute;
+
+  top: 0%;
+  left: 0%;
+  width: calc((var(--tile-size) * var(--map-size)));
+  height: calc((var(--tile-size) * var(--map-size)));
+
+  // transform: translate(-50%, -50%);
+
+  pointer-events: none;
+
+  z-index: 10;
+}
+
+.food {
+  position: fixed;
+
+  top: -100px;
+  left: -100px;
+  width: var(--tile-size);
+  height: var(--tile-size);
+
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+  background-size: auto var(--tile-size);
+}
+.food.apple {
+  position: absolute;
+
+  background-image: url("../../../../public/assets/images/natsel/apple.png");
+}
+.food.peach {
+  position: absolute;
+
+  background-image: url("../../../../public/assets/images/natsel/peach.png");
+}
+.food.fish {
+  position: absolute;
+
+  background-image: url("../../../../public/assets/images/natsel/enchovy.png");
+}

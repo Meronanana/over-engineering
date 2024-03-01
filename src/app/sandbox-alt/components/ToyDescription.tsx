@@ -26,6 +26,7 @@ const descriptions: ObjType = {
   "qr-code": `큐알코드에영`,
   deadlock: `데드락락`,
   "nwjns-powerpuffgirl": `버거워요`,
+  "natural-selection": `자연 선택 시뮬레이션`,
   tutorial: `없어짐`,
 };
 

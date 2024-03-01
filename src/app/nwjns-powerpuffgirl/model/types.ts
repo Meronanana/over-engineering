@@ -1,5 +1,5 @@
 import { RefObject, createRef } from "react";
-import { Coordinate, Vector } from "@/utils/physicalEngine";
+import { ScreenCoordinate, Vector } from "@/utils/physicalEngine";
 import { hoveringSequence } from "../utils/stream";
 import { ScreenType } from "@/utils/types";
 
@@ -20,7 +20,7 @@ export type NWJNSCharacter = {
 // };
 
 export type NWJNSPhysics = {
-  DST: Coordinate;
+  DST: ScreenCoordinate;
   HOVER: Vector;
   HOVER_SEQ: Generator<number>;
 };
@@ -55,7 +55,7 @@ export const defaultCharacters: Array<NWJNSCharacter> = [
     name: "minji",
     ref: createRef(),
     physics: {
-      DST: { X: 0, Y: 0 } as Coordinate,
+      DST: { X: 0, Y: 0 } as ScreenCoordinate,
       HOVER: { vx: 0, vy: 0 } as Vector,
       HOVER_SEQ: hoveringSequence(0),
     },
@@ -72,7 +72,7 @@ export const defaultCharacters: Array<NWJNSCharacter> = [
     name: "hanni",
     ref: createRef(),
     physics: {
-      DST: { X: 0, Y: 0 } as Coordinate,
+      DST: { X: 0, Y: 0 } as ScreenCoordinate,
       HOVER: { vx: 0, vy: 0 } as Vector,
       HOVER_SEQ: hoveringSequence(1),
     },
@@ -90,7 +90,7 @@ export const defaultCharacters: Array<NWJNSCharacter> = [
     name: "danielle",
     ref: createRef(),
     physics: {
-      DST: { X: 0, Y: 0 } as Coordinate,
+      DST: { X: 0, Y: 0 } as ScreenCoordinate,
       HOVER: { vx: 0, vy: 0 } as Vector,
       HOVER_SEQ: hoveringSequence(2),
     },
@@ -107,7 +107,7 @@ export const defaultCharacters: Array<NWJNSCharacter> = [
     name: "haerin",
     ref: createRef(),
     physics: {
-      DST: { X: 0, Y: 0 } as Coordinate,
+      DST: { X: 0, Y: 0 } as ScreenCoordinate,
       HOVER: { vx: 0, vy: 0 } as Vector,
       HOVER_SEQ: hoveringSequence(3),
     },
@@ -124,7 +124,7 @@ export const defaultCharacters: Array<NWJNSCharacter> = [
     name: "hyein",
     ref: createRef(),
     physics: {
-      DST: { X: 0, Y: 0 } as Coordinate,
+      DST: { X: 0, Y: 0 } as ScreenCoordinate,
       HOVER: { vx: 0, vy: 0 } as Vector,
       HOVER_SEQ: hoveringSequence(4),
     },

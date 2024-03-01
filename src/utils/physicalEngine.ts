@@ -5,7 +5,7 @@ export type Vector = {
   vy: number;
 };
 
-export type Coordinate = {
+export type ScreenCoordinate = {
   X: number;
   Y: number;
 };
@@ -29,7 +29,7 @@ export const lerp = (start: number, end: number, t: number): number => {
   return start * (1 - t) + end * t;
 };
 
-export const getRadius = (vector: Vector): number => {
+export const getRadian = (vector: Vector): number => {
   let result = Math.atan2(-vector.vy, vector.vx);
   if (result < 0) result += Math.PI * 2;
   return result;
@@ -58,8 +58,8 @@ export const reactionByCircleCollision = (data: Array<Circle | null>, index: num
 
     const distance = Math.pow(dx, 2) + Math.pow(dy, 2);
     if (distance < Math.pow(threshold, 2)) {
-      const normal = getRadius({ vx: dx, vy: dy });
-      const incoming = getRadius(vector);
+      const normal = getRadian({ vx: dx, vy: dy });
+      const incoming = getRadian(vector);
       if (Math.abs(normal - incoming) < Math.PI / 2) return;
 
       const direction = normal * 2 - incoming + Math.PI;
@@ -77,7 +77,7 @@ export const isObjectInFront = (data: Array<CarBox | null>, index: number): bool
   const thisBox = data[index];
   if (thisBox === null) return false;
 
-  let coords: Coordinate[] = [];
+  let coords: ScreenCoordinate[] = [];
   let gapRatio = 4 / 5;
   if (thisBox.type === CarType.FromLeft) {
     coords.push({ X: thisBox.x + thisBox.w / 4, Y: thisBox.y }); // 겹침 판정

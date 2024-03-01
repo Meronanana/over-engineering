@@ -1,0 +1,57 @@
+.creature-area {
+  position: absolute;
+
+  top: 0%;
+  left: 0%;
+  width: calc((var(--tile-size) * var(--map-size)));
+  height: calc((var(--tile-size) * var(--map-size)));
+
+  // border-width: 2px;
+  // border-color: black;
+
+  // transform: translate(-50%, -50%);
+
+  z-index: 11;
+}
+
+.creature {
+  position: fixed;
+
+  top: -100px;
+  left: 100px;
+  width: var(--creature-size);
+  height: var(--creature-size);
+
+  transform: translate(
+    calc((var(--creature-size) - var(--tile-size) / 2)),
+    calc((var(--creature-size) - var(--tile-size) / 2))
+  );
+
+  background-repeat: no-repeat;
+  background-position: calc(var(--creature-size) * -3) calc(var(--creature-size) * -2);
+  background-size: calc(var(--creature-size) * 4) auto;
+}
+
+.creature.pikachu {
+  position: absolute;
+
+  background-image: url("../../../../public/assets/images/natsel/pikachu.png");
+}
+
+.creature.pairi {
+  position: absolute;
+
+  background-image: url("../../../../public/assets/images/natsel/pairi.png");
+}
+
+.creature.isanghaessi {
+  position: absolute;
+
+  background-image: url("../../../../public/assets/images/natsel/isanghaessi.png");
+}
+
+.creature.ggobugi {
+  position: absolute;
+
+  background-image: url("../../../../public/assets/images/natsel/ggobugi.png");
+}
