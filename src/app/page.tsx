@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Provider } from "react-redux";
 
 export default function App() {
   return (

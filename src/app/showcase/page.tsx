@@ -1,25 +1,44 @@
-import Showcase from "@/containers/showcase";
+"use client";
 
-interface Props {
-  name: string;
-}
+import { useState } from "react";
 
-const fetchData = async () => {
-  return "Hello SSR!";
+import "./layout.scss";
+
+const App: React.FC = () => {
+  const [carouselIndex, setCarouselIndex] = useState(0);
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        height: "100%",
+      }}
+    >
+      <div className="box-tmp" style={{ height: "200px" }}>
+        <h1>{`Carousel`}</h1>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          height: "100%",
+        }}
+      >
+        <div className="box-tmp">
+          <h1>{`Left Description`}</h1>
+        </div>
+        <div className="box-tmp">
+          <h1>{`Jacket`}</h1>
+        </div>
+        <div className="box-tmp">
+          <h1>{`Right Description`}</h1>
+        </div>
+      </div>
+    </div>
+  );
 };
 
-export async function getServerSideProps() {
-  // 여기에서 데이터를 가져오는 로직을 작성합니다.
-  const name = await fetchData(); // fetchData()는 실제 데이터를 가져오는 함수입니다.
-
-  // 가져온 데이터를 props로 전달합니다.
-  return {
-    props: {
-      name,
-    },
-  };
-}
-
-export default function App({ name }: Props) {
-  return <Showcase name={name} />;
-}
+export default App;
