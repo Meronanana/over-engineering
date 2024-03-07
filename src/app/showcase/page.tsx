@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import "./layout.scss";
+import Carousel from "./view/Carousel";
 
 const App: React.FC = () => {
   const [carouselIndex, setCarouselIndex] = useState(0);
@@ -17,7 +18,10 @@ const App: React.FC = () => {
       }}
     >
       <div className="box-tmp" style={{ height: "200px" }}>
-        <h1>{`Carousel`}</h1>
+        <Carousel
+          carouselIndex={carouselIndex}
+          setCarouselIndex={setCarouselIndex}
+        />
       </div>
       <div
         style={{
@@ -30,12 +34,15 @@ const App: React.FC = () => {
         <div className="box-tmp">
           <h1>{`Left Description`}</h1>
         </div>
-        <div className="box-tmp">
+        <div className="box-tmp" style={{ width: "200%" }}>
           <h1>{`Jacket`}</h1>
         </div>
         <div className="box-tmp">
           <h1>{`Right Description`}</h1>
         </div>
+      </div>
+      <div className="box-tmp" style={{ height: "50px" }}>
+        <h1>{`Footer`}</h1>
       </div>
     </div>
   );

@@ -1,0 +1,16 @@
+.carousel-container {
+  position: absolute;
+
+  // top: -160px;
+  left: 50vw;
+  width: 640px;
+  height: 640px;
+
+  background-color: rgba(0, 255, 255, 0.2);
+
+  transform: translate(-50%, -50%);
+  rotate: 0deg;
+
+  border-width: 2px;
+  border-color: aqua;
+}
